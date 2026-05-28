@@ -17,13 +17,12 @@ jobs:
       - name: Compile LaTeX document
         uses: xu-cheng/latex-action@v3
         env:
-          # 【最關鍵】強制 Python 使用 UTF-8，防止讀取中文註解時崩潰
           PYTHONIOENCODING: utf8 
         with:
           root_file: main.tex 
-          compiler: xelatex 
-          # 移除了無效的 -pdf
-          args: -file-line-error -halt-on-error -interaction=nonstopmode -shell-escape
+          latexmk_use_xelatex: true
+          latexmk_shell_escape: true
+          
           extra_system_packages: |
             fontconfig
             font-noto-cjk
