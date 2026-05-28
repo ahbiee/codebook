@@ -1,0 +1,28 @@
+{
+    // --- LaTeX Workshop 設定開始 ---
+    // 設定自動編譯機制：存檔時自動編譯
+    "latex-workshop.latex.autoBuild.run": "onFileChange",
+    
+    // 定義預設的編譯配方 (Recipe)
+    "latex-workshop.latex.recipes": [
+        {
+            "name": "xelatex",
+            "tools": ["xelatex"]
+        }
+    ],
+    
+    // 定義具體的編譯工具與參數
+    "latex-workshop.latex.tools": [
+        {
+            "name": "xelatex",
+            "command": "xelatex",
+            "args": [
+                "-synctex=1",
+                "-interaction=nonstopmode",
+                "-file-line-error",
+                "%DOC%"
+            ]
+        }
+    ],
+    // --- LaTeX Workshop 設定結束 ---
+}
