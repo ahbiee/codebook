@@ -1,0 +1,145 @@
+% Team Note Sample Template
+% These codes should be guaranteed, fast enough, short and easy to type.
+
+\documentclass[portrait, 8pt, a4paper, oneside, twocolumn]{extarticle}
+\usepackage{teamnote}
+
+% 引入中文字體處理套件
+\usepackage{xeCJK}
+\setCJKmainfont{Noto Sans CJK TC}
+
+\teamnote{FJCU}{UltraGrammer}{ahbiee}
+
+\ShowUsage
+\ShowComplexity
+\HideAuthor
+
+\begin{document}
+
+\maketitlepage
+
+% Make Pagebreak if you want.
+% \pagebreak 
+
+\section{你是否有...}
+
+\subsection{嘗試...}
+
+\begin{itemize}
+    \item \textcolor{red}{\textbf{再讀一遍題目}}
+    \item 懷疑你認為「理所當然」的直覺?
+    \item 試著寫下直覺的規律? (有助於觀察)
+    \item 換個方向思考?
+    \item 暴力解?
+    \item 貪心解?
+    \item 動態規劃(DP)?
+    \item 狀態建模, 把問題轉化成圖論?
+    \item 只在奇數index反轉狀態?
+    \item 用乘法取代除法? ($/2 = *2^{-1}$，模逆元)
+\end{itemize}
+
+\subsection{檢查...}
+
+\begin{itemize}
+    \item \textcolor{red}{\textbf{確定沒漏看敘述?}}
+    \item 確認數值範圍? (溢位, 精度位數, 陣列大小...)
+    \item 不同的陣列/字串 使用同個index導致超出範圍?
+    \item 模板抄錯?
+    \item 多筆資料之間初始化?
+    \item 題目額外的敘述, 暗示?
+    \item 未定義行為? (陣列越界, 未初始化)
+    \item overflow? (int -> long long)
+    \item 非void function忘記return?
+    \item 浮點數誤差? (極小的eps, 是否需要long double)
+    \item 隱轉換? (int*int爆了才存到long long)
+    \item signed與unsigned int之間的compare?
+\end{itemize}
+
+\section{資料結構: 前綴和}
+
+\Algorithm{BIT (Fenwick Tree)}{支援單點修改與區間求和。index是1-based。}{$\mathcal{O}(\log n)$}{cpp}{source/DataStructure/BIT.cpp}{}
+
+\Algorithm{Segment Tree 線段樹}{給定n筆資料查詢與m次範圍更新，解決多次範圍更新的問題，找區間和或最大/小值}{建樹$\mathcal{O}(N)$ 查詢/更新 $\mathcal{O}(\log N)$}{cpp}{source/DataStructure/SegmentTree.cpp}{}
+
+\section{數論: 尤拉公式, 數論分塊, Sprague-Grundy函數, 排容原理}
+
+\Algorithm{快速冪}{計算 $a^b \pmod m$。}{$\mathcal{O}(\log b)$}{cpp}{source/Math/FastPower.cpp}{}
+
+\Algorithm{模逆元與費馬小定理}{定義： 若 $p$ 為質數，且整數 $a$ 與 $p$ 互質，則 $a^{p-1} \equiv 1 \pmod p$。邏輯應用： 兩邊同除以 $a$ 可得 $a^{p-2} \equiv a^{-1} \pmod p$。\\這代表計算 $(x / a) \pmod p$ 等同於計算 $(x \cdot a^{p-2}) \pmod p$。}{$\mathcal{O}(\log p)$}{cpp}{source/Math/invModulo.cpp}{}
+
+\Algorithm{質數檢查}{單次詢問大數用 \texttt{isPrime}；若有大量詢問則建質數表。}{$\mathcal{O}(\sqrt{N})$}{cpp}{source/Math/Prime.cpp}{}
+
+\Algorithm{大數乘法}{未知長度的大數相乘}{$\mathcal{O}(N \times M)$}{cpp}{source/Math/BigNumMultiply.cpp}{}
+
+\section{字串}
+
+\Algorithm{KMP 字串匹配}{尋找 \texttt{pattern} 出現位置。\texttt{pi} 陣列可求最小循環節。}
+{$\mathcal{O}(N + M)$}{cpp}{source/String/KMP.cpp}{}
+
+\Algorithm{Z-Algorithm 字串匹配}{\texttt{z[i]} 代表 $S$ 與 $S[i \dots N-1]$ 的最長共同前綴。}{$\mathcal{O}(N)$}{cpp}{source/String/Z.cpp}{}
+
+\Algorithm{Manacher 迴文判斷}{求最長迴文子字串。預處理字串塞入 \texttt{\#} 將所有迴文轉為奇數長度。}
+{$\mathcal{O}(N)$}{cpp}{source/String/Manacher.cpp}{}
+
+\Algorithm{Trie 字典樹}{字串前綴統計或最大 XOR 問題。}{$\mathcal{O}(|S|)$}{cpp}{source/String/Trie.cpp}{}
+
+\Algorithm{AC自動機}{多字串匹配 (Trie + KMP)}{$\mathcal{O}(N + M)$}{cpp}{source/String/AC.cpp}{}
+
+\section {圖論: Bellman-Ford, Floyd, SPFA最短路徑, 著色問題，帶權二分圖最大匹配(KM演算法)，無權二分圖最大匹配(匈牙利演算法)，最大流}
+
+需注意： \\
+是否為全連通圖（connected， 只有一個component），對於連通圖要找region可以用Euler's theorem V-E+R=2 \\
+undirected 無自環 \\
+directed \\
+weighted 有權重（點或邊）\\
+multigraph 兩點之間有多條直接的路徑 \\
+有向圖的outdegree, indegree，無向圖的degree \\
+
+表示圖的方式：Adjacency matrix, adjacency list
+
+
+\Algorithm{BFS與拓樸排序}{無權圖最短路徑 / 拓樸排序計算In-degree尋找相關順序，可判斷是否有環。}{$\mathcal{O}(V + E)$}{cpp}{source/Graph/BFSTopo.cpp}{}
+
+\Algorithm{DFS}{用遞迴走訪。}{$\mathcal{O}(V + E)$}{cpp}{source/Graph/DFS.cpp}{}
+
+\Algorithm{Dijkstra 最短路徑}{單源最短路徑，不支援負權邊，支援自環。}{$\mathcal{O}((V+E)\log V)$}{cpp}{source/Graph/Dijkstra.cpp}{}
+
+\section{幾何: 三點求圓, 向量, 凹凸多邊形面積, 點與線等等的關係, 凸包}
+
+\section{樹論}
+
+\Algorithm{Disjoint Set}{解決集合、快速合併的問題。優化必須路徑壓縮，可選小掛大}{$\mathcal{O}(1)$}{cpp}{source/Tree/DisjointSet.cpp}{}
+
+\Algorithm{Kruskal 最小生成樹}{需搭配並查集使用。將所有邊排序後，利用併查集檢查是否形成環。}{$\mathcal{O}(E \log E)$}{cpp}{source/Tree/Kruskal.cpp}{}
+
+\section{DP: LIS, LDS, 分錢幣問題, Kadane's algo找最大子序列問題}
+
+DP通用解題四步驟: \\
+1. 定義陣列意義：明確寫出 dp[i] (或dp[i][j]) 代表什麼。 \\
+2. 找出遞迴關係式：推導出當前狀態如何由過去狀態轉移而來。 \\ 
+3. 設定邊界條件：初始化起點或基礎 dp 值（如： dp[0] = 0 ）。 \\ 
+4. 確認遍歷順序：決定迴圈是從前到後（Bottom-Up）還是後到前 (Top-Down) 計算。(通常是Bottom-Up，思考 "我是如何到這一步的"去推) \\
+
+\Algorithm{01 Knapsack 背包}{解決物品不可拆分的情況，若可拆分用Greedy拿比例最佳的部分}{$\mathcal{O}(N)$}{cpp}{source/DP/01.cpp}{}
+
+\Algorithm{LCS 最長共同子序列(Sequence)}{二維DP與Backtrack找原始子序列}{$\mathcal{O}(NM)$}{cpp}{source/DP/LCS.cpp}{}
+
+\Algorithm{跳格子}{給定一組陣列，固定跳躍距離，問你最少需要跳幾次，以及所跳過的格子index}{$\mathcal{O}(N \times K)$}{cpp}{source/DP/jump.cpp}{}
+
+\section{Greedy: 二分搜}
+
+擴充一：區間合併 (Merge Intervals)情境： 給你一堆區間，把所有重疊的部分合併起來（Leetcode 56）。貪心策略： 依照「開始時間」排序。如果下一個區間的開始時間 $\le$ 當前區間的結束時間，則合併（更新當前結束時間為兩者最大值）；否則將當前區間放入答案，換下一個。擴充二：多點排程 / 優先佇列貪心 (Huffman 概念)情境： 經典的「切木板問題」或「合併果子（碎紙機）」，每次合併兩堆，成本是兩堆的重量和，求最小總成本。貪心策略： 這裡不需要排序和掃描線，而是直接把所有元素丟進 Min-Heap (Priority Queue)。每次 pop 出最小的兩個相加，把總和加進成本，再把總和 push 回 Heap，直到 Heap 只剩下一個元素。
+
+\Algorithm{一維區間全覆蓋}{需要先把輸入轉化成一個包含l, r的struct，自訂operator<，起始位置由小到大排序}{$\mathcal{O}(N \log N)$}{cpp}{source/Greedy/1Dcoverage.cpp}{}
+
+\Algorithm{間格跳躍}{給定一組陣列，距離為index的值，問你最少需要跳多少次才能到終點}{$\mathcal{O}(N)$}{cpp}{source/Greedy/jump.cpp}{}
+
+\Algorithm{最大不重疊區間}{對一組任務做排程，請問最多可以移除多少個任務 -> 最早結束的先選。}{$\mathcal{O}(N \log N)$}{cpp}{source/Greedy/Nonoverlapping.cpp}{}
+
+\Algorithm{最小覆蓋區間}{給定一組陣列，包含開始時間與結束時間，求最少需要幾個房間就能完成所有任務}{$\mathcal{O}(N \log N)$}{cpp}{source/Greedy/room.cpp}{}
+
+\section{其他: Random Select(QuickSort), 雙指針, 滑動窗口, C++ algorithm庫}
+
+\Algorithm{模板}{競賽用基礎模板}{$\mathcal{O}(How FastYouType)$}{cpp}{source/Others/Template.cpp}{}
+
+\end{document}
