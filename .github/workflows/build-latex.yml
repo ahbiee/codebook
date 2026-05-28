@@ -28,6 +28,7 @@ jobs:
           extra_system_packages: |
             fontconfig
             font-noto-cjk
+            py3-pygments
 
       # 3. 自動將編譯出來的 PDF commit 並 push 回去你的 Repo 檔案列表中
       - name: Commit PDF back to repo
