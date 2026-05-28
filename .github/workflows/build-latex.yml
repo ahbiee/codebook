@@ -19,6 +19,10 @@ jobs:
         with:
           root_file: main.tex 
           compiler: xelatex 
+          args: -pdf -file-line-error -halt-on-error -interaction=nonstopmode
+          extra_system_packages: |
+            fonts-noto-cjk
+            fonts-noto-cjk-extra
 
       # 3. 把編譯好的 PDF 檔上傳 (已更新為 v4)
       - name: Upload PDF artifact
