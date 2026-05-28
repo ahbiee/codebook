@@ -23,7 +23,7 @@ jobs:
           root_file: main.tex 
           compiler: xelatex 
           # 保留你的完整編譯參數，包含解決 minted 問題的 -shell-escape
-          args: -pdf -file-line-error -halt-on-error -interaction=nonstopmode -shell-escape
+          args: -file-line-error -halt-on-error -interaction=nonstopmode -shell-escape
           # 保留你所需的中文字體與系統套件
           extra_system_packages: |
             fontconfig
