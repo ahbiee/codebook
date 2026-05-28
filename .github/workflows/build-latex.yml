@@ -4,7 +4,6 @@ on:
   push:
     branches: [ main ]
 
-# 開啟寫入權限，讓機器人可以將 PDF 推回你的 Repo
 permissions:
   contents: write
 
@@ -12,25 +11,24 @@ jobs:
   build_latex:
     runs-on: ubuntu-latest
     steps:
-      # 1. 把你的程式碼拉到 GitHub 虛擬機
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. 安裝字體並編譯 LaTeX
       - name: Compile LaTeX document
         uses: xu-cheng/latex-action@v3
+        env:
+          # 【最關鍵】強制 Python 使用 UTF-8，防止讀取中文註解時崩潰
+          PYTHONIOENCODING: utf8 
         with:
           root_file: main.tex 
           compiler: xelatex 
-          # 保留你的完整編譯參數，包含解決 minted 問題的 -shell-escape
+          # 移除了無效的 -pdf
           args: -file-line-error -halt-on-error -interaction=nonstopmode -shell-escape
-          # 保留你所需的中文字體與系統套件
           extra_system_packages: |
             fontconfig
             font-noto-cjk
             py3-pygments
 
-      # 3. 自動將編譯出來的 PDF commit 並 push 回去你的 Repo 檔案列表中
       - name: Commit PDF back to repo
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
