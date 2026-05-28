@@ -1,0 +1,31 @@
+name: Build LaTeX PDF
+
+# 當你 push 程式碼到 main 分支時，就會自動觸發這個動作
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build_latex:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. 把你的程式碼拉到 GitHub 虛擬機
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 2. 使用社群公認最強大的 LaTeX 編譯 Action
+      - name: Compile LaTeX document
+        uses: xu-cheng/latex-action@v3
+        with:
+          # 請替換成你的主檔案名稱，通常是 main.tex
+          root_file: main.tex 
+          # 如果你有為了程式碼字體美觀而使用 fontspec 套件，請設為 xelatex。若無，設為 pdflatex
+          compiler: xelatex 
+
+      # 3. 把編譯好的 PDF 檔上傳，讓你可以在網頁上下載
+      - name: Upload PDF artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: Codebook-PDF
+          # 確保這裡的檔名與你 root_file 編譯出來的檔名一致
+          path: main.pdf
