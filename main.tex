@@ -5,8 +5,14 @@
 \usepackage{teamnote}
 
 % 引入中文字體處理套件
+\usepackage{fontspec}
 \usepackage{xeCJK}
-\setCJKmainfont{Noto Sans TC}
+% 讓 LaTeX 自動判斷環境中存在的字體名稱
+\IfFontExistsTF{Noto Sans CJK TC}{
+    \setCJKmainfont{Noto Sans CJK TC}  % 給 GitHub Actions (Linux) 用的
+}{
+    \setCJKmainfont{Noto Sans TC}      % 給你本機 Windows 用的
+}
 
 \teamnote{FJCU}{UltraGrammer}{ahbiee}
 
