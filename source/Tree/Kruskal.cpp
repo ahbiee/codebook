@@ -45,3 +45,13 @@ struct Kruskal {
         return (edge_cnt == n - 1) ? total_weight : -1;
     }
 };
+
+/*
+延伸題型
+
+找第二小的Minimum Spanning Tree
+
+改成Maximum Spanning Tree
+
+對Min ST做DFS
+*/

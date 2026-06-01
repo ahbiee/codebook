@@ -1,0 +1,45 @@
+\contentsline {section}{\numberline {1}你是否有...}{1}{}%
+\contentsline {subsection}{\numberline {1.1}嘗試...}{1}{}%
+\contentsline {subsection}{\numberline {1.2}檢查...}{1}{}%
+\contentsline {section}{\numberline {2}資料結構: 前綴和}{1}{}%
+\contentsline {subsection}{\numberline {2.1}BIT (Fenwick Tree)}{1}{}%
+\contentsline {subsection}{\numberline {2.2}Segment Tree 線段樹}{1}{}%
+\contentsline {section}{\numberline {3}數論: 尤拉公式, 數論分塊, Sprague-Grundy函數, 排容原理}{2}{}%
+\contentsline {subsection}{\numberline {3.1}快速冪}{2}{}%
+\contentsline {subsection}{\numberline {3.2}模逆元與費馬小定理}{2}{}%
+\contentsline {subsection}{\numberline {3.3}質數檢查}{2}{}%
+\contentsline {subsection}{\numberline {3.4}大數乘法}{2}{}%
+\contentsline {section}{\numberline {4}字串}{3}{}%
+\contentsline {subsection}{\numberline {4.1}KMP 字串匹配}{3}{}%
+\contentsline {subsection}{\numberline {4.2}Z-Algorithm 字串匹配}{3}{}%
+\contentsline {subsection}{\numberline {4.3}Manacher 迴文判斷}{3}{}%
+\contentsline {subsection}{\numberline {4.4}Trie 字典樹}{3}{}%
+\contentsline {subsection}{\numberline {4.5}AC自動機}{4}{}%
+\contentsline {section}{\numberline {5}圖論: 著色問題，帶權二分圖最大匹配(KM演算法)，最大流，biconnected component與articulation point找dfn與low}{4}{}%
+\contentsline {subsection}{\numberline {5.1}BFS與拓樸排序}{4}{}%
+\contentsline {subsection}{\numberline {5.2}DFS}{5}{}%
+\contentsline {subsection}{\numberline {5.3}匈牙利演算法}{5}{}%
+\contentsline {subsection}{\numberline {5.4}Dijkstra 單源最短路徑}{5}{}%
+\contentsline {subsection}{\numberline {5.5}SPFA 單源最短路徑}{5}{}%
+\contentsline {subsection}{\numberline {5.6}Floyd-Warshall 多源最短路徑}{6}{}%
+\contentsline {section}{\numberline {6}幾何}{6}{}%
+\contentsline {subsection}{\numberline {6.1}點與向量基礎 (Point \& Vector)}{6}{}%
+\contentsline {subsection}{\numberline {6.2}判斷線段相交 (Segment Intersection)}{6}{}%
+\contentsline {subsection}{\numberline {6.3}點與線段關係 (Point \& Line)}{6}{}%
+\contentsline {subsection}{\numberline {6.4}任意多邊形面積}{6}{}%
+\contentsline {subsection}{\numberline {6.5}凸包 Convex Hull}{7}{}%
+\contentsline {section}{\numberline {7}樹論}{7}{}%
+\contentsline {subsection}{\numberline {7.1}Disjoint Set}{7}{}%
+\contentsline {subsection}{\numberline {7.2}Kruskal 最小生成樹}{7}{}%
+\contentsline {section}{\numberline {8}DP: LIS, LDS, 分錢幣問題, Kadane's algo找最大子序列問題}{7}{}%
+\contentsline {subsection}{\numberline {8.1}01 Knapsack 背包}{7}{}%
+\contentsline {subsection}{\numberline {8.2}LCS 最長共同子序列(Sequence)}{8}{}%
+\contentsline {subsection}{\numberline {8.3}區間DP概念 (最長迴文子序列)}{8}{}%
+\contentsline {subsection}{\numberline {8.4}跳格子}{8}{}%
+\contentsline {section}{\numberline {9}Greedy: 二分搜}{9}{}%
+\contentsline {subsection}{\numberline {9.1}一維區間全覆蓋}{9}{}%
+\contentsline {subsection}{\numberline {9.2}間格跳躍}{9}{}%
+\contentsline {subsection}{\numberline {9.3}最大不重疊區間}{9}{}%
+\contentsline {subsection}{\numberline {9.4}最小覆蓋區間}{9}{}%
+\contentsline {section}{\numberline {10}MISC: Random Select(QuickSort), 雙指針, 滑動窗口, C++ algorithm庫}{10}{}%
+\contentsline {subsection}{\numberline {10.1}模板}{10}{}%

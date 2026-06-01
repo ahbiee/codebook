@@ -1,3 +1,5 @@
+// LCS (線性 DP)：dp[i][j] 代表的是 s1 的前 i 個字元，與 s2 的前 j 個字元。這是一個從索引 0 開始的前綴
+
 struct LCS {
     // 求解 LCS 並回傳最長共同子序列的字串
     // 若只需長度，直接回傳 dp[n][m] 即可
@@ -43,3 +45,12 @@ struct LCS {
         return res;
     }
 };
+
+/*
+補充: Longest Palindrome Sequence 最長迴文子序列
+給定一個字串，問你該字串的最長迴文子序列 "長度" 為多少
+做法就是對 s1 與 s2=reverse(s1) 做一次LCS，即可得到 "最長長度"
+
+變化2: 求最少插入/刪除次數以形成迴文
+如果只求長度 -> strlen - LPS(s)
+*/

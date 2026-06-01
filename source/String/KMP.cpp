@@ -1,15 +1,37 @@
-// failure 陣列 (LPS): pi[i] 代表 pattern[0..i] 的最長相同前後綴長度
-vector<int> build_pi(const string& p) {
-    int m = p.length();
+// pi 陣列 (Longest Prefix Suffix): pi[i] 代表 pattern[0..i] 的最長相同前後綴長度
+vector<int> build_pi(const string& s) {
+    int m = s.length();
     vector<int> pi(m, 0);
     for (int i = 1, j = 0; i < m; ++i) {
         // 如果不匹配，就利用 pi 陣列往回跳
-        while (j > 0 && p[i] != p[j]) j = pi[j - 1];
-        if (p[i] == p[j]) j++;
+        while (j > 0 && s[i] != s[j]) j = pi[j - 1];
+        if (s[i] == s[j]) j++;
         pi[i] = j;
     }
     return pi;
 }
+
+// 可用 pi 陣列尋找一個字串的最小循環節
+int getMinimumPeriod(const string& s) {
+    int n = s.length();
+    if (n == 0) return 0;
+    vector<int> pi = build_pi(s);
+
+    // 取得整個字串的最長相同前後綴長度
+    int maxPrefixLength = pi[n - 1];
+
+    // 計算可能的最小循環節長度
+    int period = n - maxPrefixLength;
+
+    // 檢查總長度是否能被 period 整除
+    if (maxPrefixLength > 0 && n % period == 0) {
+        return period;
+    }
+    
+    // 若無法整除，代表沒有更小的週期，最小循環節為字串本身
+    return n; 
+}
+// 最終，最小循環節長度即為回傳的 period -> s.substr(0, period);
 
 // 執行字串匹配
 vector<int> kmp(const string& text, const string& pattern) {

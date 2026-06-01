@@ -6,7 +6,7 @@
 
 % 引入中文字體處理套件
 \usepackage{xeCJK}
-\setCJKmainfont{Noto Sans CJK TC}
+\setCJKmainfont{Noto Sans TC}
 
 \teamnote{FJCU}{UltraGrammer}{ahbiee}
 
@@ -51,15 +51,15 @@
     \item overflow? (int -> long long)
     \item 非void function忘記return?
     \item 浮點數誤差? (極小的eps, 是否需要long double)
-    \item 隱轉換? (int*int爆了才存到long long)
+    \item 隱轉換? (int*int爆了後才存到long long)
     \item signed與unsigned int之間的compare?
 \end{itemize}
 
 \section{資料結構: 前綴和}
 
-\Algorithm{BIT (Fenwick Tree)}{支援單點修改與區間求和。index是1-based。}{$\mathcal{O}(\log n)$}{cpp}{source/DataStructure/BIT.cpp}{}
+\Algorithm{BIT (Fenwick Tree)}{支援單點修改與區間求和。必須是1-based index。}{$\mathcal{O}(\log n)$}{cpp}{source/DataStructure/BIT.cpp}{}
 
-\Algorithm{Segment Tree 線段樹}{給定n筆資料查詢與m次範圍更新，解決多次範圍更新的問題，找區間和或最大/小值}{建樹$\mathcal{O}(N)$ 查詢/更新 $\mathcal{O}(\log N)$}{cpp}{source/DataStructure/SegmentTree.cpp}{}
+\Algorithm{Segment Tree 線段樹}{給定n筆資料查詢與m次範圍更新，解決多次範圍更新的問題，找區間和或最大/小值。必須是1-based index。}{建樹$\mathcal{O}(N)$ 查詢/更新 $\mathcal{O}(\log N)$}{cpp}{source/DataStructure/SegmentTree.cpp}{}
 
 \section{數論: 尤拉公式, 數論分塊, Sprague-Grundy函數, 排容原理}
 
@@ -73,19 +73,19 @@
 
 \section{字串}
 
-\Algorithm{KMP 字串匹配}{尋找 \texttt{pattern} 出現位置。\texttt{pi} 陣列可求最小循環節。}
+\Algorithm{KMP 字串匹配}{尋找 \texttt{pattern} 出現位置。\texttt{pi} 陣列可求最小循環節。必須是0-based index。}
 {$\mathcal{O}(N + M)$}{cpp}{source/String/KMP.cpp}{}
 
-\Algorithm{Z-Algorithm 字串匹配}{\texttt{z[i]} 代表 $S$ 與 $S[i \dots N-1]$ 的最長共同前綴。}{$\mathcal{O}(N)$}{cpp}{source/String/Z.cpp}{}
+\Algorithm{Z-Algorithm 字串匹配}{\texttt{z[i]} 代表 $S$ 與 $S[i \dots N-1]$ 的最長共同前綴。必須是0-based index。}{$\mathcal{O}(N)$}{cpp}{source/String/Z.cpp}{}
 
 \Algorithm{Manacher 迴文判斷}{求最長迴文子字串。預處理字串塞入 \texttt{\#} 將所有迴文轉為奇數長度。}
 {$\mathcal{O}(N)$}{cpp}{source/String/Manacher.cpp}{}
 
-\Algorithm{Trie 字典樹}{字串前綴統計或最大 XOR 問題。}{$\mathcal{O}(|S|)$}{cpp}{source/String/Trie.cpp}{}
+\Algorithm{Trie 字典樹}{字串前綴統計或最大 XOR 問題。必須是0-based index。}{$\mathcal{O}(|S|)$}{cpp}{source/String/Trie.cpp}{}
 
-\Algorithm{AC自動機}{多字串匹配 (Trie + KMP)}{$\mathcal{O}(N + M)$}{cpp}{source/String/AC.cpp}{}
+\Algorithm{AC自動機}{多字串匹配 (Trie + KMP)，必須是0-based index。}{$\mathcal{O}(N + M)$}{cpp}{source/String/AC.cpp}{}
 
-\section {圖論: Bellman-Ford, Floyd, SPFA最短路徑, 著色問題，帶權二分圖最大匹配(KM演算法)，無權二分圖最大匹配(匈牙利演算法)，最大流}
+\section {圖論: 著色問題，帶權二分圖最大匹配(KM演算法)，最大流，biconnected component與articulation point找dfn與low}
 
 需注意： \\
 是否為全連通圖（connected， 只有一個component），對於連通圖要找region可以用Euler's theorem V-E+R=2 \\
@@ -102,10 +102,60 @@ multigraph 兩點之間有多條直接的路徑 \\
 
 \Algorithm{DFS}{用遞迴走訪。}{$\mathcal{O}(V + E)$}{cpp}{source/Graph/DFS.cpp}{}
 
-\Algorithm{Dijkstra 最短路徑}{單源最短路徑，不支援負權邊，支援自環。}{$\mathcal{O}((V+E)\log V)$}{cpp}{source/Graph/Dijkstra.cpp}{}
+\Algorithm{匈牙利演算法}
+{無權二分圖最大匹配，透過回溯尋找增廣路徑，以達到最大匹配。分為左(S)、右(T)兩側，以及left陣列紀錄右側所選的對象}
+{$\mathcal{O}(V \cdot E)$}
+{cpp}{source/Graph/Hungarian.cpp}
+{}
 
-\section{幾何: 三點求圓, 向量, 凹凸多邊形面積, 點與線等等的關係, 凸包}
+\Algorithm{Dijkstra 單源最短路徑}
+{找單個起點的最短路徑，不支援負權邊，支援自環。}
+{$\mathcal{O}((V+E)\log V)$}{cpp}{source/Graph/Dijkstra.cpp}{}
 
+\Algorithm{SPFA 單源最短路徑}
+{也是找單個起點的最短路徑，但支援負權邊。只在"可能有負邊"或"必須檢查負環"時才用}
+{預期 $\mathcal{O}(V+E)$，最差 $\mathcal{O}(VE)$}
+{cpp}{source/Graph/SPFA.cpp}
+{}
+
+\Algorithm{Floyd-Warshall 多源最短路徑}
+{求任意兩點之間距離。利用滾動陣列降維，\texttt{k} 必須在最外層迴圈。注意避開 \texttt{INF} 加上負權邊的陷阱。}
+{時間 $\mathcal{O}(V^3)$，空間 $\mathcal{O}(V^2)$}
+{cpp}{source/Graph/Floyd.cpp}
+{}
+
+\section{幾何}
+
+\Algorithm{點與向量基礎 (Point \& Vector)}
+{幾何基礎，定義struct與operator。包含浮點數誤差處理 \texttt{sign}，以及核心工具 \texttt{dot} (內積) 與 \texttt{cross} (外積)。}
+{$\mathcal{O}(1)$}
+{cpp}{source/Geometry/point.cpp}
+{}
+
+\Algorithm{判斷線段相交 (Segment Intersection)}
+{利用外積進行跨立實驗。避開斜率除以零的問題，可處理端點相切與共線重疊。}
+{$\mathcal{O}(1)$}
+{cpp}{source/Geometry/Intersection.cpp}
+{}
+
+\Algorithm{點與線段關係 (Point \& Line)}
+{判斷 1.點是否在線段上 2.求點到直線/線段最短距離。利用內外積避免解方程式與浮點數除以零。}
+{$\mathcal{O}(1)$}
+{cpp}{source/Geometry/PointLine.cpp}
+{}
+
+\Algorithm{任意多邊形面積}
+{利用外積求多邊形面積(鞋帶公式)。頂點必須依順時針或逆時針順序給定。支援凹凸多邊形。}
+{$\mathcal{O}(N)$}
+{cpp}{source/Geometry/PolygonArea.cpp}
+{}
+
+\Algorithm{凸包 Convex Hull}
+{求包圍所有點的最小凸多邊形。先排 $X$ 再排 $Y$。由左至右建下半部，由右至左建上半部。利用外積判斷並踢除右轉點。}
+{$\mathcal{O}(N \log N)$}
+{cpp}{source/Geometry/ConvexHull.cpp}
+{}
+ 
 \section{樹論}
 
 \Algorithm{Disjoint Set}{解決集合、快速合併的問題。優化必須路徑壓縮，可選小掛大}{$\mathcal{O}(1)$}{cpp}{source/Tree/DisjointSet.cpp}{}
@@ -124,11 +174,21 @@ DP通用解題四步驟: \\
 
 \Algorithm{LCS 最長共同子序列(Sequence)}{二維DP與Backtrack找原始子序列}{$\mathcal{O}(NM)$}{cpp}{source/DP/LCS.cpp}{}
 
-\Algorithm{跳格子}{給定一組陣列，固定跳躍距離，問你最少需要跳幾次，以及所跳過的格子index}{$\mathcal{O}(N \times K)$}{cpp}{source/DP/jump.cpp}{}
+\Algorithm{區間DP概念 (最長迴文子序列)}{區間 DP是由字串的內部向外擴張，利用已經算好的較短子字串，來推導出較長子字串的答案。}{$\mathcal{O}(N^2)$}{cpp}{source/DP/Interval.cpp}{}
+
+\Algorithm{跳格子}{給定一組陣列，固定跳躍距離，問你最少需要跳幾次，以及所跳過的格子index。如果數值達到long long，INF需設為1e18或0x3f3f3f3f3f3f3f3f}{$\mathcal{O}(N \times K)$}{cpp}{source/DP/jump.cpp}{}
 
 \section{Greedy: 二分搜}
 
-擴充一：區間合併 (Merge Intervals)情境： 給你一堆區間，把所有重疊的部分合併起來（Leetcode 56）。貪心策略： 依照「開始時間」排序。如果下一個區間的開始時間 $\le$ 當前區間的結束時間，則合併（更新當前結束時間為兩者最大值）；否則將當前區間放入答案，換下一個。擴充二：多點排程 / 優先佇列貪心 (Huffman 概念)情境： 經典的「切木板問題」或「合併果子（碎紙機）」，每次合併兩堆，成本是兩堆的重量和，求最小總成本。貪心策略： 這裡不需要排序和掃描線，而是直接把所有元素丟進 Min-Heap (Priority Queue)。每次 pop 出最小的兩個相加，把總和加進成本，再把總和 push 回 Heap，直到 Heap 只剩下一個元素。
+擴充一：區間合併 (Merge Intervals)
+情境： 給你一堆區間，把所有重疊的部分合併起來（Leetcode 56）。
+貪心策略： 依照「開始時間」排序。如果下一個區間的開始時間 $\le$ 當前區間的結束時間，則合併（更新當前結束時間為兩者最大值）
+；否則將當前區間放入答案，換下一個。
+
+擴充二：多點排程 / 優先佇列貪心 (Huffman 概念)
+情境： 經典的「切木板問題」或「合併果子（碎紙機）」，每次合併兩堆，成本是兩堆的重量和，求最小總成本。
+貪心策略： 這裡不需要排序和掃描線，而是直接把所有元素丟進 Min-Heap (Priority Queue)。
+每次 pop 出最小的兩個相加，把總和加進成本，再把總和 push 回 Heap，直到 Heap 只剩下一個元素。
 
 \Algorithm{一維區間全覆蓋}{需要先把輸入轉化成一個包含l, r的struct，自訂operator<，起始位置由小到大排序}{$\mathcal{O}(N \log N)$}{cpp}{source/Greedy/1Dcoverage.cpp}{}
 
@@ -138,7 +198,7 @@ DP通用解題四步驟: \\
 
 \Algorithm{最小覆蓋區間}{給定一組陣列，包含開始時間與結束時間，求最少需要幾個房間就能完成所有任務}{$\mathcal{O}(N \log N)$}{cpp}{source/Greedy/room.cpp}{}
 
-\section{其他: Random Select(QuickSort), 雙指針, 滑動窗口, C++ algorithm庫}
+\section{MISC: Random Select(QuickSort), 雙指針, 滑動窗口, C++ algorithm庫}
 
 \Algorithm{模板}{競賽用基礎模板}{$\mathcal{O}(How FastYouType)$}{cpp}{source/Others/Template.cpp}{}
 
