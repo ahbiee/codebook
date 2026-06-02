@@ -185,6 +185,12 @@ DP通用解題四步驟: \\
 
 \Algorithm{跳格子}{給定一組陣列，固定跳躍距離，問你最少需要跳幾次，以及所跳過的格子index。如果數值達到long long，INF需設為1e18或0x3f3f3f3f3f3f3f3f}{$\mathcal{O}(N \times K)$}{cpp}{source/DP/jump.cpp}{}
 
+\Algorithm{LIS / LDS 最長遞增/遞減子序列}
+{嚴格遞增用 \texttt{lower\_bound}，非嚴格改用 \texttt{upper\_bound}。替換策略下的 \texttt{dp} 陣列長度正確，但內容不一定是真實子序列。}
+{$\mathcal{O}(N \log N)$}
+{cpp}{source/DP/LIS_LDS.cpp}
+{}
+
 \section{Greedy}
 
 擴充一：區間合併 (Merge Intervals) \\
