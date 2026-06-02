@@ -25,24 +25,21 @@ struct Point {
         return sign(x - p.x) == 0 && sign(y - p.y) == 0;
     }
 
-    bool operator<(const Point& a, const Point& b) const{
-        if (a.x != b.x) return a.x < b.x;
-        return a.y < b.y;
+    bool operator<(const Point &p) const{
+        if(x != p.x) return x < p.x;
+        return y < p.y;
     }
 };
 
-// 在幾何中，向量和點的表示法一樣，給它一個別名增加可讀性
-using Vector = Point; 
+using Vector = Point; // 在幾何中，向量和點的表示法一樣，給它一個別名增加可讀性
 
-// 1. 內積 (Dot Product)
-// 計算方式：x1*x2 + y1*y2
+// 1. 內積 (Dot Product)，計算方式：x1*x2 + y1*y2
 // 實戰意義：用來判斷兩向量夾角。大於0為銳角，小於0為鈍角，等於0為垂直。
 double dot(Vector a, Vector b) {
     return a.x * b.x + a.y * b.y;
 }
 
-// 2. 外積 (Cross Product)
-// 計算方式：x1*y2 - x2*y1
+// 2. 外積 (Cross Product)，計算方式：x1*y2 - x2*y1
 // 實戰意義：用來判斷方向與面積。
 // 若 cross(a, b) > 0，代表 b 在 a 的逆時針方向 (偏左)
 // 若 cross(a, b) < 0，代表 b 在 a 的順時針方向 (偏右)

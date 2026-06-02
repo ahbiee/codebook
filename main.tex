@@ -139,7 +139,7 @@ multigraph 兩點之間有多條直接的路徑 \\
 {cpp}{source/Geometry/point.cpp}
 {}
 
-\Algorithm{判斷線段相交 (Segment Intersection)}
+\Algorithm{判斷線段、矩形相交 (Segment Intersection)}
 {利用外積進行跨立實驗。避開斜率除以零的問題，可處理端點相切與共線重疊。}
 {$\mathcal{O}(1)$}
 {cpp}{source/Geometry/Intersection.cpp}
@@ -169,7 +169,7 @@ multigraph 兩點之間有多條直接的路徑 \\
 
 \Algorithm{Kruskal 最小生成樹}{需搭配並查集使用。將所有邊排序後，利用併查集檢查是否形成環。}{$\mathcal{O}(E \log E)$}{cpp}{source/Tree/Kruskal.cpp}{}
 
-\section{DP: LIS, LDS, 分錢幣問題, Kadane's algo找最大子序列問題}
+\section{DP: 分錢幣問題, Kadane's algo找最大子序列問題}
 
 DP通用解題四步驟: \\
 1. 定義陣列意義：明確寫出 dp[i] (或dp[i][j]) 代表什麼。 \\
