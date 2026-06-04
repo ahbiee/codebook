@@ -11,7 +11,7 @@
 \IfFontExistsTF{Noto Sans CJK TC}{
     \setCJKmainfont{Noto Sans CJK TC}  % 給 GitHub Actions (Linux) 用的
 }{
-    \setCJKmainfont{Noto Sans TC}      % 給你本機 Windows 用的
+    \setCJKmainfont{Noto Sans TC}      % 給本機 Windows 用的
 }
 
 \teamnote{FJCU}{UltraGrammer}{ahbiee}
@@ -62,7 +62,7 @@
     \item signed與unsigned int之間的compare?
 \end{itemize}
 
-\section{資料結構: 前綴和}
+\section{資料結構}
 
 \Algorithm{BIT (Fenwick Tree)}{支援單點修改與區間求和。必須是1-based index。}{$\mathcal{O}(\log n)$}{cpp}{source/DataStructure/BIT.cpp}{}
 
@@ -92,7 +92,7 @@
 
 \Algorithm{AC自動機}{多字串匹配 (Trie + KMP)，必須是0-based index。}{$\mathcal{O}(N + M)$}{cpp}{source/String/AC.cpp}{}
 
-\section {圖論: 著色問題，帶權二分圖最大匹配(KM演算法)，最大流，biconnected component與articulation point找dfn與low}
+\section {圖論: 最大流}
 
 需注意： \\
 是否為全連通圖（connected， 只有一個component），對於連通圖要找region可以用Euler's theorem V-E+R=2 \\
@@ -109,12 +109,6 @@ multigraph 兩點之間有多條直接的路徑 \\
 
 \Algorithm{DFS}{用遞迴走訪。}{$\mathcal{O}(V + E)$}{cpp}{source/Graph/DFS.cpp}{}
 
-\Algorithm{匈牙利演算法}
-{無權二分圖最大匹配，透過回溯尋找增廣路徑，以達到最大匹配。分為左(S)、右(T)兩側，以及left陣列紀錄右側所選的對象}
-{$\mathcal{O}(V \cdot E)$}
-{cpp}{source/Graph/Hungarian.cpp}
-{}
-
 \Algorithm{Dijkstra 單源最短路徑}
 {找單個起點的最短路徑，不支援負權邊，支援自環。}
 {$\mathcal{O}((V+E)\log V)$}{cpp}{source/Graph/Dijkstra.cpp}{}
@@ -129,6 +123,30 @@ multigraph 兩點之間有多條直接的路徑 \\
 {求任意兩點之間距離。利用滾動陣列降維，\texttt{k} 必須在最外層迴圈。注意避開 \texttt{INF} 加上負權邊的陷阱。}
 {時間 $\mathcal{O}(V^3)$，空間 $\mathcal{O}(V^2)$}
 {cpp}{source/Graph/Floyd.cpp}
+{}
+
+\Algorithm{二分圖判定 (著色問題)}
+{規定相鄰節點必須塗上不同顏色，如果在著色過程中，發現相鄰節點已經被塗上相同的顏色，則代表此圖包含奇數環Odd Cycle，不是二分圖。已考量到不連通圖的情況}
+{$\mathcal{O}(V + E)$}
+{cpp}{source/Graph/BipartiteCheck.cpp}
+{}
+
+\Algorithm{割點與雙連通分量}
+{處理網路穩定性、單點故障分析。透過 DFS 一次遍歷找出所有的割點以及 v-BCC。由於一個割點可能同時屬於多個 BCC，我們利用 stack 記錄 DFS 走過的點，當發現割點條件成立時，再把點從 stack 彈出形成 BCC。}
+{$\mathcal{O}(V + E)$}
+{cpp}{source/Graph/BCC.cpp}
+{}
+
+\Algorithm{匈牙利演算法}
+{無權二分圖最大匹配，透過回溯尋找增廣路徑，以達到最大匹配。分為左(S)、右(T)兩側，以及left陣列紀錄右側所選的對象}
+{$\mathcal{O}(V \cdot E)$}
+{cpp}{source/Graph/Hungarian.cpp}
+{}
+
+\Algorithm{KM演算法}
+{適用於左右節點數皆為 $N$ 的帶權完全二分圖}
+{$\mathcal{O}(N^3)$}
+{cpp}{source/Graph/KM.cpp}
 {}
 
 \section{幾何}
@@ -193,16 +211,6 @@ DP通用解題四步驟: \\
 
 \section{Greedy}
 
-擴充一：區間合併 (Merge Intervals) \\
-情境： 給你一堆區間，把所有重疊的部分合併起來（Leetcode 56）。 \\
-貪心策略： 依照「開始時間」排序。如果下一個區間的開始時間 $\le$ 當前區間的結束時間，則合併（更新當前結束時間為兩者最大值）\\
-；否則將當前區間放入答案，換下一個。\\
-
-擴充二：多點排程 / 優先佇列貪心 (Huffman 概念)\\
-情境： 經典的「切木板問題」或「合併果子（碎紙機）」，每次合併兩堆，成本是兩堆的重量和，求最小總成本。\\
-貪心策略： 這裡不需要排序和掃描線，而是直接把所有元素丟進 Min-Heap (Priority Queue)。\\
-每次 pop 出最小的兩個相加，把總和加進成本，再把總和 push 回 Heap，直到 Heap 只剩下一個元素。\\
-
 \Algorithm{一維區間全覆蓋}{需要先把輸入轉化成一個包含l, r的struct，自訂operator<，起始位置由小到大排序}{$\mathcal{O}(N \log N)$}{cpp}{source/Greedy/1Dcoverage.cpp}{}
 
 \Algorithm{間格跳躍}{給定一組陣列，距離為index的值，問你最少需要跳多少次才能到終點}{$\mathcal{O}(N)$}{cpp}{source/Greedy/jump.cpp}{}
@@ -211,8 +219,22 @@ DP通用解題四步驟: \\
 
 \Algorithm{最小覆蓋區間}{給定一組陣列，包含開始時間與結束時間，求最少需要幾個房間就能完成所有任務}{$\mathcal{O}(N \log N)$}{cpp}{source/Greedy/room.cpp}{}
 
-\section{MISC: Random Select(QuickSort), 雙指針, 滑動窗口, C++ algorithm庫}
+\Algorithm{區間選點問題}{將區間依照右界由小到大排序。遍歷所有區段，如果當前區間的左界大於目前選定點的右界，代表必須多選一個點}{$\mathcal{O}(N \log N)$}{cpp}{source/Greedy/IntervalPointSelection.cpp}{}
+
+\Algorithm{最小化最大延遲問題}{按照到期時間從早到晚處理。記錄當下累積的耗時，並與該任務的死線相減，取最大的延遲時間}{$\mathcal{O}(N \log N)$}{cpp}{source/Greedy/job.cpp}{}
+
+\Algorithm{Huffman樹}{每次合併兩堆，成本是兩堆的重量和，求最小總成本}{$\mathcal{O}(N \log N)$}{cpp}{source/Greedy/huffman.cpp}{}
+
+\Algorithm{任務調度問題}{依照懲罰由大到小排序，每項工作依序嘗試可不可以放在 Di−Ti+1,Di−Ti,...,1,0，如果有空閒就放進去，否則延後執行。}{$\mathcal{O}(N)$}{cpp}{source/Greedy/JobWithDeadline.cpp}{}
+
+\Algorithm{多機調度問題}{將工作依耗時「由大到小」排序 。每次將工作交給最快空閒出來的機器。}{$\mathcal{O}(N \log N)$}{cpp}{source/Greedy/ProcessorScheduling.cpp}{}
+
+\section{MISC}
 
 \Algorithm{模板}{競賽用基礎模板}{$\mathcal{O}(How FastYouType)$}{cpp}{source/Others/Template.cpp}{}
+
+\Algorithm{一些概念}{想不到怎麼解或優化的時候可以參考這些想法}{$\mathcal{咕咕嘎嘎}$}{cpp}{source/Others/Concepts.cpp}{}
+
+\Algorithm{C++函式庫}{好用的東西可以參考}{$NULL$}{cpp}{source/Others/functions.cpp}{}
 
 \end{document}
