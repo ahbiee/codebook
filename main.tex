@@ -68,7 +68,7 @@
 
 \Algorithm{Segment Tree 線段樹}{給定n筆資料查詢與m次範圍更新，解決多次範圍更新的問題，找區間和或最大/小值。必須是1-based index。}{建樹$\mathcal{O}(N)$ 查詢/更新 $\mathcal{O}(\log N)$}{cpp}{source/DataStructure/SegmentTree.cpp}{}
 
-\section{數論: 尤拉公式, 數論分塊, Sprague-Grundy函數}
+\section{數論}
 
 \Algorithm{快速冪}{計算 $a^b \pmod m$。}{$\mathcal{O}(\log b)$}{cpp}{source/Math/FastPower.cpp}{}
 
@@ -82,6 +82,24 @@
 {解決「至少符合一項條件」的計數問題。利用 Bitmask 枚舉子集，遵守「奇加偶減」法則。}
 {$\mathcal{O}(2^M \cdot M)$}
 {cpp}{source/Math/PIE.cpp}
+{}
+
+\Algorithm{擴展歐幾里得 (Extended GCD)}
+{求解 $ax + by = \gcd(a, b)$，以及當模數 $m$ 非質數時的萬能模逆元。}
+{$\mathcal{O}(\log(\min(a, b)))$}
+{cpp}{source/Math/exGCD.cpp}
+{}
+
+\Algorithm{尤拉函數}
+{求 $1 \sim N$ 中與 $N$ 互質的整數個數。}
+{$\mathcal{O}(\sqrt{N})$}
+{cpp}{source/Math/EulerPhi.cpp}
+{}
+
+\Algorithm{數論分塊}
+{快速計算 $\sum \lfloor \frac{N}{i} \rfloor$。利用商的階梯狀分布，將 $\mathcal{O}(N)$ 降至 $\mathcal{O}(\sqrt{N})$。}
+{$\mathcal{O}(\sqrt{N})$}
+{cpp}{source/Math/MathBlock.cpp}
 {}
 
 \section{字串}
@@ -199,7 +217,7 @@ multigraph 兩點之間有多條直接的路徑 \\
 
 \Algorithm{Kruskal 最小生成樹}{需搭配並查集使用。將所有邊排序後，利用併查集檢查是否形成環。}{$\mathcal{O}(E \log E)$}{cpp}{source/Tree/Kruskal.cpp}{}
 
-\section{DP: Kadane's algo找最大子序列問題}
+\section{DP}
 
 DP通用解題四步驟: \\
 1. 定義陣列意義：明確寫出 dp[i] (或dp[i][j]) 代表什麼。 \\
@@ -225,6 +243,12 @@ DP通用解題四步驟: \\
 {完全背包變體。求「方法數」需外層枚舉硬幣、內層枚舉金額(求組合數)。求「最少硬幣數」轉移取 \texttt{min}。於 \texttt{main} 開頭先建表。}
 {$\mathcal{O}(\text{硬幣數} \times \text{最大金額})$}
 {cpp}{source/DP/Coin.cpp}
+{}
+
+\Algorithm{Kadane's Algorithm (最大子陣列和)}
+{尋找陣列中連續元素相加的最大值。若全為負數會正確回傳最大的負數。}
+{$\mathcal{O}(N)$}
+{cpp}{source/DP/Kadane.cpp}
 {}
 
 \section{Greedy}
