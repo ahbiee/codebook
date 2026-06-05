@@ -92,7 +92,7 @@
 
 \Algorithm{AC自動機}{多字串匹配 (Trie + KMP)，必須是0-based index。}{$\mathcal{O}(N + M)$}{cpp}{source/String/AC.cpp}{}
 
-\section {圖論: 最大流}
+\section {圖論}
 
 需注意： \\
 是否為全連通圖（connected， 只有一個component），對於連通圖要找region可以用Euler's theorem V-E+R=2 \\
@@ -149,6 +149,12 @@ multigraph 兩點之間有多條直接的路徑 \\
 {cpp}{source/Graph/KM.cpp}
 {}
 
+\Algorithm{Dinic 最大流}
+{建圖時需加入反向邊做為退流(悔棋)機制。多筆測資要記得清空 \texttt{adj}。}
+{$\mathcal{O}(V^2E)$，二分圖匹配 $\mathcal{O}(E\sqrt{V})$}
+{cpp}{source/Graph/Dinic.cpp}
+{}
+
 \section{幾何}
 
 \Algorithm{點與向量基礎 (Point \& Vector)}
@@ -187,7 +193,7 @@ multigraph 兩點之間有多條直接的路徑 \\
 
 \Algorithm{Kruskal 最小生成樹}{需搭配並查集使用。將所有邊排序後，利用併查集檢查是否形成環。}{$\mathcal{O}(E \log E)$}{cpp}{source/Tree/Kruskal.cpp}{}
 
-\section{DP: 分錢幣問題, Kadane's algo找最大子序列問題}
+\section{DP: Kadane's algo找最大子序列問題}
 
 DP通用解題四步驟: \\
 1. 定義陣列意義：明確寫出 dp[i] (或dp[i][j]) 代表什麼。 \\
@@ -207,6 +213,12 @@ DP通用解題四步驟: \\
 {嚴格遞增用 \texttt{lower\_bound}，非嚴格改用 \texttt{upper\_bound}。替換策略下的 \texttt{dp} 陣列長度正確，但內容不一定是真實子序列。}
 {$\mathcal{O}(N \log N)$}
 {cpp}{source/DP/LIS_LDS.cpp}
+{}
+
+\Algorithm{分錢幣問題}
+{完全背包變體。求「方法數」需外層枚舉硬幣、內層枚舉金額(求組合數)。求「最少硬幣數」轉移取 \texttt{min}。於 \texttt{main} 開頭先建表。}
+{$\mathcal{O}(\text{硬幣數} \times \text{最大金額})$}
+{cpp}{source/DP/Coin.cpp}
 {}
 
 \section{Greedy}
