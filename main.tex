@@ -68,7 +68,7 @@
 
 \Algorithm{Segment Tree 線段樹}{給定n筆資料查詢與m次範圍更新，解決多次範圍更新的問題，找區間和或最大/小值。必須是1-based index。}{建樹$\mathcal{O}(N)$ 查詢/更新 $\mathcal{O}(\log N)$}{cpp}{source/DataStructure/SegmentTree.cpp}{}
 
-\section{數論: 尤拉公式, 數論分塊, Sprague-Grundy函數, 排容原理}
+\section{數論: 尤拉公式, 數論分塊, Sprague-Grundy函數}
 
 \Algorithm{快速冪}{計算 $a^b \pmod m$。}{$\mathcal{O}(\log b)$}{cpp}{source/Math/FastPower.cpp}{}
 
@@ -78,9 +78,15 @@
 
 \Algorithm{大數乘法}{未知長度的大數相乘}{$\mathcal{O}(N \times M)$}{cpp}{source/Math/BigNumMultiply.cpp}{}
 
+\Algorithm{排容原理}
+{解決「至少符合一項條件」的計數問題。利用 Bitmask 枚舉子集，遵守「奇加偶減」法則。}
+{$\mathcal{O}(2^M \cdot M)$}
+{cpp}{source/Math/PIE.cpp}
+{}
+
 \section{字串}
 
-\Algorithm{KMP 字串匹配}{尋找 \texttt{pattern} 出現位置。\texttt{pi} 陣列可求最小循環節。必須是0-based index。}
+\Algorithm{KMP 字串匹配}{尋找 \texttt{pattern} 出現位置。\texttt{pi} 陣列可求最小循環節。回傳 0-based 起始位置，未匹配為 $-1$。}
 {$\mathcal{O}(N + M)$}{cpp}{source/String/KMP.cpp}{}
 
 \Algorithm{Z-Algorithm 字串匹配}{\texttt{z[i]} 代表 $S$ 與 $S[i \dots N-1]$ 的最長共同前綴。必須是0-based index。}{$\mathcal{O}(N)$}{cpp}{source/String/Z.cpp}{}
