@@ -6,4 +6,7 @@
 滑動窗口
 Random Select(QuickSort)
 對答案二分搜
+
+Nim Game (賽局理論基礎)： 桌上有 N 堆石頭， A1, A2 ... An，兩人輪流拿。
+若 A1 ^ A2 ^ A3 ^ ... ^ An != 0，則先手必勝；若 XOR 總和為 0，則後手必勝。
 */
