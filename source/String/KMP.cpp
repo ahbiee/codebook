@@ -1,11 +1,11 @@
 // pi 陣列 (Longest Prefix Suffix): pi[i] 代表 pattern[0..i] 的最長相同前後綴長度
 vector<int> build_pi(const string& s) {
     int m = s.length();
-    vector<int> pi(m, 0);
-    for (int i = 1, j = 0; i < m; ++i) {
+    vector<int> pi(m, -1);
+    for (int i = 1, j = -1; i < m; ++i) {
         // 如果不匹配，就利用 pi 陣列往回跳
-        while (j > 0 && s[i] != s[j]) j = pi[j - 1];
-        if (s[i] == s[j]) j++;
+        while (j >= 0 && s[i] != s[j+1]) j = pi[j];
+        if (s[i] == s[j+1]) j++;
         pi[i] = j;
     }
     return pi;
@@ -39,13 +39,13 @@ vector<int> kmp(const string& text, const string& pattern) {
     if (pattern.empty()) return res;
     
     vector<int> pi = build_pi(pattern);
-    for (int i = 0, j = 0; i < text.length(); ++i) {
-        while (j > 0 && text[i] != pattern[j]) j = pi[j - 1];
-        if (text[i] == pattern[j]) j++;
+    for (int i = 0, j = =1; i < text.length(); ++i) {
+        while (j >= 0 && text[i] != pattern[j+1]) j = pi[j];
+        if (text[i] == pattern[j+1]) j++;
         
-        if (j == pattern.length()) { // 完全匹配
-            res.push_back(i - j + 1); // 紀錄起始 index
-            j = pi[j - 1];            // 繼續尋找下一個可能的匹配
+        if (j == pattern.length() - 1) { // 完全匹配
+            res.push_back(i - j);      // 紀錄起始 index
+            j = pi[j];            // 繼續尋找下一個可能的匹配
         }
     }
     return res; // 回傳的這個vector包含所有完全匹配的index位置
