@@ -72,7 +72,7 @@
 
 \Algorithm{快速冪}{計算 $a^b \pmod m$。}{$\mathcal{O}(\log b)$}{cpp}{source/Math/FastPower.cpp}{}
 
-\Algorithm{模逆元與費馬小定理}{定義： 若 $p$ 為質數，且整數 $a$ 與 $p$ 互質，則 $a^{p-1} \equiv 1 \pmod p$。邏輯應用： 兩邊同除以 $a$ 可得 $a^{p-2} \equiv a^{-1} \pmod p$。\\這代表計算 $(x / a) \pmod p$ 等同於計算 $(x \cdot a^{p-2}) \pmod p$。}{$\mathcal{O}(\log p)$}{cpp}{source/Math/invModulo.cpp}{}
+\Algorithm{模逆元與費馬小定理}{若 $p$ 為質數，且整數 $a$ 與 $p$ 互質，則 $a^{p-1} \equiv 1 \pmod p$。兩邊同除以 $a$ 可得 $a^{p-2} \equiv a^{-1} \pmod p$。\\這代表計算 $(x / a) \pmod p$ 等同於計算 $(x \cdot a^{p-2}) \pmod p$。}{$\mathcal{O}(\log p)$}{cpp}{source/Math/invModulo.cpp}{}
 
 \Algorithm{質數檢查}{單次詢問大數用 \texttt{isPrime}；若有大量詢問則建質數表。}{$\mathcal{O}(\sqrt{N})$}{cpp}{source/Math/Prime.cpp}{}
 
@@ -118,7 +118,7 @@
 
 \section {圖論}
 
-需注意： \\
+需注意: \\
 是否為全連通圖（connected， 只有一個component），對於連通圖要找region可以用Euler's theorem V-E+R=2 \\
 undirected 無自環 \\
 directed \\
@@ -126,7 +126,7 @@ weighted 有權重（點或邊）\\
 multigraph 兩點之間有多條直接的路徑 \\
 有向圖的outdegree, indegree，無向圖的degree \\
 
-表示圖的方式：Adjacency matrix, adjacency list
+表示圖的方式: Adjacency matrix, adjacency list
 
 
 \Algorithm{BFS與拓樸排序}{無權圖最短路徑 / 拓樸排序計算In-degree尋找相關順序，可判斷是否有環。}{$\mathcal{O}(V + E)$}{cpp}{source/Graph/BFSTopo.cpp}{}
@@ -134,7 +134,7 @@ multigraph 兩點之間有多條直接的路徑 \\
 \Algorithm{DFS}{用遞迴走訪。}{$\mathcal{O}(V + E)$}{cpp}{source/Graph/DFS.cpp}{}
 
 \Algorithm{Dijkstra 單源最短路徑}
-{找單個起點的最短路徑，不支援負權邊，支援自環。}
+{找單個起點的最短路徑，不支援負權邊，支援自環，支援有/無向圖。}
 {$\mathcal{O}((V+E)\log V)$}{cpp}{source/Graph/Dijkstra.cpp}{}
 
 \Algorithm{SPFA 單源最短路徑}
