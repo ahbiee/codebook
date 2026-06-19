@@ -27,3 +27,5 @@ struct DSU {
         return true;
     }
 };
+
+// 概念: successor DSU，這個disjoint set將會是用可以來記錄 "下一個位置" 的set (f[i]指向find(i+1))

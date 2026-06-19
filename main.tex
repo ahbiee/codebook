@@ -14,7 +14,7 @@
     \setCJKmainfont{Noto Sans TC}      % 給本機 Windows 用的
 }
 
-\teamnote{FJCU}{UltraGrammer}{ahbiee}
+\teamnote{FJCU}{UltraGrammer}{} % ahbiee
 
 \ShowUsage
 \ShowComplexity
@@ -73,6 +73,12 @@
 \Algorithm{快速冪}{計算 $a^b \pmod m$。}{$\mathcal{O}(\log b)$}{cpp}{source/Math/FastPower.cpp}{}
 
 \Algorithm{模逆元與費馬小定理}{若 $p$ 為質數，且整數 $a$ 與 $p$ 互質，則 $a^{p-1} \equiv 1 \pmod p$。兩邊同除以 $a$ 可得 $a^{p-2} \equiv a^{-1} \pmod p$。\\這代表計算 $(x / a) \pmod p$ 等同於計算 $(x \cdot a^{p-2}) \pmod p$。}{$\mathcal{O}(\log p)$}{cpp}{source/Math/invModulo.cpp}{}
+
+\Algorithm{組合數 C(n,k)}
+{N <= 2000 用怕斯卡三角形，用加法建表避免除法陷阱。\\ N <= 10^6 且模數為質數時，使用預處理階乘與模逆元}
+{$\mathcal{O}(N^2)$ 或 $\mathcal{O}(N)$}
+{cpp}{source/Math/Combinatorics.cpp}
+{}
 
 \Algorithm{質數檢查}{單次詢問大數用 \texttt{isPrime}；若有大量詢問則建質數表。}{$\mathcal{O}(\sqrt{N})$}{cpp}{source/Math/Prime.cpp}{}
 
@@ -174,7 +180,7 @@ multigraph 兩點之間有多條直接的路徑 \\
 {}
 
 \Algorithm{Dinic 最大流}
-{建圖時需加入反向邊做為退流(悔棋)機制。多筆測資要記得清空 \texttt{adj}。}
+{建圖時需加入反向邊做為退流機制。多筆測資要記得清空 \texttt{adj}。}
 {$\mathcal{O}(V^2E)$，二分圖匹配 $\mathcal{O}(E\sqrt{V})$}
 {cpp}{source/Graph/Dinic.cpp}
 {}
@@ -216,6 +222,12 @@ multigraph 兩點之間有多條直接的路徑 \\
 \Algorithm{Disjoint Set}{解決集合、快速合併的問題。優化必須路徑壓縮，可選小掛大}{$\mathcal{O}(1)$}{cpp}{source/Tree/DisjointSet.cpp}{}
 
 \Algorithm{Kruskal 最小生成樹}{需搭配並查集使用。將所有邊排序後，利用併查集檢查是否形成環。}{$\mathcal{O}(E \log E)$}{cpp}{source/Tree/Kruskal.cpp}{}
+
+\Algorithm{次小生成樹}
+{基於 Kruskal。會先求出最小生成樹，再暴力枚舉拔除 MST 上的每一條邊，找剩下的最小生成樹，取最小值即為次小生成樹。}
+{$\mathcal{O}(V \times E)$}
+{cpp}{source/Tree/SecondMST.cpp}
+{}
 
 \section{DP}
 
@@ -270,6 +282,18 @@ DP通用解題四步驟: \\
 \Algorithm{任務調度問題}{依照懲罰由大到小排序，每項工作依序嘗試可不可以放在 Di−Ti+1,Di−Ti,...,1,0，如果有空閒就放進去，否則延後執行。}{$\mathcal{O}(N)$}{cpp}{source/Greedy/JobWithDeadline.cpp}{}
 
 \Algorithm{多機調度問題}{將工作依耗時「由大到小」排序 。每次將工作交給最快空閒出來的機器。}{$\mathcal{O}(N \log N)$}{cpp}{source/Greedy/ProcessorScheduling.cpp}{}
+
+\Algorithm{最大區間重疊數 Sweep Line}
+{詢問在任意時刻可達到的最大重疊數量為何。將區間拆分為 +1 (開始) 與 -1 (結束) 事件。時間相同時 -1 優先處理，避免多算重疊數。}
+{$\mathcal{O}(N \log N)$}
+{cpp}{source/Greedy/SweepLineOverlap.cpp}
+{}
+
+\Algorithm{三分搜}
+{求單峰/單谷函數極值。浮點數固定跑 100 次迴圈；整數在 R-L < 2 時改用 for 暴力找極值以避開死迴圈。}
+{$\mathcal{O}(\log_3(\text{值域}))$}
+{cpp}{source/Greedy/TernarySearch.cpp}
+{}
 
 \section{MISC}
 
