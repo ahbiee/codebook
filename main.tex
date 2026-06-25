@@ -10,8 +10,10 @@
 % 讓 LaTeX 自動判斷環境中存在的字體名稱
 \IfFontExistsTF{Noto Sans CJK TC}{
     \setCJKmainfont{Noto Sans CJK TC}  % 給 GitHub Actions (Linux) 用的
+    \setCJKmonofont{Noto Sans CJK TC}
 }{
     \setCJKmainfont{Noto Sans TC}      % 給本機 Windows 用的
+    \setCJKmonofont{Noto Sans TC}
 }
 
 \teamnote{FJCU}{UltraGrammer}{} % ahbiee
@@ -72,20 +74,19 @@
 
 \Algorithm{快速冪}{計算 $a^b \pmod m$。}{$\mathcal{O}(\log b)$}{cpp}{source/Math/FastPower.cpp}{}
 
-\Algorithm{模逆元與費馬小定理}{若 $p$ 為質數，且整數 $a$ 與 $p$ 互質，則 $a^{p-1} \equiv 1 \pmod p$。兩邊同除以 $a$ 可得 $a^{p-2} \equiv a^{-1} \pmod p$。\\這代表計算 $(x / a) \pmod p$ 等同於計算 $(x \cdot a^{p-2}) \pmod p$。}{$\mathcal{O}(\log p)$}{cpp}{source/Math/invModulo.cpp}{}
+\Algorithm{模逆元與費馬小定理}{$p$ 必須是質數，且整數 $a$ 與 $p$ 互質，則 $a^{p-1} \equiv 1 \pmod p$。\\兩邊同除以 $a$ 可得 $a^{p-2} \equiv a^{-1} \pmod p$。即計算 $(x / a) \pmod p$ 等同於計算 $(x \cdot a^{p-2}) \pmod p$。}{$\mathcal{O}(\log p)$}{cpp}{source/Math/invModulo.cpp}{}
 
 \Algorithm{組合數 C(n,k)}
-{N <= 2000 用怕斯卡三角形，用加法建表避免除法陷阱。\\ N <= 10^6 且模數為質數時，使用預處理階乘與模逆元}
+{N $\le$ 2000 用帕斯卡三角形。N $\le$ $10^6$ 且模數為質數時，用預處理階乘與模逆元}
 {$\mathcal{O}(N^2)$ 或 $\mathcal{O}(N)$}
-{cpp}{source/Math/Combinatorics.cpp}
-{}
+{cpp}{source/Math/Combinatorics.cpp}{}
 
 \Algorithm{質數檢查}{單次詢問大數用 \texttt{isPrime}；若有大量詢問則建質數表。}{$\mathcal{O}(\sqrt{N})$}{cpp}{source/Math/Prime.cpp}{}
 
 \Algorithm{大數乘法}{未知長度的大數相乘}{$\mathcal{O}(N \times M)$}{cpp}{source/Math/BigNumMultiply.cpp}{}
 
 \Algorithm{排容原理}
-{解決「至少符合一項條件」的計數問題。利用 Bitmask 枚舉子集，遵守「奇加偶減」法則。}
+{解決「至少符合一項條件」的計數問題。遵守奇加偶減原則。}
 {$\mathcal{O}(2^M \cdot M)$}
 {cpp}{source/Math/PIE.cpp}
 {}
@@ -102,11 +103,12 @@
 {cpp}{source/Math/EulerPhi.cpp}
 {}
 
-\Algorithm{數論分塊}
-{快速計算 $\sum \lfloor \frac{N}{i} \rfloor$。利用商的階梯狀分布，將 $\mathcal{O}(N)$ 降至 $\mathcal{O}(\sqrt{N})$。}
-{$\mathcal{O}(\sqrt{N})$}
-{cpp}{source/Math/MathBlock.cpp}
-{}
+
+%\Algorithm{數論分塊}
+%{快速計算 $\sum \lfloor \frac{N}{i} \rfloor$。利用商的階梯狀分布，將 $\mathcal{O}(N)$ 降至 $\mathcal{O}(\sqrt{N})$。}
+%{$\mathcal{O}(\sqrt{N})$}
+%{cpp}{source/Math/MathBlock.cpp}
+%{}
 
 \section{字串}
 
@@ -299,7 +301,7 @@ DP通用解題四步驟: \\
 
 \Algorithm{模板}{競賽用基礎模板}{$\mathcal{O}(How FastYouType)$}{cpp}{source/Others/Template.cpp}{}
 
-\Algorithm{一些概念}{想不到怎麼解或優化的時候可以參考這些想法}{$\mathcal{咕咕嘎嘎}$}{cpp}{source/Others/Concepts.cpp}{}
+\Algorithm{一些概念}{想不到怎麼解或優化的時候可以參考這些想法}{$\text{咕咕嘎嘎}$}{cpp}{source/Others/Concepts.cpp}{}
 
 \Algorithm{C++函式庫}{好用的東西可以參考}{$NULL$}{cpp}{source/Others/functions.cpp}{}
 
