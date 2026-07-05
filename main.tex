@@ -104,11 +104,11 @@
 {}
 
 
-%\Algorithm{數論分塊}
-%{快速計算 $\sum \lfloor \frac{N}{i} \rfloor$。利用商的階梯狀分布，將 $\mathcal{O}(N)$ 降至 $\mathcal{O}(\sqrt{N})$。}
-%{$\mathcal{O}(\sqrt{N})$}
-%{cpp}{source/Math/MathBlock.cpp}
-%{}
+\Algorithm{數論分塊}
+{快速計算 $\sum \lfloor \frac{N}{i} \rfloor$。利用商的階梯狀分布，將 $\mathcal{O}(N)$ 降至 $\mathcal{O}(\sqrt{N})$。}
+{$\mathcal{O}(\sqrt{N})$}
+{cpp}{source/Math/MathBlock.cpp}
+{}
 
 \section{字串}
 
@@ -231,6 +231,8 @@ multigraph 兩點之間有多條直接的路徑 \\
 {cpp}{source/Tree/SecondMST.cpp}
 {}
 
+\Algorithm{最近共同祖先 LCA}{使用倍增法，利用二進位的特性，預處理出每個節點向上跳 $2^0, 2^1, \dots, 2^i$ 步的祖先是誰}{$\text{最差} \mathcal{O} (N)$}{cpp}{source/Tree/LCA.cpp}{}
+
 \section{DP}
 
 DP通用解題四步驟: \\
@@ -290,7 +292,7 @@ DP通用解題四步驟: \\
 {$\mathcal{O}(N \log N)$}
 {cpp}{source/Greedy/SweepLineOverlap.cpp}
 {}
-
+~
 \Algorithm{三分搜}
 {求單峰/單谷函數極值。浮點數固定跑 100 次迴圈；整數在 R-L < 2 時改用 for 暴力找極值以避開死迴圈。}
 {$\mathcal{O}(\log_3(\text{值域}))$}
@@ -299,10 +301,12 @@ DP通用解題四步驟: \\
 
 \section{MISC}
 
-\Algorithm{模板}{競賽用基礎模板}{$\mathcal{O}(How FastYouType)$}{cpp}{source/Others/Template.cpp}{}
+\Algorithm{模板}{競賽用基礎模板}{$NULL$}{cpp}{source/Others/Template.cpp}{}
 
-\Algorithm{一些概念}{想不到怎麼解或優化的時候可以參考這些想法}{$\text{咕咕嘎嘎}$}{cpp}{source/Others/Concepts.cpp}{}
+\Algorithm{一些概念}{想不到怎麼解或優化的時候可以參考這些想法}{$NULL$}{cpp}{source/Others/Concepts.cpp}{}
 
 \Algorithm{C++函式庫}{好用的東西可以參考}{$NULL$}{cpp}{source/Others/functions.cpp}{}
+
+\Algorithm{對拍器}{有一個想法，也保證暴力解法全對時，可以使用 對拍器 檢查答案}{$NULL$}{cpp}{source/Others/gen.cpp}{}
 
 \end{document}

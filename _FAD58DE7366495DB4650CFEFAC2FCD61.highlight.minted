@@ -1,96 +1,287 @@
 \begin{MintedVerbatim}[commandchars=\\\{\}]
-\PYG{n}{\PYGZus{}\PYGZus{}builtin\PYGZus{}popcount}\PYG{p}{(}\PYG{n}{x}\PYG{p}{)}\PYG{o}{:}\PYG{+w}{ }\PYG{n}{回傳整數}\PYG{+w}{ }\PYG{n}{x}\PYG{+w}{ }\PYG{n}{轉為二進位後}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{+w}{ }\PYG{n}{的數量}\PYG{p}{(}\PYG{n}{若處理}\PYG{+w}{ }\PYG{k+kt}{long}\PYG{+w}{ }\PYG{k+kt}{long}\PYG{+w}{ }\PYG{n}{需使用}
-\PYG{n}{\PYGZus{}\PYGZus{}builtin\PYGZus{}popcountll}\PYG{p}{(}\PYG{n}{x}\PYG{p}{))}\PYG{err}{。}
-\PYG{n}{\PYGZus{}\PYGZus{}builtin\PYGZus{}clz}\PYG{p}{(}\PYG{n}{x}\PYG{p}{)}\PYG{o}{:}\PYG{+w}{ }\PYG{n}{回傳二進位前導}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{+w}{ }\PYG{n}{的個數}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{Count}\PYG{+w}{ }\PYG{n}{Leading}\PYG{+w}{ }\PYG{n}{Zeros}\PYG{p}{)}\PYG{err}{。}
-\PYG{n}{gcd}\PYG{p}{(}\PYG{n}{a}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{b}\PYG{p}{),}\PYG{+w}{ }\PYG{n}{lcm}\PYG{p}{(}\PYG{n}{a}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{b}\PYG{p}{)}\PYG{o}{:}\PYG{+w}{ }\PYG{n}{求最大公因數}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{C}\PYG{o}{++}\PYG{l+m+mi}{17}\PYG{+w}{ }\PYG{n}{引入}\PYG{p}{,}\PYG{n}{需引入}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{n}{numeric}\PYG{o}{\PYGZgt{}}\PYG{p}{,}\PYG{n}{舊版編譯器可使用內建的}\PYG{+w}{ }\PYG{n}{\PYGZus{}\PYGZus{}gcd}\PYG{p}{(}\PYG{n}{a}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{b}\PYG{p}{))}\PYG{err}{。}
-\PYG{n}{string}\PYG{+w}{ }\PYG{n}{相關}\PYG{o}{:}\PYG{+w}{ }\PYG{n}{stoi}\PYG{p}{(}\PYG{n}{s}\PYG{p}{)}\PYG{+w}{ }\PYG{n}{將字串轉為}\PYG{+w}{ }\PYG{k+kt}{int}\PYG{p}{;}
-\PYG{n}{to\PYGZus{}string}\PYG{p}{(}\PYG{n}{num}\PYG{p}{)}\PYG{+w}{ }\PYG{n}{將數字轉為字串}\PYG{p}{;}
-\PYG{n}{s}\PYG{p}{.}\PYG{n}{substr}\PYG{p}{(}\PYG{n}{pos}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{len}\PYG{p}{)}\PYG{+w}{ }\PYG{n}{擷取子字串}\PYG{err}{。}
+\PYG{c+c1}{// 使用當下時間作為亂數種子，確保每次執行生成的測資都不同}
+\PYG{n}{mt19937\PYGZus{}64}\PYG{+w}{ }\PYG{n+nf}{rng}\PYG{p}{(}\PYG{n}{chrono}\PYG{o}{::}\PYG{n}{steady\PYGZus{}clock}\PYG{o}{::}\PYG{n}{now}\PYG{p}{().}\PYG{n}{time\PYGZus{}since\PYGZus{}epoch}\PYG{p}{().}\PYG{n}{count}\PYG{p}{());}
+\PYG{c+cm}{/*}
+\PYG{c+cm}{或 random\PYGZus{}device rd; mt19937 rng(rd());}
+\PYG{c+cm}{mt19937 rng(chrono::high\PYGZus{}resolution\PYGZus{}clock::now().time\PYGZus{}since\PYGZus{}epoch().count());}
+\PYG{c+cm}{*/}
 
-\PYG{c+cp}{\PYGZsh{}include}\PYG{+w}{ }\PYG{c+cpf}{\PYGZlt{}algorithm\PYGZgt{}}
+\PYG{c+c1}{// 生成 [L, R] 範圍內的隨機整數}
+\PYG{k+kt}{long}\PYG{+w}{ }\PYG{k+kt}{long}\PYG{+w}{ }\PYG{n+nf}{rnd}\PYG{p}{(}\PYG{k+kt}{long}\PYG{+w}{ }\PYG{k+kt}{long}\PYG{+w}{ }\PYG{n}{L}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{long}\PYG{+w}{ }\PYG{k+kt}{long}\PYG{+w}{ }\PYG{n}{R}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{uniform\PYGZus{}int\PYGZus{}distribution}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{long}\PYG{+w}{ }\PYG{k+kt}{long}\PYG{o}{\PYGZgt{}}\PYG{p}{(}\PYG{n}{L}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{R}\PYG{p}{)(}\PYG{n}{rng}\PYG{p}{);}
+\PYG{p}{\PYGZcb{}}
 
-\PYG{n}{sort}\PYG{p}{(}\PYG{n}{bg}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{ed}\PYG{p}{)}\PYG{+w}{ }\PYG{n}{sort}\PYG{p}{(}\PYG{n}{bg}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{ed}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{cmp}\PYG{p}{)}\PYG{o}{:}\PYG{n}{預設由小到大排序}
+\PYG{c+c1}{// 1. 陣列與字串 (Array \PYGZam{} String)}
 
-\PYG{n}{min}\PYG{p}{(}\PYG{n}{a}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{b}\PYG{p}{)}\PYG{+w}{ }\PYG{n}{min}\PYG{p}{(}\PYG{n}{list}\PYG{p}{)}\PYG{o}{:}\PYG{n}{取最小值}
-\PYG{n}{max}\PYG{p}{(}\PYG{n}{a}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{b}\PYG{p}{)}\PYG{+w}{ }\PYG{n}{max}\PYG{p}{(}\PYG{n}{list}\PYG{p}{)}\PYG{o}{:}\PYG{n}{取最大值}
+\PYG{c+c1}{// 生成排列 (Permutation: 1 到 n 不重複)}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{gen\PYGZus{}permutation}\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{n}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{int}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{p}\PYG{p}{(}\PYG{n}{n}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n}{iota}\PYG{p}{(}\PYG{n}{p}\PYG{p}{.}\PYG{n}{begin}\PYG{p}{(),}\PYG{+w}{ }\PYG{n}{p}\PYG{p}{.}\PYG{n}{end}\PYG{p}{(),}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n}{shuffle}\PYG{p}{(}\PYG{n}{p}\PYG{p}{.}\PYG{n}{begin}\PYG{p}{(),}\PYG{+w}{ }\PYG{n}{p}\PYG{p}{.}\PYG{n}{end}\PYG{p}{(),}\PYG{+w}{ }\PYG{n}{rng}\PYG{p}{);}
+\PYG{+w}{    }\PYG{k}{for}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{i}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{;}\PYG{+w}{ }\PYG{n}{i}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{n}{n}\PYG{p}{;}\PYG{+w}{ }\PYG{o}{++}\PYG{n}{i}\PYG{p}{)}\PYG{+w}{ }\PYG{n}{cout}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{n}{p}\PYG{p}{[}\PYG{n}{i}\PYG{p}{]}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{i}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{n}{n}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{+w}{ }\PYG{o}{?}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}\PYGZdq{}}\PYG{+w}{ }\PYG{o}{:}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{} \PYGZdq{}}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n}{cout}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{\PYGZdq{}}\PYG{p}{;}
+\PYG{p}{\PYGZcb{}}
 
-\PYG{n}{min\PYGZus{}element}\PYG{p}{(}\PYG{n}{first}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{last}\PYG{p}{)}\PYG{o}{:}\PYG{n}{找尋連續資料中最小元素}
-\PYG{n}{max\PYGZus{}element}\PYG{p}{(}\PYG{n}{first}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{last}\PYG{p}{)}\PYG{o}{:}\PYG{n}{找尋連續資料中最大元素}
+\PYG{c+c1}{// 生成重複值很多的陣列 (distinct\PYGZus{}count 控制相異數字的數量)}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{gen\PYGZus{}array\PYGZus{}few\PYGZus{}distinct}\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{n}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{long}\PYG{+w}{ }\PYG{k+kt}{long}\PYG{+w}{ }\PYG{n}{L}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{long}\PYG{+w}{ }\PYG{k+kt}{long}\PYG{+w}{ }\PYG{n}{R}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{distinct\PYGZus{}count}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{long}\PYG{+w}{ }\PYG{k+kt}{long}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{pool}\PYG{p}{;}
+\PYG{+w}{    }\PYG{k}{for}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{i}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{;}\PYG{+w}{ }\PYG{n}{i}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{n}{distinct\PYGZus{}count}\PYG{p}{;}\PYG{+w}{ }\PYG{o}{++}\PYG{n}{i}\PYG{p}{)}\PYG{+w}{ }\PYG{n}{pool}\PYG{p}{.}\PYG{n}{push\PYGZus{}back}\PYG{p}{(}\PYG{n}{rnd}\PYG{p}{(}\PYG{n}{L}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{R}\PYG{p}{));}
+\PYG{+w}{    }\PYG{k}{for}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{i}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{;}\PYG{+w}{ }\PYG{n}{i}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{n}{n}\PYG{p}{;}\PYG{+w}{ }\PYG{o}{++}\PYG{n}{i}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{        }\PYG{n}{cout}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{n}{pool}\PYG{p}{[}\PYG{n}{rnd}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{distinct\PYGZus{}count}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{)]}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{i}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{n}{n}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{+w}{ }\PYG{o}{?}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}\PYGZdq{}}\PYG{+w}{ }\PYG{o}{:}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{} \PYGZdq{}}\PYG{p}{);}
+\PYG{+w}{    }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{    }\PYG{n}{cout}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{\PYGZdq{}}\PYG{p}{;}
+\PYG{p}{\PYGZcb{}}
 
-\PYG{n}{find}\PYG{p}{(}\PYG{n}{first}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{last}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{val}\PYG{p}{)}\PYG{o}{:}\PYG{n}{尋找元素}\PYG{err}{。}
-\PYG{n}{lower\PYGZus{}bound}\PYG{p}{(}\PYG{n}{first}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{last}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{val}\PYG{p}{)}\PYG{o}{:}\PYG{n}{尋找第一個}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}\PYGZgt{}=\PYGZdq{}}\PYG{+w}{ }\PYG{n}{x}\PYG{+w}{ }\PYG{n}{的元素}\PYG{l+s}{\PYGZdq{}位置\PYGZdq{}}\PYG{err}{，}\PYG{n}{如果不存在}\PYG{err}{，}\PYG{n}{則回傳}\PYG{+w}{ }\PYG{n}{last}
-\PYG{n}{upper\PYGZus{}bound}\PYG{p}{(}\PYG{n}{first}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{last}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{val}\PYG{p}{)}\PYG{o}{:}\PYG{n}{尋找第一個}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}\PYGZgt{}\PYGZdq{}}\PYG{+w}{ }\PYG{n}{x}\PYG{+w}{ }\PYG{n}{的元素}\PYG{l+s}{\PYGZdq{}位置\PYGZdq{}}\PYG{err}{，}\PYG{n}{如果不存在}\PYG{err}{，}\PYG{n}{則回傳}\PYG{+w}{ }\PYG{n}{last}\PYG{+w}{ }
+\PYG{c+c1}{// 生成已排序或完全反序的陣列}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{gen\PYGZus{}sorted\PYGZus{}array}\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{n}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{long}\PYG{+w}{ }\PYG{k+kt}{long}\PYG{+w}{ }\PYG{n}{L}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{long}\PYG{+w}{ }\PYG{k+kt}{long}\PYG{+w}{ }\PYG{n}{R}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{bool}\PYG{+w}{ }\PYG{n}{reverse\PYGZus{}sort}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nb}{false}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{long}\PYG{+w}{ }\PYG{k+kt}{long}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{a}\PYG{p}{(}\PYG{n}{n}\PYG{p}{);}
+\PYG{+w}{    }\PYG{k}{for}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{i}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{;}\PYG{+w}{ }\PYG{n}{i}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{n}{n}\PYG{p}{;}\PYG{+w}{ }\PYG{o}{++}\PYG{n}{i}\PYG{p}{)}\PYG{+w}{ }\PYG{n}{a}\PYG{p}{[}\PYG{n}{i}\PYG{p}{]}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{rnd}\PYG{p}{(}\PYG{n}{L}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{R}\PYG{p}{);}
+\PYG{+w}{    }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{reverse\PYGZus{}sort}\PYG{p}{)}\PYG{+w}{ }\PYG{n}{sort}\PYG{p}{(}\PYG{n}{a}\PYG{p}{.}\PYG{n}{rbegin}\PYG{p}{(),}\PYG{+w}{ }\PYG{n}{a}\PYG{p}{.}\PYG{n}{rend}\PYG{p}{());}
+\PYG{+w}{    }\PYG{k}{else}\PYG{+w}{ }\PYG{n}{sort}\PYG{p}{(}\PYG{n}{a}\PYG{p}{.}\PYG{n}{begin}\PYG{p}{(),}\PYG{+w}{ }\PYG{n}{a}\PYG{p}{.}\PYG{n}{end}\PYG{p}{());}
+\PYG{+w}{    }\PYG{k}{for}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{i}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{;}\PYG{+w}{ }\PYG{n}{i}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{n}{n}\PYG{p}{;}\PYG{+w}{ }\PYG{o}{++}\PYG{n}{i}\PYG{p}{)}\PYG{+w}{ }\PYG{n}{cout}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{n}{a}\PYG{p}{[}\PYG{n}{i}\PYG{p}{]}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{i}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{n}{n}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{+w}{ }\PYG{o}{?}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}\PYGZdq{}}\PYG{+w}{ }\PYG{o}{:}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{} \PYGZdq{}}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n}{cout}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{\PYGZdq{}}\PYG{p}{;}
+\PYG{p}{\PYGZcb{}}
 
-\PYG{n}{next\PYGZus{}permutation}\PYG{p}{(}\PYG{n}{first}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{last}\PYG{p}{)}\PYG{o}{:}\PYG{n}{將序列順序轉換成下一個字典序}\PYG{err}{，}\PYG{n}{如果存在回傳}\PYG{+w}{ }\PYG{n+nb}{true}\PYG{+w}{ }\PYG{err}{，}\PYG{n}{反之回傳}\PYG{+w}{ }\PYG{n+nb}{false}\PYG{+w}{ }
-\PYG{n}{prev\PYGZus{}permutation}\PYG{p}{(}\PYG{n}{first}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{last}\PYG{p}{)}\PYG{o}{:}\PYG{n}{將序列順序轉換成上一個字典序}\PYG{err}{，}\PYG{n}{如果存在回傳}\PYG{+w}{ }\PYG{n+nb}{true}\PYG{+w}{ }\PYG{err}{，}\PYG{n}{反之回傳}\PYG{+w}{ }\PYG{n+nb}{false}\PYG{+w}{ }
+\PYG{c+c1}{// 生成隨機字串}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n}{gen\PYGZus{}string}\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{n}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{string}\PYG{+w}{ }\PYG{n}{charset}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}abcdefghijklmnopqrstuvwxyz\PYGZdq{}}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{k}{for}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{i}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{;}\PYG{+w}{ }\PYG{n}{i}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{n}{n}\PYG{p}{;}\PYG{+w}{ }\PYG{o}{++}\PYG{n}{i}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{        }\PYG{n}{cout}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{n}{charset}\PYG{p}{[}\PYG{n}{rnd}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{charset}\PYG{p}{.}\PYG{n}{size}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{)];}
+\PYG{+w}{    }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{    }\PYG{n}{cout}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{\PYGZdq{}}\PYG{p}{;}
+\PYG{p}{\PYGZcb{}}
 
-\PYG{n}{unique}\PYG{p}{(}\PYG{n}{bg}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{ed}\PYG{p}{)}\PYG{o}{:}\PYG{n}{將相鄰重複元素移至尾端}\PYG{err}{，}\PYG{n}{回傳新陣列無重複部分尾端的}\PYG{+w}{ }\PYG{n}{iterator}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{或指標}\PYG{p}{)}
-\PYG{n}{reverse}\PYG{p}{(}\PYG{n}{bg}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{ed}\PYG{p}{)}\PYG{o}{:}\PYG{n}{反轉區間內的元素順序}
+\PYG{c+c1}{// 2. 樹論結構生成器 (Trees)}
 
-\PYG{c+cp}{\PYGZsh{}include}\PYG{+w}{ }\PYG{c+cpf}{\PYGZlt{}cctype\PYGZgt{}}
+\PYG{c+c1}{// 輔助函式：打亂邊的順序與節點編號，避免特殊的編號順序讓錯誤的 Code 賽中}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n}{print\PYGZus{}tree}\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{n}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{pair}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{int}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{int}\PYG{o}{\PYGZgt{}\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{edges}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{bool}\PYG{+w}{ }\PYG{n}{weighted}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nb}{false}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{long}\PYG{+w}{ }\PYG{k+kt}{long}\PYG{+w}{ }\PYG{n}{max\PYGZus{}w}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{100}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{int}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{p}\PYG{p}{(}\PYG{n}{n}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n}{iota}\PYG{p}{(}\PYG{n}{p}\PYG{p}{.}\PYG{n}{begin}\PYG{p}{(),}\PYG{+w}{ }\PYG{n}{p}\PYG{p}{.}\PYG{n}{end}\PYG{p}{(),}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n}{shuffle}\PYG{p}{(}\PYG{n}{p}\PYG{p}{.}\PYG{n}{begin}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{p}\PYG{p}{.}\PYG{n}{end}\PYG{p}{(),}\PYG{+w}{ }\PYG{n}{rng}\PYG{p}{);}\PYG{+w}{ }\PYG{c+c1}{// 打亂 1\PYGZti{}n 的編號}
+\PYG{+w}{    }\PYG{n}{shuffle}\PYG{p}{(}\PYG{n}{edges}\PYG{p}{.}\PYG{n}{begin}\PYG{p}{(),}\PYG{+w}{ }\PYG{n}{edges}\PYG{p}{.}\PYG{n}{end}\PYG{p}{(),}\PYG{+w}{ }\PYG{n}{rng}\PYG{p}{);}\PYG{+w}{ }\PYG{c+c1}{// 打亂邊的順序}
 
-\PYG{n}{isalnum}\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{c}\PYG{p}{)}\PYG{o}{:}\PYG{+w}{ }\PYG{n}{判斷是否為數字或英文}
-\PYG{n}{isalpha}\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{c}\PYG{p}{)}\PYG{o}{:}\PYG{+w}{ }\PYG{n}{判斷是否為英文}
-\PYG{n}{isdigit}\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{c}\PYG{p}{)}\PYG{o}{:}\PYG{+w}{ }\PYG{n}{判斷是否為數字}
+\PYG{+w}{    }\PYG{k}{for}\PYG{+w}{ }\PYG{p}{(}\PYG{k}{auto}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{e}\PYG{+w}{ }\PYG{o}{:}\PYG{+w}{ }\PYG{n}{edges}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{        }\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{u}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{p}\PYG{p}{[}\PYG{n}{e}\PYG{p}{.}\PYG{n}{first}\PYG{p}{],}\PYG{+w}{ }\PYG{n}{v}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{p}\PYG{p}{[}\PYG{n}{e}\PYG{p}{.}\PYG{n}{second}\PYG{p}{];}
+\PYG{+w}{        }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{rnd}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{))}\PYG{+w}{ }\PYG{n}{swap}\PYG{p}{(}\PYG{n}{u}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{v}\PYG{p}{);}\PYG{+w}{ }\PYG{c+c1}{// 隨機交換 u, v 順序}
+\PYG{+w}{        }\PYG{n}{cout}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{n}{u}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{} \PYGZdq{}}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{n}{v}\PYG{p}{;}
+\PYG{+w}{        }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{weighted}\PYG{p}{)}\PYG{+w}{ }\PYG{n}{cout}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{} \PYGZdq{}}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{n}{rnd}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{max\PYGZus{}w}\PYG{p}{);}
+\PYG{+w}{        }\PYG{n}{cout}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{\PYGZdq{}}\PYG{p}{;}
+\PYG{+w}{    }\PYG{p}{\PYGZcb{}}
+\PYG{p}{\PYGZcb{}}
 
-\PYG{n}{islower}\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{c}\PYG{p}{)}\PYG{o}{:}\PYG{+w}{ }\PYG{n}{判斷是否為小寫字母}
-\PYG{n}{isupper}\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{c}\PYG{p}{)}\PYG{o}{:}\PYG{+w}{ }\PYG{n}{判斷是否為大寫字母}
+\PYG{c+c1}{// 鏈狀樹 (Chain / Bamboo)：一條線到底 (常卡遞迴深度)}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n}{gen\PYGZus{}chain}\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{n}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{bool}\PYG{+w}{ }\PYG{n}{weighted}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nb}{false}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{pair}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{int}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{int}\PYG{o}{\PYGZgt{}\PYGZgt{}}\PYG{+w}{ }\PYG{n}{edges}\PYG{p}{;}
+\PYG{+w}{    }\PYG{k}{for}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{i}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{p}{;}\PYG{+w}{ }\PYG{n}{i}\PYG{+w}{ }\PYG{o}{\PYGZlt{}=}\PYG{+w}{ }\PYG{n}{n}\PYG{p}{;}\PYG{+w}{ }\PYG{o}{++}\PYG{n}{i}\PYG{p}{)}\PYG{+w}{ }\PYG{n}{edges}\PYG{p}{.}\PYG{n}{push\PYGZus{}back}\PYG{p}{(\PYGZob{}}\PYG{n}{i}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{i}\PYG{p}{\PYGZcb{});}
+\PYG{+w}{    }\PYG{n}{print\PYGZus{}tree}\PYG{p}{(}\PYG{n}{n}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{edges}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{weighted}\PYG{p}{);}
+\PYG{p}{\PYGZcb{}}
 
-\PYG{n}{tolower}\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{c}\PYG{p}{)}\PYG{o}{:}\PYG{+w}{ }\PYG{n}{將字母轉成小寫字母}
-\PYG{n}{toupper}\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{c}\PYG{p}{)}\PYG{o}{:}\PYG{+w}{ }\PYG{n}{將字母轉成大寫字母}
+\PYG{c+c1}{// 星狀樹 (Star)：一個中心點連向所有其他點 (常卡度數度為 O(N) 的暴力解)}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n}{gen\PYGZus{}star}\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{n}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{bool}\PYG{+w}{ }\PYG{n}{weighted}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nb}{false}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{pair}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{int}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{int}\PYG{o}{\PYGZgt{}\PYGZgt{}}\PYG{+w}{ }\PYG{n}{edges}\PYG{p}{;}
+\PYG{+w}{    }\PYG{k}{for}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{i}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{p}{;}\PYG{+w}{ }\PYG{n}{i}\PYG{+w}{ }\PYG{o}{\PYGZlt{}=}\PYG{+w}{ }\PYG{n}{n}\PYG{p}{;}\PYG{+w}{ }\PYG{o}{++}\PYG{n}{i}\PYG{p}{)}\PYG{+w}{ }\PYG{n}{edges}\PYG{p}{.}\PYG{n}{push\PYGZus{}back}\PYG{p}{(\PYGZob{}}\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{i}\PYG{p}{\PYGZcb{});}
+\PYG{+w}{    }\PYG{n}{print\PYGZus{}tree}\PYG{p}{(}\PYG{n}{n}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{edges}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{weighted}\PYG{p}{);}
+\PYG{p}{\PYGZcb{}}
 
-\PYG{c+cp}{\PYGZsh{}include}\PYG{+w}{ }\PYG{c+cpf}{\PYGZlt{}stack\PYGZgt{}}
+\PYG{c+c1}{// 完全二元樹 (Complete Binary Tree)：樹高最低的平衡樹}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n}{gen\PYGZus{}complete\PYGZus{}binary\PYGZus{}tree}\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{n}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{bool}\PYG{+w}{ }\PYG{n}{weighted}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nb}{false}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{pair}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{int}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{int}\PYG{o}{\PYGZgt{}\PYGZgt{}}\PYG{+w}{ }\PYG{n}{edges}\PYG{p}{;}
+\PYG{+w}{    }\PYG{k}{for}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{i}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{p}{;}\PYG{+w}{ }\PYG{n}{i}\PYG{+w}{ }\PYG{o}{\PYGZlt{}=}\PYG{+w}{ }\PYG{n}{n}\PYG{p}{;}\PYG{+w}{ }\PYG{o}{++}\PYG{n}{i}\PYG{p}{)}\PYG{+w}{ }\PYG{n}{edges}\PYG{p}{.}\PYG{n}{push\PYGZus{}back}\PYG{p}{(\PYGZob{}}\PYG{n}{i}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{i}\PYG{p}{\PYGZcb{});}
+\PYG{+w}{    }\PYG{n}{print\PYGZus{}tree}\PYG{p}{(}\PYG{n}{n}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{edges}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{weighted}\PYG{p}{);}
+\PYG{p}{\PYGZcb{}}
 
-\PYG{n}{s}\PYG{p}{.}\PYG{n}{push}\PYG{p}{(}\PYG{n}{T}\PYG{+w}{ }\PYG{n}{a}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{:}\PYG{n}{插入頂端元素}\PYG{err}{，}\PYG{n}{複雜度}\PYG{+w}{ }\PYG{n}{O}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{)}
-\PYG{n}{s}\PYG{p}{.}\PYG{n}{pop}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{:}\PYG{n}{刪除頂端元素}\PYG{err}{，}\PYG{n}{複雜度}\PYG{+w}{ }\PYG{n}{O}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{)}
-\PYG{n}{s}\PYG{p}{.}\PYG{n}{top}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{:}\PYG{n}{回傳頂端元素}\PYG{err}{，}\PYG{n}{複雜度}\PYG{+w}{ }\PYG{n}{O}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{)}
-\PYG{n}{s}\PYG{p}{.}\PYG{n}{size}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{:}\PYG{n}{回傳元素個數}\PYG{err}{，}\PYG{n}{複雜度}\PYG{+w}{ }\PYG{n}{O}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{)}
-\PYG{n}{s}\PYG{p}{.}\PYG{n}{empty}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{:}\PYG{n}{回傳是否為空}\PYG{err}{，}\PYG{n}{複雜度}\PYG{+w}{ }\PYG{n}{O}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{)}
+\PYG{c+c1}{// 毛毛蟲樹 (Caterpillar)：一條主幹，其餘點全部直接連在主幹上}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n}{gen\PYGZus{}caterpillar}\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{n}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{bool}\PYG{+w}{ }\PYG{n}{weighted}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nb}{false}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{pair}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{int}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{int}\PYG{o}{\PYGZgt{}\PYGZgt{}}\PYG{+w}{ }\PYG{n}{edges}\PYG{p}{;}
+\PYG{+w}{    }\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{chain\PYGZus{}len}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{max}\PYG{p}{(}\PYG{l+m+mf}{2L}\PYG{n}{L}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{rnd}\PYG{p}{(}\PYG{l+m+mi}{2}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{n}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{));}\PYG{+w}{ }\PYG{c+c1}{// 隨機決定主幹長度}
+\PYG{+w}{    }\PYG{k}{for}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{i}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{p}{;}\PYG{+w}{ }\PYG{n}{i}\PYG{+w}{ }\PYG{o}{\PYGZlt{}=}\PYG{+w}{ }\PYG{n}{chain\PYGZus{}len}\PYG{p}{;}\PYG{+w}{ }\PYG{o}{++}\PYG{n}{i}\PYG{p}{)}\PYG{+w}{ }\PYG{n}{edges}\PYG{p}{.}\PYG{n}{push\PYGZus{}back}\PYG{p}{(\PYGZob{}}\PYG{n}{i}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{i}\PYG{p}{\PYGZcb{});}
+\PYG{+w}{    }\PYG{k}{for}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{i}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{chain\PYGZus{}len}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{;}\PYG{+w}{ }\PYG{n}{i}\PYG{+w}{ }\PYG{o}{\PYGZlt{}=}\PYG{+w}{ }\PYG{n}{n}\PYG{p}{;}\PYG{+w}{ }\PYG{o}{++}\PYG{n}{i}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{        }\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{attach\PYGZus{}to}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{rnd}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{chain\PYGZus{}len}\PYG{p}{);}\PYG{+w}{ }\PYG{c+c1}{// 剩下的點隨機接在主幹上}
+\PYG{+w}{        }\PYG{n}{edges}\PYG{p}{.}\PYG{n}{push\PYGZus{}back}\PYG{p}{(\PYGZob{}}\PYG{n}{attach\PYGZus{}to}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{i}\PYG{p}{\PYGZcb{});}
+\PYG{+w}{    }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{    }\PYG{n}{print\PYGZus{}tree}\PYG{p}{(}\PYG{n}{n}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{edges}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{weighted}\PYG{p}{);}
+\PYG{p}{\PYGZcb{}}
 
-\PYG{c+cp}{\PYGZsh{}include}\PYG{+w}{ }\PYG{c+cpf}{\PYGZlt{}queue\PYGZgt{}}
+\PYG{c+c1}{// 3. 圖論結構生成器 (Graphs)}
 
-\PYG{n}{q}\PYG{p}{.}\PYG{n}{push}\PYG{p}{(}\PYG{n}{T}\PYG{+w}{ }\PYG{n}{a}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{:}\PYG{n}{插入尾端元素}\PYG{err}{，}\PYG{n}{複雜度}\PYG{+w}{ }\PYG{n}{O}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{)}
-\PYG{n}{q}\PYG{p}{.}\PYG{n}{pop}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{:}\PYG{n}{刪除頂端元素}\PYG{err}{，}\PYG{n}{複雜度}\PYG{+w}{ }\PYG{n}{O}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{)}
-\PYG{n}{q}\PYG{p}{.}\PYG{n}{front}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{:}\PYG{n}{回傳頂端元素}\PYG{err}{，}\PYG{n}{複雜度}\PYG{+w}{ }\PYG{n}{O}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{)}
-\PYG{n}{q}\PYG{p}{.}\PYG{n}{size}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{:}\PYG{n}{回傳元素個數}\PYG{err}{，}\PYG{n}{複雜度}\PYG{+w}{ }\PYG{n}{O}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{)}
-\PYG{n}{q}\PYG{p}{.}\PYG{n}{empty}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{:}\PYG{n}{回傳是否為空}\PYG{err}{，}\PYG{n}{複雜度}\PYG{+w}{ }\PYG{n}{O}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{)}
+\PYG{c+c1}{// 有向無環圖 (DAG)}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n}{gen\PYGZus{}dag}\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{n}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{m}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{bool}\PYG{+w}{ }\PYG{n}{weighted}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nb}{false}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{long}\PYG{+w}{ }\PYG{k+kt}{long}\PYG{+w}{ }\PYG{n}{max\PYGZus{}w}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{100}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{c+c1}{// DAG 的特性：只要所有邊都由編號小的連向編號大的，就絕對無環}
+\PYG{+w}{    }\PYG{n}{set}\PYG{o}{\PYGZlt{}}\PYG{n}{pair}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{int}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{int}\PYG{o}{\PYGZgt{}\PYGZgt{}}\PYG{+w}{ }\PYG{n}{edges}\PYG{p}{;}
+\PYG{+w}{    }\PYG{k}{while}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{edges}\PYG{p}{.}\PYG{n}{size}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{n}{m}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{        }\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{u}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{rnd}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{n}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
+\PYG{+w}{        }\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{v}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{rnd}\PYG{p}{(}\PYG{n}{u}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{n}\PYG{p}{);}
+\PYG{+w}{        }\PYG{n}{edges}\PYG{p}{.}\PYG{n}{insert}\PYG{p}{(\PYGZob{}}\PYG{n}{u}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{v}\PYG{p}{\PYGZcb{});}
+\PYG{+w}{    }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{    }
+\PYG{+w}{    }\PYG{c+c1}{// 一樣打亂編號輸出}
+\PYG{+w}{    }\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{int}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{p}\PYG{p}{(}\PYG{n}{n}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n}{iota}\PYG{p}{(}\PYG{n}{p}\PYG{p}{.}\PYG{n}{begin}\PYG{p}{(),}\PYG{+w}{ }\PYG{n}{p}\PYG{p}{.}\PYG{n}{end}\PYG{p}{(),}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{);}
+\PYG{+w}{    }\PYG{n}{shuffle}\PYG{p}{(}\PYG{n}{p}\PYG{p}{.}\PYG{n}{begin}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{p}\PYG{p}{.}\PYG{n}{end}\PYG{p}{(),}\PYG{+w}{ }\PYG{n}{rng}\PYG{p}{);}
+\PYG{+w}{    }
+\PYG{+w}{    }\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{pair}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{int}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{int}\PYG{o}{\PYGZgt{}\PYGZgt{}}\PYG{+w}{ }\PYG{n}{edge\PYGZus{}list}\PYG{p}{(}\PYG{n}{edges}\PYG{p}{.}\PYG{n}{begin}\PYG{p}{(),}\PYG{+w}{ }\PYG{n}{edges}\PYG{p}{.}\PYG{n}{end}\PYG{p}{());}
+\PYG{+w}{    }\PYG{n}{shuffle}\PYG{p}{(}\PYG{n}{edge\PYGZus{}list}\PYG{p}{.}\PYG{n}{begin}\PYG{p}{(),}\PYG{+w}{ }\PYG{n}{edge\PYGZus{}list}\PYG{p}{.}\PYG{n}{end}\PYG{p}{(),}\PYG{+w}{ }\PYG{n}{rng}\PYG{p}{);}
+\PYG{+w}{    }
+\PYG{+w}{    }\PYG{k}{for}\PYG{+w}{ }\PYG{p}{(}\PYG{k}{auto}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{e}\PYG{+w}{ }\PYG{o}{:}\PYG{+w}{ }\PYG{n}{edge\PYGZus{}list}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{        }\PYG{n}{cout}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{n}{p}\PYG{p}{[}\PYG{n}{e}\PYG{p}{.}\PYG{n}{first}\PYG{p}{]}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{} \PYGZdq{}}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{n}{p}\PYG{p}{[}\PYG{n}{e}\PYG{p}{.}\PYG{n}{second}\PYG{p}{];}
+\PYG{+w}{        }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{weighted}\PYG{p}{)}\PYG{+w}{ }\PYG{n}{cout}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{} \PYGZdq{}}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{n}{rnd}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{max\PYGZus{}w}\PYG{p}{);}
+\PYG{+w}{        }\PYG{n}{cout}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{\PYGZdq{}}\PYG{p}{;}
+\PYG{+w}{    }\PYG{p}{\PYGZcb{}}
+\PYG{p}{\PYGZcb{}}
 
-\PYG{n}{pq}\PYG{p}{.}\PYG{n}{push}\PYG{p}{(}\PYG{n}{T}\PYG{+w}{ }\PYG{n}{a}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{:}\PYG{n}{插入元素}\PYG{+w}{ }\PYG{n}{a}\PYG{err}{，}\PYG{n}{複雜度}\PYG{+w}{ }\PYG{n}{O}\PYG{p}{(}\PYG{n}{logsize}\PYG{p}{)}
-\PYG{n}{pq}\PYG{p}{.}\PYG{n}{pop}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{:}\PYG{n}{刪除頂端元素}\PYG{err}{，}\PYG{n}{複雜度}\PYG{+w}{ }\PYG{n}{O}\PYG{p}{(}\PYG{n}{logsize}\PYG{p}{)}
-\PYG{n}{pq}\PYG{p}{.}\PYG{n}{top}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{:}\PYG{n}{回傳頂端元素}\PYG{err}{，}\PYG{n}{複雜度}\PYG{+w}{ }\PYG{n}{O}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{)}
-\PYG{n}{pq}\PYG{p}{.}\PYG{n}{size}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{:}\PYG{n}{回傳元素個數}\PYG{err}{，}\PYG{n}{複雜度}\PYG{+w}{ }\PYG{n}{O}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{)}
-\PYG{n}{pq}\PYG{p}{.}\PYG{n}{empty}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{:}\PYG{n}{回傳是否為空}\PYG{err}{，}\PYG{n}{複雜度}\PYG{+w}{ }\PYG{n}{O}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{)}
+\PYG{c+c1}{// 完全圖 (Complete Graph)：N 個點有 N*(N\PYGZhy{}1)/2 條邊 (常卡 O(E\PYGZca{}2) 演算法)}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n}{gen\PYGZus{}complete\PYGZus{}graph}\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{n}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{bool}\PYG{+w}{ }\PYG{n}{weighted}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nb}{false}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{long}\PYG{+w}{ }\PYG{k+kt}{long}\PYG{+w}{ }\PYG{n}{max\PYGZus{}w}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{100}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{pair}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{int}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{int}\PYG{o}{\PYGZgt{}\PYGZgt{}}\PYG{+w}{ }\PYG{n}{edges}\PYG{p}{;}
+\PYG{+w}{    }\PYG{k}{for}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{i}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{;}\PYG{+w}{ }\PYG{n}{i}\PYG{+w}{ }\PYG{o}{\PYGZlt{}=}\PYG{+w}{ }\PYG{n}{n}\PYG{p}{;}\PYG{+w}{ }\PYG{o}{++}\PYG{n}{i}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{        }\PYG{k}{for}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{j}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{i}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{;}\PYG{+w}{ }\PYG{n}{j}\PYG{+w}{ }\PYG{o}{\PYGZlt{}=}\PYG{+w}{ }\PYG{n}{n}\PYG{p}{;}\PYG{+w}{ }\PYG{o}{++}\PYG{n}{j}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{            }\PYG{n}{edges}\PYG{p}{.}\PYG{n}{push\PYGZus{}back}\PYG{p}{(\PYGZob{}}\PYG{n}{i}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{j}\PYG{p}{\PYGZcb{});}
+\PYG{+w}{        }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{    }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{    }\PYG{c+c1}{// 不需打亂節點，因為大家互相都有連線，只要打亂邊的順序即可}
+\PYG{+w}{    }\PYG{n}{shuffle}\PYG{p}{(}\PYG{n}{edges}\PYG{p}{.}\PYG{n}{begin}\PYG{p}{(),}\PYG{+w}{ }\PYG{n}{edges}\PYG{p}{.}\PYG{n}{end}\PYG{p}{(),}\PYG{+w}{ }\PYG{n}{rng}\PYG{p}{);}
+\PYG{+w}{    }\PYG{k}{for}\PYG{+w}{ }\PYG{p}{(}\PYG{k}{auto}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{e}\PYG{+w}{ }\PYG{o}{:}\PYG{+w}{ }\PYG{n}{edges}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{        }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{rnd}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{))}\PYG{+w}{ }\PYG{n}{cout}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{n}{e}\PYG{p}{.}\PYG{n}{first}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{} \PYGZdq{}}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{n}{e}\PYG{p}{.}\PYG{n}{second}\PYG{p}{;}
+\PYG{+w}{        }\PYG{k}{else}\PYG{+w}{ }\PYG{n}{cout}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{n}{e}\PYG{p}{.}\PYG{n}{second}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{} \PYGZdq{}}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{n}{e}\PYG{p}{.}\PYG{n}{first}\PYG{p}{;}
+\PYG{+w}{        }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{weighted}\PYG{p}{)}\PYG{+w}{ }\PYG{n}{cout}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{} \PYGZdq{}}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{n}{rnd}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{max\PYGZus{}w}\PYG{p}{);}
+\PYG{+w}{        }\PYG{n}{cout}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{\PYGZdq{}}\PYG{p}{;}
+\PYG{+w}{    }\PYG{p}{\PYGZcb{}}
+\PYG{p}{\PYGZcb{}}
 
-\PYG{c+cp}{\PYGZsh{}include}\PYG{+w}{ }\PYG{c+cpf}{\PYGZlt{}deque\PYGZgt{}}
+\PYG{c+c1}{// 4. 生成隨機區間 [l, r] (Sweep Line, 區間 DP 題型)}
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n}{gen\PYGZus{}intervals}\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{n}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{long}\PYG{+w}{ }\PYG{k+kt}{long}\PYG{+w}{ }\PYG{n}{max\PYGZus{}val}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{k}{for}\PYG{+w}{ }\PYG{p}{(}\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{i}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{;}\PYG{+w}{ }\PYG{n}{i}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{n}{n}\PYG{p}{;}\PYG{+w}{ }\PYG{o}{++}\PYG{n}{i}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{        }\PYG{k+kt}{long}\PYG{+w}{ }\PYG{k+kt}{long}\PYG{+w}{ }\PYG{n}{l}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{rnd}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{max\PYGZus{}val}\PYG{p}{);}
+\PYG{+w}{        }\PYG{k+kt}{long}\PYG{+w}{ }\PYG{k+kt}{long}\PYG{+w}{ }\PYG{n}{r}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{rnd}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{max\PYGZus{}val}\PYG{p}{);}
+\PYG{+w}{        }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{l}\PYG{+w}{ }\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{r}\PYG{p}{)}\PYG{+w}{ }\PYG{n}{swap}\PYG{p}{(}\PYG{n}{l}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{r}\PYG{p}{);}
+\PYG{+w}{        }\PYG{n}{cout}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{n}{l}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{} \PYGZdq{}}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{n}{r}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{\PYGZdq{}}\PYG{p}{;}
+\PYG{+w}{    }\PYG{p}{\PYGZcb{}}
+\PYG{p}{\PYGZcb{}}
 
-\PYG{n}{dq}\PYG{p}{.}\PYG{n}{push\PYGZus{}front}\PYG{p}{(}\PYG{n}{T}\PYG{+w}{ }\PYG{n}{a}\PYG{p}{),}\PYG{+w}{ }\PYG{n}{dq}\PYG{p}{.}\PYG{n}{push\PYGZus{}back}\PYG{p}{(}\PYG{n}{T}\PYG{+w}{ }\PYG{n}{a}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{:}\PYG{n}{插入頂端}\PYG{o}{/}\PYG{n}{尾端元素}\PYG{err}{，}\PYG{n}{複雜度}\PYG{+w}{ }\PYG{n}{O}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{)}
-\PYG{n}{dq}\PYG{p}{.}\PYG{n}{pop\PYGZus{}front}\PYG{p}{(),}\PYG{+w}{ }\PYG{n}{dq}\PYG{p}{.}\PYG{n}{pop\PYGZus{}back}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{:}\PYG{n}{刪除頂端}\PYG{o}{/}\PYG{n}{尾端元素}\PYG{err}{，}\PYG{n}{複雜度}\PYG{+w}{ }\PYG{n}{O}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{)}
-\PYG{n}{dq}\PYG{p}{.}\PYG{n}{front}\PYG{p}{(),}\PYG{+w}{ }\PYG{n}{dq}\PYG{p}{.}\PYG{n}{back}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{:}\PYG{n}{回傳頂端}\PYG{o}{/}\PYG{n}{尾端元素}\PYG{err}{，}\PYG{n}{複雜度}\PYG{+w}{ }\PYG{n}{O}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{)}
-\PYG{n}{dq}\PYG{p}{.}\PYG{n}{size}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{:}\PYG{n}{回傳元素個數}\PYG{err}{，}\PYG{n}{複雜度}\PYG{+w}{ }\PYG{n}{O}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{)}
-\PYG{n}{dq}\PYG{p}{.}\PYG{n}{empty}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{:}\PYG{n}{回傳是否為空}\PYG{err}{，}\PYG{n}{複雜度}\PYG{+w}{ }\PYG{n}{O}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{)}
+\PYG{c+c1}{// 主程式呼叫範例}
+\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{main}\PYG{p}{()}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{ios}\PYG{o}{::}\PYG{n}{sync\PYGZus{}with\PYGZus{}stdio}\PYG{p}{(}\PYG{n+nb}{false}\PYG{p}{);}\PYG{+w}{ }\PYG{n}{cin}\PYG{p}{.}\PYG{n}{tie}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{);}
+\PYG{+w}{    }
+\PYG{+w}{    }\PYG{c+c1}{// ======== 在這裡調整你的測資 ========}
+\PYG{+w}{    }\PYG{c+c1}{// 例如：題目要求輸出 T 筆測資，每筆有 N 個長度為 M 的陣列}
+\PYG{+w}{    }\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{T}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{;}\PYG{+w}{ }
+\PYG{+w}{    }\PYG{c+c1}{// cout \PYGZlt{}\PYGZlt{} T \PYGZlt{}\PYGZlt{} \PYGZdq{}\PYGZbs{}n\PYGZdq{}; // 如果題目有多筆測資取消註解}
 
-\PYG{c+cp}{\PYGZsh{}include}\PYG{+w}{ }\PYG{c+cpf}{\PYGZlt{}set\PYGZgt{}}
+\PYG{+w}{    }\PYG{k}{while}\PYG{p}{(}\PYG{n}{T}\PYG{o}{\PYGZhy{}\PYGZhy{}}\PYG{p}{)\PYGZob{}}
+\PYG{+w}{        }\PYG{k+kt}{int}\PYG{+w}{ }\PYG{n}{N}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{10}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{M}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{15}\PYG{p}{;}
+\PYG{+w}{        }\PYG{n}{cout}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{n}{N}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{} \PYGZdq{}}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{n}{M}\PYG{+w}{ }\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{\PYGZdq{}}\PYG{p}{;}
 
-\PYG{n}{s}\PYG{p}{.}\PYG{n}{size}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{:}\PYG{n}{回傳元素個數}\PYG{err}{，}\PYG{n}{複雜度}\PYG{+w}{ }\PYG{n}{O}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{)}
-\PYG{n}{s}\PYG{p}{.}\PYG{n}{empty}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{:}\PYG{n}{回傳是否為空}\PYG{err}{，}\PYG{n}{複雜度}\PYG{+w}{ }\PYG{n}{O}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{)}
-\PYG{n}{s}\PYG{p}{.}\PYG{n}{clear}\PYG{p}{()}\PYG{+w}{ }\PYG{o}{:}\PYG{n}{清除元素}\PYG{err}{，}\PYG{n}{複雜度}\PYG{+w}{ }\PYG{n}{O}\PYG{p}{(}\PYG{n}{size}\PYG{p}{)}
-\PYG{n}{s}\PYG{p}{.}\PYG{n}{insert}\PYG{p}{(}\PYG{n}{T1}\PYG{+w}{ }\PYG{n}{a}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{:}\PYG{n}{加入元素}\PYG{+w}{ }\PYG{n}{a}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{複雜度}\PYG{+w}{ }\PYG{n}{O}\PYG{p}{(}\PYG{n}{logsize}\PYG{p}{)}
-\PYG{n}{s}\PYG{p}{.}\PYG{n}{erase}\PYG{p}{(}\PYG{n}{iterator}\PYG{+w}{ }\PYG{n}{first}\PYG{p}{,}\PYG{n}{iterator}\PYG{+w}{ }\PYG{n}{last}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{:}\PYG{n}{刪除}\PYG{+w}{ }\PYG{p}{[}\PYG{n}{first}\PYG{p}{,}\PYG{n}{last}\PYG{p}{),}\PYG{+w}{ }\PYG{n}{若沒有指定}\PYG{+w}{ }\PYG{n}{last}\PYG{+w}{ }\PYG{n}{則只刪除}\PYG{+w}{ }\PYG{n}{first}
-\PYG{n}{s}\PYG{p}{.}\PYG{n}{erase}\PYG{p}{(}\PYG{n}{T1}\PYG{+w}{ }\PYG{n}{a}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{:}\PYG{n}{刪除鍵值}\PYG{+w}{ }\PYG{n}{a}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{複雜度}\PYG{+w}{ }\PYG{n}{O}\PYG{p}{(}\PYG{n}{logsize}\PYG{p}{)}
-\PYG{n}{s}\PYG{p}{.}\PYG{n}{find}\PYG{p}{(}\PYG{n}{T1}\PYG{+w}{ }\PYG{n}{a}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{:}\PYG{n}{回傳指向鍵值}\PYG{+w}{ }\PYG{n}{a}\PYG{+w}{ }\PYG{n}{的迭代器}\PYG{err}{，}\PYG{n}{若不存在則回傳}\PYG{+w}{ }\PYG{n}{s}\PYG{p}{.}\PYG{n}{end}\PYG{+w}{ }\PYG{p}{(),}\PYG{+w}{ }\PYG{n}{複雜度}\PYG{+w}{ }\PYG{n}{O}\PYG{p}{(}\PYG{n}{logsize}\PYG{p}{)}
-\PYG{n}{s}\PYG{p}{.}\PYG{n}{count}\PYG{p}{(}\PYG{n}{T}\PYG{+w}{ }\PYG{n}{a}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{:}\PYG{n}{計算有幾個元素}\PYG{+w}{ }\PYG{n}{a}\PYG{+w}{ }
-\PYG{n}{s}\PYG{p}{.}\PYG{n}{lower\PYGZus{}bound}\PYG{p}{(}\PYG{n}{T1}\PYG{+w}{ }\PYG{n}{a}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{:}\PYG{n}{回傳指向第一個鍵值大於等於}\PYG{+w}{ }\PYG{n}{a}\PYG{+w}{ }\PYG{n}{的迭代器}\PYG{err}{。}\PYG{n}{複雜度}\PYG{+w}{ }\PYG{n}{O}\PYG{p}{(}\PYG{n}{logsize}\PYG{p}{)}
-\PYG{n}{s}\PYG{p}{.}\PYG{n}{upper\PYGZus{}bound}\PYG{p}{(}\PYG{n}{T1}\PYG{+w}{ }\PYG{n}{a}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{:}\PYG{n}{回傳指向第一個鍵值大於}\PYG{+w}{ }\PYG{n}{a}\PYG{+w}{ }\PYG{n}{的迭代器}\PYG{err}{。}\PYG{n}{複雜度}\PYG{+w}{ }\PYG{n}{O}\PYG{p}{(}\PYG{n}{logsize}\PYG{p}{)}
+\PYG{+w}{        }\PYG{c+c1}{// 根據你的需求，取消註解對應的測資生成器}
+\PYG{+w}{    }
+\PYG{+w}{        }\PYG{c+c1}{// [陣列 Edge Cases]}
+\PYG{+w}{        }\PYG{c+c1}{// gen\PYGZus{}array\PYGZus{}few\PYGZus{}distinct(N, 1, 100, 2); // 只有 2 種不同數字的陣列}
+\PYG{+w}{        }\PYG{c+c1}{// gen\PYGZus{}sorted\PYGZus{}array(N, 1, 100, true); // 完全反序的陣列}
+\PYG{+w}{        }\PYG{c+c1}{// gen\PYGZus{}permutation(N); // 1\PYGZti{}N 的排列}
+\PYG{+w}{        }
+\PYG{+w}{        }\PYG{c+c1}{// [樹論 Edge Cases]}
+\PYG{+w}{        }\PYG{c+c1}{// gen\PYGZus{}chain(N, false); // 產生長度為 10 的鏈狀樹 (無權重)}
+\PYG{+w}{        }\PYG{c+c1}{// gen\PYGZus{}star(N, true); // 產生 10 個點的星狀樹 (帶隨機權重)}
+\PYG{+w}{        }\PYG{c+c1}{// gen\PYGZus{}caterpillar(N, false); // 產生毛毛蟲樹}
+\PYG{+w}{        }
+\PYG{+w}{        }\PYG{c+c1}{// [圖論 Edge Cases]}
+\PYG{+w}{        }\PYG{n}{gen\PYGZus{}dag}\PYG{p}{(}\PYG{n}{N}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{M}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{true}\PYG{p}{);}\PYG{+w}{ }\PYG{c+c1}{// 產生 10點 15邊的帶權 DAG}
+\PYG{+w}{        }\PYG{c+c1}{// gen\PYGZus{}complete\PYGZus{}graph(N, false); // 產生完全圖}
+\PYG{+w}{    }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{    }
+\PYG{+w}{    }\PYG{k}{return}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{;}
+\PYG{p}{\PYGZcb{}}
 
-\PYG{c+cp}{\PYGZsh{}include}\PYG{+w}{ }\PYG{c+cpf}{\PYGZlt{}map\PYGZgt{}}
+\PYG{o}{\PYGZhy{}\PYGZhy{}\PYGZhy{}}
 
-\PYG{n}{m}\PYG{p}{.}\PYG{n}{size}\PYG{p}{()}
-\PYG{n}{m}\PYG{p}{.}\PYG{n}{empty}\PYG{p}{()}
-\PYG{n}{m}\PYG{p}{.}\PYG{n}{clear}\PYG{p}{()}
-\PYG{n}{m}\PYG{p}{.}\PYG{n}{count}\PYG{p}{()}
-\PYG{n}{m}\PYG{p}{.}\PYG{n}{erase}\PYG{p}{(}\PYG{n}{iterator}\PYG{+w}{ }\PYG{n}{first}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{iterator}\PYG{+w}{ }\PYG{n}{last}\PYG{p}{)}
-\PYG{n}{m}\PYG{p}{.}\PYG{n}{erase}\PYG{p}{(}\PYG{n}{T1}\PYG{+w}{ }\PYG{n}{a}\PYG{p}{)}
-\PYG{n}{m}\PYG{p}{.}\PYG{n}{find}\PYG{p}{(}\PYG{n}{T1}\PYG{+w}{ }\PYG{n}{a}\PYG{p}{)}
-\PYG{n}{m}\PYG{p}{.}\PYG{n}{lower\PYGZus{}bound}\PYG{p}{(}\PYG{n}{T1}\PYG{+w}{ }\PYG{n}{a}\PYG{p}{)}
-\PYG{n}{m}\PYG{p}{.}\PYG{n}{upper\PYGZus{}bound}\PYG{p}{(}\PYG{n}{T1}\PYG{+w}{ }\PYG{n}{a}\PYG{p}{)}
+\PYG{c+c1}{//!/bin/bash}
+
+\PYG{c+c1}{// 1. 編譯所有相關程式 (加上 \PYGZhy{}O2 模擬正式評測環境)}
+\PYG{n}{g}\PYG{o}{++}\PYG{+w}{ }\PYG{n}{gen}\PYG{p}{.}\PYG{n}{cpp}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{n}{o}\PYG{+w}{ }\PYG{n}{gen}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{n}{O2}
+\PYG{n}{g}\PYG{o}{++}\PYG{+w}{ }\PYG{n}{sol}\PYG{p}{.}\PYG{n}{cpp}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{n}{o}\PYG{+w}{ }\PYG{n}{sol}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{n}{O2}
+\PYG{n}{g}\PYG{o}{++}\PYG{+w}{ }\PYG{n}{brute}\PYG{p}{.}\PYG{n}{cpp}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{n}{o}\PYG{+w}{ }\PYG{n}{brute}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{n}{O2}
+
+\PYG{n}{echo}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}編譯完成，開始對拍...\PYGZdq{}}
+\PYG{n}{echo}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZdq{}}
+
+\PYG{c+c1}{// 2. 進入無限迴圈進行對拍}
+\PYG{k}{for}\PYG{+w}{ }\PYG{p}{((}\PYG{n}{i}\PYG{o}{=}\PYG{l+m+mi}{1}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{;}\PYG{+w}{ }\PYG{o}{++}\PYG{n}{i}\PYG{p}{));}\PYG{+w}{ }\PYG{k}{do}
+\PYG{+w}{    }\PYG{c+c1}{// 生成測資並存入 in.txt}
+\PYG{+w}{    }\PYG{p}{.}\PYG{o}{/}\PYG{n}{gen}\PYG{+w}{ }\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{in}\PYG{p}{.}\PYG{n}{txt}
+\PYG{+w}{    }
+\PYG{+w}{    }\PYG{c+c1}{// 將測資餵給正確的暴力解，輸出到 ans.txt}
+\PYG{+w}{    }\PYG{p}{.}\PYG{o}{/}\PYG{n}{brute}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{n}{in}\PYG{p}{.}\PYG{n}{txt}\PYG{+w}{ }\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{ans}\PYG{p}{.}\PYG{n}{txt}
+\PYG{+w}{    }
+\PYG{+w}{    }\PYG{c+c1}{// 將測資餵給你寫的待測程式，輸出到 out.txt}
+\PYG{+w}{    }\PYG{p}{.}\PYG{o}{/}\PYG{n}{sol}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{n}{in}\PYG{p}{.}\PYG{n}{txt}\PYG{+w}{ }\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{out}\PYG{p}{.}\PYG{n}{txt}
+\PYG{+w}{    }
+\PYG{+w}{    }\PYG{c+c1}{// 使用 diff 比對兩個輸出檔 (\PYGZhy{}w 忽略行尾與空白差異，也可不寫)}
+\PYG{+w}{    }\PYG{k}{if}\PYG{+w}{ }\PYG{n}{diff}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{n}{w}\PYG{+w}{ }\PYG{n}{out}\PYG{p}{.}\PYG{n}{txt}\PYG{+w}{ }\PYG{n}{ans}\PYG{p}{.}\PYG{n}{txt}\PYG{+w}{ }\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{o}{/}\PYG{n}{dev}\PYG{o}{/}\PYG{n}{null}\PYG{p}{;}\PYG{+w}{ }\PYG{n}{then}\PYG{+w}{ }\PYG{c+c1}{//}
+\PYG{+w}{        }\PYG{c+c1}{// 如果沒有差異，印出 AC}
+\PYG{+w}{        }\PYG{n}{echo}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}Test Case \PYGZdl{}i: AC\PYGZdq{}}
+\PYG{+w}{    }\PYG{k}{else}
+\PYG{+w}{        }\PYG{c+c1}{// 如果有差異，停止腳本並報錯}
+\PYG{+w}{        }\PYG{n}{echo}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}Test Case \PYGZdl{}i: WA! 發現錯誤測資！\PYGZdq{}}
+\PYG{+w}{        }\PYG{k}{break}
+\PYG{+w}{    }\PYG{n}{fi}
+\PYG{n}{done}
+
+\PYG{n}{echo}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}對拍結束。\PYGZdq{}}
+
+
+\PYG{c+cm}{/*}
+\PYG{c+cm}{在同一個資料夾下，準備好四個檔案：}
+\PYG{c+cm}{sol.cpp：你寫的，會吃 WA 但跑很快的最佳化程式碼。}
+\PYG{c+cm}{brute.cpp：你寫的，保證絕對正確，但肯定會 TLE 的暴力解程式碼（例如 O(N!) 枚舉、O(N\PYGZca{}3) 暴力轉移等）。}
+\PYG{c+cm}{gen.cpp：上述的測資生成器。}
+\PYG{c+cm}{checker.sh：上述的 Bash 腳本。}
+
+\PYG{c+cm}{打開 gen.cpp，修改 main 函式裡面的變數。}
+\PYG{c+cm}{測資規模（如 N 或數值範圍）一定要調小。如果 N 設到 10\PYGZca{}5，找到錯誤測資也無法用手算推導。}
+\PYG{c+cm}{通常設 N \PYGZlt{}= 10，數值 \PYGZlt{}= 100 就足夠觸發大部分的 Edge case。}
+
+\PYG{c+cm}{打開 terminal 執行}
+\PYG{c+cm}{```}
+\PYG{c+cm}{// 賦予腳本執行權限 (只需要做一次)}
+\PYG{c+cm}{chmod +x checker.sh}
+
+\PYG{c+cm}{// 執行對拍}
+\PYG{c+cm}{./checker.sh}
+\PYG{c+cm}{```}
+
+\PYG{c+cm}{當螢幕印出 Test Case X: WA! 發現錯誤測資！ 時，腳本會自動停止。此時你該資料夾下會擁有：}
+\PYG{c+cm}{in.txt：引發錯誤的極小測資。（打開它，這就是你一直找不到的 Counter Example）。}
+\PYG{c+cm}{ans.txt：暴力解跑出來的正確答案。}
+\PYG{c+cm}{out.txt：你寫的程式跑出來的錯誤答案。}
+\PYG{c+cm}{*/}
+
+\PYG{c+cm}{/*}
+\PYG{c+cm}{文字找碴版:}
+\PYG{c+cm}{一、資料規模與全域陷阱整數溢位（Integer Overflow）：}
+\PYG{c+cm}{這是最致命也最常見的失誤。兩個 int 相乘或相加是否會超過 32\PYGZhy{}bit 的上限？}
+\PYG{c+cm}{在 C++ 中計算時，記得提早轉型，例如寫成 1LL * a * b。}
+\PYG{c+cm}{多筆測資未清空： 在 Codeforces 或 LeetCode 刷題時，如果題目有多筆測試資料，全域變數、vector、map 或 set 是否在每一輪開始前都有確實執行 clear()？}
+\PYG{c+cm}{未清空會直接污染下一筆測資。}
+
+\PYG{c+cm}{二、陣列與字串處理極小規模： }
+\PYG{c+cm}{陣列長度 N=0 或 N=1。很多迴圈邏輯或雙指標在這種長度下會直接崩潰或發生越界。}
+\PYG{c+cm}{元素全同： 陣列內所有數字都一樣（例如 [2, 2, 2, 2]）。貪心演算法或雙指標有沒有可能因此陷入無窮迴圈？}
+\PYG{c+cm}{找不到目標： 字串或陣列中完全沒有符合條件的元素。程式是否能正確回傳題目要求的值（例如 \PYGZhy{}1 或 0），而不是噴出例外錯誤。}
+\PYG{c+cm}{索引越界（Out of Bounds）： 只要程式碼裡出現 i\PYGZhy{}1、i+1 或是二維陣列的八方位搜尋，務必檢查邊界條件。}
+
+\PYG{c+cm}{三、圖論與樹圖不連通（Disconnected Graph）： }
+\PYG{c+cm}{題目如果沒有保證圖是連通的，你的 DFS 或 BFS 是否能走訪到所有節點？}
+\PYG{c+cm}{執行 Kruskal\PYGZsq{}s 演算法找最小生成樹後，選取的邊數是否確實為 V\PYGZhy{}1？}
+\PYG{c+cm}{自環與重邊（Self\PYGZhy{}loops \PYGZam{} Multiple edges）： 節點自己連向自己，或是節點 A 到節點 B 之間有兩條權重不同的邊。建圖時是否正確處理了這些冗餘資訊？}
+\PYG{c+cm}{退化結構： 樹退化成一條直線（Linked list），這會導致遞迴深度達到 \PYGZdl{}O(N)\PYGZdl{}，容易引發 Stack Overflow；或是退化成一個中心連向所有點的星狀圖（Star graph），考驗時間複雜度。}
+\PYG{c+cm}{孤島節點： 節點數 V=1 但邊數 E=0 的情況。}
+
+\PYG{c+cm}{四、進階資料結構與演算法線段樹（Segment Tree）與 BIT： }
+\PYG{c+cm}{在處理區間查詢 [L, R] 時，是否有考慮到 L \PYGZgt{} R 的非法情況？或是 L = R 時單點更新是否正確？}
+\PYG{c+cm}{掃描線（Sweep Line）： 遇到 X 座標完全相同的多個點時，事件的處理順序是否正確？（通常必須先處理「加入區間」的事件，再處理「移除區間」的事件，才不會造成重疊區間斷裂）。}
+\PYG{c+cm}{DP 初始狀態（Base Cases）： 動態規劃的狀態轉移前，dp 陣列的初始值設定是否合理？求極小值時有沒有確實初始化為 INF？}
+
+\PYG{c+cm}{五、數值與數學運算除以零與模運算（Modulo）： }
+\PYG{c+cm}{任何除法或取餘數操作，除數有沒有可能是 0？}
+\PYG{c+cm}{另外，C++ 的負數取模結果會是負的，遇到減法取模時，必須寫成 (x \PYGZpc{} M + M) \PYGZpc{} M 來保證正數。}
+\PYG{c+cm}{質數與因數邊界： 判斷質數時，有沒有正確處理 0 和 1 既不是質數也不是合數的特例？}
+\PYG{c+cm}{浮點數誤差： 比較兩個浮點數是否相等時，絕對不能直接使用 ==，請使用 abs(A \PYGZhy{} B) \PYGZlt{} 1e\PYGZhy{}9 （或自定義的 epsilon 容差值）來判斷。}
+\PYG{c+cm}{*/}
 \end{MintedVerbatim}
