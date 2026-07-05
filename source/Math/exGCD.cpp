@@ -2,6 +2,9 @@
 應用場景:
 1. 題目要求解 ax + by = gcd(a, b)
 2. 題目要求你算「模逆元 (Modular Inverse)」，但是模數 p 不是質數。
+
+對於 ax + by = c，若 gcd(a, b) 不能整除 c (c不是他的倍數)，就代表沒有整數解
+否則，設g = gcd(a, b)，先解出基本解 x', y'
 */
 long long extgcd(long long a, long long b, long long &x, long long &y) {
     if (b == 0) {

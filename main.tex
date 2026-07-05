@@ -83,6 +83,17 @@
 
 \Algorithm{質數檢查}{單次詢問大數用 \texttt{isPrime}；若有大量詢問則建質數表。}{$\mathcal{O}(\sqrt{N})$}{cpp}{source/Math/Prime.cpp}{}
 
+\begin{table}[h]
+\centering
+\begin{tabular}{ccc}
+Range & 因數總個數 & 最多因數的數 \\
+$10^9$ & 1344 & 735134400 \\
+$2^{31}$ & 1600 & 2095133040 \\
+$10^{18}$ & 103680 & 897612484786617600 \\
+$2^{64}$ & 161280 & 9200527969062830400 \\
+\end{tabular}
+\end{table}
+
 \Algorithm{大數乘法}{未知長度的大數相乘}{$\mathcal{O}(N \times M)$}{cpp}{source/Math/BigNumMultiply.cpp}{}
 
 \Algorithm{排容原理}
@@ -112,7 +123,7 @@
 
 \section{字串}
 
-\Algorithm{KMP 字串匹配}{尋找 \texttt{pattern} 出現位置。\texttt{pi} 陣列可求最小循環節。回傳 0-based 起始位置，未匹配為 $-1$。}
+\Algorithm{KMP 字串匹配}{尋找 \texttt{pattern} 出現位置。\texttt{pi} 陣列可求最小循環節。回傳 0-based 起始位置，未匹配為 $-1$。pi[i] 代表前綴 S[0 $\dots$ i] 中最長的「相等真前後綴」長度。}
 {$\mathcal{O}(N + M)$}{cpp}{source/String/KMP.cpp}{}
 
 \Algorithm{Z-Algorithm 字串匹配}{\texttt{z[i]} 代表 $S$ 與 $S[i \dots N-1]$ 的最長共同前綴。必須是0-based index。}{$\mathcal{O}(N)$}{cpp}{source/String/Z.cpp}{}
@@ -122,7 +133,7 @@
 
 \Algorithm{Trie 字典樹}{字串前綴統計或最大 XOR 問題。必須是0-based index。}{$\mathcal{O}(|S|)$}{cpp}{source/String/Trie.cpp}{}
 
-\Algorithm{AC自動機}{多字串匹配 (Trie + KMP)，必須是0-based index。}{$\mathcal{O}(N + M)$}{cpp}{source/String/AC.cpp}{}
+\Algorithm{AC自動機}{多字串匹配 (Trie + KMP)，必須是0-based index。fail[i] 指向當前狀態最長的、且在 Trie 中存在的後綴狀態。}{$\mathcal{O}(N + M)$}{cpp}{source/String/AC.cpp}{}
 
 \section {圖論}
 
@@ -189,6 +200,83 @@ multigraph 兩點之間有多條直接的路徑 \\
 
 \section{幾何}
 
+\section*{A. Circle and Line}
+點 $P(x_0, y_0)$ \\
+到直線 $L : ax + by + c = 0$ 的距離
+\[
+d(P, L) = \frac{|ax_0 + by_0 + c|}{\sqrt{a^2 + b^2}}
+\]
+兩平行直線 $L_1 : ax + by + c_1 = 0$ \\
+與 $L_2 : ax + by + c_2 = 0$ 的距離
+\[
+d(L_1, L_2) = \frac{|c_1 - c_2|}{\sqrt{a^2 + b^2}}
+\]
+
+\section*{B. Triangle}
+設三角形頂點為 $A(x_1, y_1), B(x_2, y_2), C(x_3, y_3)$ \\
+點 $A, B, C$ 的對邊長分別為 $a, b, c$ \\
+三角形面積為 $\Delta$ \\
+重心為 $(G_x, G_y)$，內心為 $(I_x, I_y)$，\\
+外心為 $(O_x, O_y)$ 和垂心為 $(H_x, H_y)$
+
+\[
+\Delta = \frac{1}{2} \begin{vmatrix} x_1 & y_1 & 1 \\ x_2 & y_2 & 1 \\ x_3 & y_3 & 1 \end{vmatrix}
+\]
+\[
+G_x = \frac{1}{3}(x_1 + x_2 + x_3)
+\]
+\[
+G_y = \frac{1}{3}(y_1 + y_2 + y_3)
+\]
+\[
+I_x = \frac{ax_1 + bx_2 + cx_3}{a + b + c}
+\]
+\[
+I_y = \frac{ay_1 + by_2 + cy_3}{a + b + c}
+\]
+\[
+O_x = \frac{1}{4\Delta} \begin{vmatrix} x_1^2 + y_1^2 & y_1 & 1 \\ x_2^2 + y_2^2 & y_2 & 1 \\ x_3^2 + y_3^2 & y_3 & 1 \end{vmatrix}
+\]
+\[
+O_y = \frac{1}{4\Delta} \begin{vmatrix} x_1 & x_1^2 + y_1^2 & 1 \\ x_2 & x_2^2 + y_2^2 & 1 \\ x_3 & x_3^2 + y_3^2 & 1 \end{vmatrix}
+\]
+\[
+H_x = -\frac{1}{2\Delta} \begin{vmatrix} x_2x_3 + y_2y_3 & y_1 & 1 \\ x_1x_3 + y_1y_3 & y_2 & 1 \\ x_1x_2 + y_1y_2 & y_3 & 1 \end{vmatrix}
+\]
+\[
+H_y = -\frac{1}{2\Delta} \begin{vmatrix} x_1 & x_2x_3 + y_2y_3 & 1 \\ x_2 & x_1x_3 + y_1y_3 & 1 \\ x_3 & x_1x_2 + y_1y_2 & 1 \end{vmatrix}
+\]
+
+任意三角形，重心、外心、垂心共線
+\[
+G_x = \frac{2}{3} O_x + \frac{1}{3} H_x
+\]
+\[
+G_y = \frac{2}{3} O_y + \frac{1}{3} H_y
+\]
+
+\section*{C. Quadrilateral}
+任意凸四邊形 $ABCD$ 的四邊長分別為 $a, b, c, d$ \\
+且已知 $\angle A + \angle C$，則四邊形 $ABCD$ 的面積為
+\[
+\sqrt{(s-a)(s-b)(s-c)(s-d) - \Delta}
+\]
+\textbf{where}
+\[
+s = \frac{a+b+c+d}{2}
+\]
+\[
+\Delta = abcd \cos^2 \left( \frac{A+C}{2} \right)
+\]
+
+特例：若 $ABCD$ 為圓內接四邊形，則 $\Delta = 0$
+
+若只知道其中一角，則可用餘弦定理
+\[
+c^2 = a^2 + b^2 - 2ab \cos(\angle C)
+\]
+求出對角線長，再用海龍計算兩個三角形面積即可。
+
 \Algorithm{點與向量基礎 (Point \& Vector)}
 {幾何基礎，定義struct與operator。包含浮點數誤差處理 \texttt{sign}，以及核心工具 \texttt{dot} (內積) 與 \texttt{cross} (外積)。}
 {$\mathcal{O}(1)$}
@@ -245,15 +333,17 @@ DP通用解題四步驟: \\
 
 \Algorithm{LCS 最長共同子序列(Sequence)}{二維DP與Backtrack找原始子序列}{$\mathcal{O}(NM)$}{cpp}{source/DP/LCS.cpp}{}
 
-\Algorithm{區間DP概念 (最長迴文子序列)}{區間 DP是由字串的內部向外擴張，利用已經算好的較短子字串，來推導出較長子字串的答案。}{$\mathcal{O}(N^2)$}{cpp}{source/DP/Interval.cpp}{}
-
-\Algorithm{跳格子}{給定一組陣列，固定跳躍距離，問你最少需要跳幾次，以及所跳過的格子index。如果數值達到long long，INF需設為1e18或0x3f3f3f3f3f3f3f3f}{$\mathcal{O}(N \times K)$}{cpp}{source/DP/jump.cpp}{}
-
 \Algorithm{LIS / LDS 最長遞增/遞減子序列}
 {嚴格遞增用 \texttt{lower\_bound}，非嚴格改用 \texttt{upper\_bound}。替換策略下的 \texttt{dp} 陣列長度正確，但內容不一定是真實子序列。}
 {$\mathcal{O}(N \log N)$}
 {cpp}{source/DP/LIS_LDS.cpp}
 {}
+
+\Algorithm{LCS 轉 LIS}{兩個序列的「公共子序列」，在序列 A 中的索引必定是嚴格遞增的，所以可以將 B 中的每一個數字 替換成他在 A 中的位置(索引)，接著對新陣列求 LIS，長度就會剛好等於 LCS}{$\mathcal{O} (K log K) \text{K 為元素配對數量}$}{cpp}{source/DP/LCS_to_LIS.cpp}{}
+
+\Algorithm{區間DP概念 (最長迴文子序列)}{區間 DP是由字串的內部向外擴張，利用已經算好的較短子字串，來推導出較長子字串的答案。}{$\mathcal{O}(N^2)$}{cpp}{source/DP/Interval.cpp}{}
+
+\Algorithm{跳格子}{給定一組陣列，固定跳躍距離，問你最少需要跳幾次，以及所跳過的格子index。如果數值達到long long，INF需設為1e18或0x3f3f3f3f3f3f3f3f}{$\mathcal{O}(N \times K)$}{cpp}{source/DP/jump.cpp}{}
 
 \Algorithm{分錢幣問題}
 {完全背包變體。求「方法數」需外層枚舉硬幣、內層枚舉金額(求組合數)。求「最少硬幣數」轉移取 \texttt{min}。於 \texttt{main} 開頭先建表。}
@@ -292,12 +382,14 @@ DP通用解題四步驟: \\
 {$\mathcal{O}(N \log N)$}
 {cpp}{source/Greedy/SweepLineOverlap.cpp}
 {}
-~
+
 \Algorithm{三分搜}
 {求單峰/單谷函數極值。浮點數固定跑 100 次迴圈；整數在 R-L < 2 時改用 for 暴力找極值以避開死迴圈。}
 {$\mathcal{O}(\log_3(\text{值域}))$}
 {cpp}{source/Greedy/TernarySearch.cpp}
 {}
+
+\Algorithm{Josephus 約瑟夫問題}{詢問約瑟夫問題的最後贏家 (存活者)}{$\mathcal{O}(K log N)$}{cpp}{source/Greedy/Josephus.cpp}{}
 
 \section{MISC}
 
