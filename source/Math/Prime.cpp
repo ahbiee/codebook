@@ -1,4 +1,5 @@
-bool isPrime(long long n) { // 一、直接查，只問極少次，且數字可能很大 (n<= 1e14)
+// 一、直接查，只問極少次，且數字可能很大 (n<= 1e14)
+bool isPrime(long long n) { 
     if (n < 2) return false;
     if (n == 2 || n == 3) return true;
     if (n % 2 == 0 || n % 3 == 0) return false;
@@ -15,6 +16,7 @@ vector<int> primes;
 bool is_prime[MAXN];
 
 void build(int n) {
+    primes.clear(); // 初始化
     fill(is_prime, is_prime + n + 1, true); // 初始化全設為true
     is_prime[0] = is_prime[1] = false;
     
@@ -33,6 +35,7 @@ bool isPrime[MAXN];
 int p[MAXN];
 int pSize=0;
 void getPrimes(){
+    pSize = 0; // 初始化
     memset(isPrime, true, sizeof(isPrime));
     isPrime[0] = isPrime[1] = false;
     for(int i=2 ; i<MAXN ; i++){

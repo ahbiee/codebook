@@ -375,7 +375,7 @@ DP通用解題四步驟: \\
 
 \Algorithm{Huffman樹}{每次合併兩堆，成本是兩堆的重量和，求最小總成本}{$\mathcal{O}(N \log N)$}{cpp}{source/Greedy/huffman.cpp}{}
 
-\Algorithm{任務調度問題}{依照懲罰由大到小排序，每項工作依序嘗試可不可以放在 Di−Ti+1,Di−Ti,...,1,0，如果有空閒就放進去，否則延後執行。}{$\mathcal{O}(N)$}{cpp}{source/Greedy/JobWithDeadline.cpp}{}
+\Algorithm{任務調度問題}{依照懲罰由大到小排序，每項工作依序嘗試可不可以放在 Di−Ti+1,Di−Ti,...,1,0，如果有空閒就放進去，否則延後執行。\\僅限 N,deadline $le 10^6$，如果更大須使用 Greedy + MinHeap，只以 deadline 遞增排序，接著走訪所有任務的同時，將懲罰值 push 進 heap。如果當前 Heap 的大小 大於當前任務的 deadline，代表你排了太多任務會逾期。這時直接把 Heap 裡面懲罰值最小的那個 pop 掉。}{$\mathcal{O}(N)$}{cpp}{source/Greedy/JobWithDeadline.cpp}{}
 
 \Algorithm{多機調度問題}{將工作依耗時「由大到小」排序 。每次將工作交給最快空閒出來的機器。}{$\mathcal{O}(N \log N)$}{cpp}{source/Greedy/ProcessorScheduling.cpp}{}
 

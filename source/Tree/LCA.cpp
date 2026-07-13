@@ -1,5 +1,5 @@
 const int MAXN = 2e5 + 5; // 依據題目給定的最大節點數量調整 MAXN
-const int LOG = 19; // LOG = __lg(MAXN) + 1，2e5 的情況下 18+1=19 即可
+const int LOG = 19; // 2e5 的情況下 18+1=19 即可，若數字超 2e5 則 LOG = __lg(MAXN) + 1
 
 vector<int> adj[MAXN];
 int up[MAXN][LOG];

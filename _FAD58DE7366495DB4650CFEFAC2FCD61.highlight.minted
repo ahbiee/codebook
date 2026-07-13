@@ -191,9 +191,9 @@
 
 \PYG{o}{\PYGZhy{}\PYGZhy{}\PYGZhy{}}
 
-\PYG{c+c1}{//!/bin/bash}
+\PYG{c+cp}{\PYGZsh{}，以下內容直接複製貼上到bash即可}
 
-\PYG{c+c1}{// 1. 編譯所有相關程式 (加上 \PYGZhy{}O2 模擬正式評測環境)}
+\PYG{c+cp}{\PYGZsh{} 1. 編譯所有相關程式 (加上 \PYGZhy{}O2 模擬正式評測環境)}
 \PYG{n}{g}\PYG{o}{++}\PYG{+w}{ }\PYG{n}{gen}\PYG{p}{.}\PYG{n}{cpp}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{n}{o}\PYG{+w}{ }\PYG{n}{gen}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{n}{O2}
 \PYG{n}{g}\PYG{o}{++}\PYG{+w}{ }\PYG{n}{sol}\PYG{p}{.}\PYG{n}{cpp}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{n}{o}\PYG{+w}{ }\PYG{n}{sol}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{n}{O2}
 \PYG{n}{g}\PYG{o}{++}\PYG{+w}{ }\PYG{n}{brute}\PYG{p}{.}\PYG{n}{cpp}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{n}{o}\PYG{+w}{ }\PYG{n}{brute}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{n}{O2}
@@ -201,23 +201,24 @@
 \PYG{n}{echo}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}編譯完成，開始對拍...\PYGZdq{}}
 \PYG{n}{echo}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZdq{}}
 
-\PYG{c+c1}{// 2. 進入無限迴圈進行對拍}
+\PYG{c+cp}{\PYGZsh{} 2. 進入無限迴圈進行對拍}
 \PYG{k}{for}\PYG{+w}{ }\PYG{p}{((}\PYG{n}{i}\PYG{o}{=}\PYG{l+m+mi}{1}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{;}\PYG{+w}{ }\PYG{o}{++}\PYG{n}{i}\PYG{p}{));}\PYG{+w}{ }\PYG{k}{do}
-\PYG{+w}{    }\PYG{c+c1}{// 生成測資並存入 in.txt}
+\PYG{+w}{    }
+\PYG{+w}{    }\PYG{c+cp}{\PYGZsh{} 生成測資並存入 in.txt}
 \PYG{+w}{    }\PYG{p}{.}\PYG{o}{/}\PYG{n}{gen}\PYG{+w}{ }\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{in}\PYG{p}{.}\PYG{n}{txt}
 \PYG{+w}{    }
-\PYG{+w}{    }\PYG{c+c1}{// 將測資餵給正確的暴力解，輸出到 ans.txt}
+\PYG{+w}{    }\PYG{c+cp}{\PYGZsh{} 將測資餵給正確的暴力解，輸出到 ans.txt}
 \PYG{+w}{    }\PYG{p}{.}\PYG{o}{/}\PYG{n}{brute}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{n}{in}\PYG{p}{.}\PYG{n}{txt}\PYG{+w}{ }\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{ans}\PYG{p}{.}\PYG{n}{txt}
 \PYG{+w}{    }
-\PYG{+w}{    }\PYG{c+c1}{// 將測資餵給你寫的待測程式，輸出到 out.txt}
+\PYG{+w}{    }\PYG{c+cp}{\PYGZsh{} 將測資餵給你寫的待測程式，輸出到 out.txt}
 \PYG{+w}{    }\PYG{p}{.}\PYG{o}{/}\PYG{n}{sol}\PYG{+w}{ }\PYG{o}{\PYGZlt{}}\PYG{+w}{ }\PYG{n}{in}\PYG{p}{.}\PYG{n}{txt}\PYG{+w}{ }\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{out}\PYG{p}{.}\PYG{n}{txt}
 \PYG{+w}{    }
-\PYG{+w}{    }\PYG{c+c1}{// 使用 diff 比對兩個輸出檔 (\PYGZhy{}w 忽略行尾與空白差異，也可不寫)}
-\PYG{+w}{    }\PYG{k}{if}\PYG{+w}{ }\PYG{n}{diff}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{n}{w}\PYG{+w}{ }\PYG{n}{out}\PYG{p}{.}\PYG{n}{txt}\PYG{+w}{ }\PYG{n}{ans}\PYG{p}{.}\PYG{n}{txt}\PYG{+w}{ }\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{o}{/}\PYG{n}{dev}\PYG{o}{/}\PYG{n}{null}\PYG{p}{;}\PYG{+w}{ }\PYG{n}{then}\PYG{+w}{ }\PYG{c+c1}{//}
-\PYG{+w}{        }\PYG{c+c1}{// 如果沒有差異，印出 AC}
+\PYG{+w}{    }\PYG{c+cp}{\PYGZsh{} 使用 diff 比對兩個輸出檔 (\PYGZhy{}w 忽略行尾與空白差異)}
+\PYG{+w}{    }\PYG{k}{if}\PYG{+w}{ }\PYG{n}{diff}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{n}{w}\PYG{+w}{ }\PYG{n}{out}\PYG{p}{.}\PYG{n}{txt}\PYG{+w}{ }\PYG{n}{ans}\PYG{p}{.}\PYG{n}{txt}\PYG{+w}{ }\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{o}{/}\PYG{n}{dev}\PYG{o}{/}\PYG{n}{null}\PYG{p}{;}\PYG{+w}{ }\PYG{n}{then}
+\PYG{+w}{        }\PYG{c+cp}{\PYGZsh{} 如果沒有差異，印出 AC}
 \PYG{+w}{        }\PYG{n}{echo}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}Test Case \PYGZdl{}i: AC\PYGZdq{}}
 \PYG{+w}{    }\PYG{k}{else}
-\PYG{+w}{        }\PYG{c+c1}{// 如果有差異，停止腳本並報錯}
+\PYG{+w}{        }\PYG{c+cp}{\PYGZsh{} 如果有差異，停止腳本並報錯}
 \PYG{+w}{        }\PYG{n}{echo}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}Test Case \PYGZdl{}i: WA! 發現錯誤測資！\PYGZdq{}}
 \PYG{+w}{        }\PYG{k}{break}
 \PYG{+w}{    }\PYG{n}{fi}
@@ -226,25 +227,28 @@
 \PYG{n}{echo}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}對拍結束。\PYGZdq{}}
 
 
-\PYG{c+cm}{/*}
+\PYG{c+cm}{/* }
+\PYG{c+cm}{執行方法}
+
+\PYG{c+cm}{1. 準備檔案}
 \PYG{c+cm}{在同一個資料夾下，準備好四個檔案：}
 \PYG{c+cm}{sol.cpp：你寫的，會吃 WA 但跑很快的最佳化程式碼。}
 \PYG{c+cm}{brute.cpp：你寫的，保證絕對正確，但肯定會 TLE 的暴力解程式碼（例如 O(N!) 枚舉、O(N\PYGZca{}3) 暴力轉移等）。}
 \PYG{c+cm}{gen.cpp：上述的測資生成器。}
 \PYG{c+cm}{checker.sh：上述的 Bash 腳本。}
 
+\PYG{c+cm}{2. }
 \PYG{c+cm}{打開 gen.cpp，修改 main 函式裡面的變數。}
 \PYG{c+cm}{測資規模（如 N 或數值範圍）一定要調小。如果 N 設到 10\PYGZca{}5，找到錯誤測資也無法用手算推導。}
 \PYG{c+cm}{通常設 N \PYGZlt{}= 10，數值 \PYGZlt{}= 100 就足夠觸發大部分的 Edge case。}
 
-\PYG{c+cm}{打開 terminal 執行}
-\PYG{c+cm}{```}
-\PYG{c+cm}{// 賦予腳本執行權限 (只需要做一次)}
+\PYG{c+cm}{3. 切換到該資料夾目錄下後，打開 terminal 執行}
+
+\PYG{c+cm}{4. 賦予腳本執行權限 (只需要做一次)}
 \PYG{c+cm}{chmod +x checker.sh}
 
-\PYG{c+cm}{// 執行對拍}
+\PYG{c+cm}{5. 執行對拍}
 \PYG{c+cm}{./checker.sh}
-\PYG{c+cm}{```}
 
 \PYG{c+cm}{當螢幕印出 Test Case X: WA! 發現錯誤測資！ 時，腳本會自動停止。此時你該資料夾下會擁有：}
 \PYG{c+cm}{in.txt：引發錯誤的極小測資。（打開它，這就是你一直找不到的 Counter Example）。}

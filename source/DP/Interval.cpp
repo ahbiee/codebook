@@ -77,7 +77,7 @@ struct IntervalDP {
                 bool can_del_i = (dp[i + 1][j] + 1 == dp[i][j]); // 選擇刪除i的
                 bool can_del_j = (dp[i][j - 1] + 1 == dp[i][j]); // 選擇刪除j的
 
-                char best_c = 127; // 用來尋找字典序最小的字元 (ASCII 上限)
+                int best_c = 256; // 用來尋找字典序最小的字元 (ASCII 上限)
                 int choice = -1;   // 1: 替換, 2: 處理左側, 3: 處理右側
 
                 // 評估替換策略 (選擇兩者中較小的字元)
@@ -97,8 +97,8 @@ struct IntervalDP {
                 }
 
                 // 寫入最佳字元
-                left_part += best_c;
-                right_part += best_c;
+                left_part += (char)best_c;
+                right_part += (char)best_c;
 
                 // 根據最佳策略移動指標
                 if (choice == 1) { i++; j--; }

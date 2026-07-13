@@ -190,9 +190,9 @@ int main() {
 
 ---
 
-//!/bin/bash
+#，以下內容直接複製貼上到bash即可
 
-// 1. 編譯所有相關程式 (加上 -O2 模擬正式評測環境)
+# 1. 編譯所有相關程式 (加上 -O2 模擬正式評測環境)
 g++ gen.cpp -o gen -O2
 g++ sol.cpp -o sol -O2
 g++ brute.cpp -o brute -O2
@@ -200,23 +200,24 @@ g++ brute.cpp -o brute -O2
 echo "編譯完成，開始對拍..."
 echo "-------------------"
 
-// 2. 進入無限迴圈進行對拍
+# 2. 進入無限迴圈進行對拍
 for ((i=1; ; ++i)); do
-    // 生成測資並存入 in.txt
+    
+    # 生成測資並存入 in.txt
     ./gen > in.txt
     
-    // 將測資餵給正確的暴力解，輸出到 ans.txt
+    # 將測資餵給正確的暴力解，輸出到 ans.txt
     ./brute < in.txt > ans.txt
     
-    // 將測資餵給你寫的待測程式，輸出到 out.txt
+    # 將測資餵給你寫的待測程式，輸出到 out.txt
     ./sol < in.txt > out.txt
     
-    // 使用 diff 比對兩個輸出檔 (-w 忽略行尾與空白差異，也可不寫)
-    if diff -w out.txt ans.txt > /dev/null; then //
-        // 如果沒有差異，印出 AC
+    # 使用 diff 比對兩個輸出檔 (-w 忽略行尾與空白差異)
+    if diff -w out.txt ans.txt > /dev/null; then
+        # 如果沒有差異，印出 AC
         echo "Test Case $i: AC"
     else
-        // 如果有差異，停止腳本並報錯
+        # 如果有差異，停止腳本並報錯
         echo "Test Case $i: WA! 發現錯誤測資！"
         break
     fi
@@ -225,25 +226,28 @@ done
 echo "對拍結束。"
 
 
-/*
+/* 
+執行方法
+
+1. 準備檔案
 在同一個資料夾下，準備好四個檔案：
 sol.cpp：你寫的，會吃 WA 但跑很快的最佳化程式碼。
 brute.cpp：你寫的，保證絕對正確，但肯定會 TLE 的暴力解程式碼（例如 O(N!) 枚舉、O(N^3) 暴力轉移等）。
 gen.cpp：上述的測資生成器。
 checker.sh：上述的 Bash 腳本。
 
+2. 
 打開 gen.cpp，修改 main 函式裡面的變數。
 測資規模（如 N 或數值範圍）一定要調小。如果 N 設到 10^5，找到錯誤測資也無法用手算推導。
 通常設 N <= 10，數值 <= 100 就足夠觸發大部分的 Edge case。
 
-打開 terminal 執行
-```
-// 賦予腳本執行權限 (只需要做一次)
+3. 切換到該資料夾目錄下後，打開 terminal 執行
+
+4. 賦予腳本執行權限 (只需要做一次)
 chmod +x checker.sh
 
-// 執行對拍
+5. 執行對拍
 ./checker.sh
-```
 
 當螢幕印出 Test Case X: WA! 發現錯誤測資！ 時，腳本會自動停止。此時你該資料夾下會擁有：
 in.txt：引發錯誤的極小測資。（打開它，這就是你一直找不到的 Counter Example）。

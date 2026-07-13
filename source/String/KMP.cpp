@@ -15,10 +15,10 @@ vector<int> build_pi(const string& s) {
 int getMinimumPeriod(const string& s) {
     int n = s.length();
     if (n == 0) return 0;
-    vector<int> pi = build_pi(s);
+    vector<int> pi = build_pi(s); // 取得 index 陣列
 
     // 取得整個字串的最長相同前後綴長度
-    int maxPrefixLength = pi[n - 1];
+    int maxPrefixLength = pi[n - 1] + 1; // 若 pi[n-1] == -1，則長度為0
 
     // 計算可能的最小循環節長度
     int period = n - maxPrefixLength;
@@ -39,7 +39,7 @@ vector<int> kmp(const string& text, const string& pattern) {
     if (pattern.empty()) return res;
     
     vector<int> pi = build_pi(pattern);
-    for (int i = 0, j = =1; i < text.length(); ++i) {
+    for (int i = 0, j = -1; i < text.length(); ++i) {
         while (j >= 0 && text[i] != pattern[j+1]) j = pi[j];
         if (text[i] == pattern[j+1]) j++;
         
