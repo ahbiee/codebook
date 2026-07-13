@@ -1,0 +1,78 @@
+\contentsline {section}{\numberline {1}你是否有...}{1}{}%
+\contentsline {subsection}{\numberline {1.1}嘗試...}{1}{}%
+\contentsline {subsection}{\numberline {1.2}檢查...}{1}{}%
+\contentsline {section}{\numberline {2}資料結構}{1}{}%
+\contentsline {subsection}{\numberline {2.1}BIT (Fenwick Tree)}{1}{}%
+\contentsline {subsection}{\numberline {2.2}Segment Tree 線段樹}{2}{}%
+\contentsline {subsection}{\numberline {2.3}Prefix Sum(前綴和) 和 Difference(差分)}{2}{}%
+\contentsline {subsection}{\numberline {2.4}Monotonic Stack 單調棧}{2}{}%
+\contentsline {subsection}{\numberline {2.5}Monotonic Queue 單調隊列}{3}{}%
+\contentsline {section}{\numberline {3}數論}{3}{}%
+\contentsline {subsection}{\numberline {3.1}快速冪}{3}{}%
+\contentsline {subsection}{\numberline {3.2}模逆元與費馬小定理}{3}{}%
+\contentsline {subsection}{\numberline {3.3}組合數 C(n,k)}{3}{}%
+\contentsline {subsection}{\numberline {3.4}質數檢查}{3}{}%
+\contentsline {subsection}{\numberline {3.5}大數乘法}{3}{}%
+\contentsline {subsection}{\numberline {3.6}排容原理}{4}{}%
+\contentsline {subsection}{\numberline {3.7}擴展歐幾里得 (Extended GCD)}{4}{}%
+\contentsline {subsection}{\numberline {3.8}尤拉函數}{4}{}%
+\contentsline {subsection}{\numberline {3.9}數論分塊}{4}{}%
+\contentsline {section}{\numberline {4}字串}{4}{}%
+\contentsline {subsection}{\numberline {4.1}KMP 字串匹配}{4}{}%
+\contentsline {subsection}{\numberline {4.2}Z-Algorithm 字串匹配}{4}{}%
+\contentsline {subsection}{\numberline {4.3}Manacher 迴文判斷}{5}{}%
+\contentsline {subsection}{\numberline {4.4}Trie 字典樹}{5}{}%
+\contentsline {subsection}{\numberline {4.5}AC自動機}{5}{}%
+\contentsline {section}{\numberline {5}圖論}{6}{}%
+\contentsline {subsection}{\numberline {5.1}BFS與拓樸排序}{6}{}%
+\contentsline {subsection}{\numberline {5.2}DFS}{6}{}%
+\contentsline {subsection}{\numberline {5.3}Dijkstra 單源最短路徑}{7}{}%
+\contentsline {subsection}{\numberline {5.4}SPFA 單源最短路徑}{7}{}%
+\contentsline {subsection}{\numberline {5.5}Floyd-Warshall 多源最短路徑}{7}{}%
+\contentsline {subsection}{\numberline {5.6}二分圖判定 (著色問題)}{7}{}%
+\contentsline {subsection}{\numberline {5.7}割點與雙連通分量}{8}{}%
+\contentsline {subsection}{\numberline {5.8}匈牙利演算法}{8}{}%
+\contentsline {subsection}{\numberline {5.9}KM演算法}{8}{}%
+\contentsline {subsection}{\numberline {5.10}Dinic 最大流}{9}{}%
+\contentsline {section}{\numberline {6}幾何}{9}{}%
+\contentsline {subsection}{\numberline {6.1}點與向量基礎 (Point \& Vector)}{10}{}%
+\contentsline {subsection}{\numberline {6.2}判斷線段、矩形相交 (Segment Intersection)}{10}{}%
+\contentsline {subsection}{\numberline {6.3}點與線段關係 (Point \& Line)}{10}{}%
+\contentsline {subsection}{\numberline {6.4}任意多邊形面積}{11}{}%
+\contentsline {subsection}{\numberline {6.5}凸包 Convex Hull}{11}{}%
+\contentsline {section}{\numberline {7}樹論}{11}{}%
+\contentsline {subsection}{\numberline {7.1}Disjoint Set}{11}{}%
+\contentsline {subsection}{\numberline {7.2}Kruskal 最小生成樹}{11}{}%
+\contentsline {subsection}{\numberline {7.3}次小生成樹}{12}{}%
+\contentsline {subsection}{\numberline {7.4}最近共同祖先 LCA}{12}{}%
+\contentsline {section}{\numberline {8}DP}{12}{}%
+\contentsline {subsection}{\numberline {8.1}01 Knapsack 背包}{12}{}%
+\contentsline {subsection}{\numberline {8.2}LCS 最長共同子序列(Sequence)}{13}{}%
+\contentsline {subsection}{\numberline {8.3}LIS / LDS 最長遞增/遞減子序列}{13}{}%
+\contentsline {subsection}{\numberline {8.4}LCS 轉 LIS}{14}{}%
+\contentsline {subsection}{\numberline {8.5}區間DP概念 (最長迴文子序列)}{14}{}%
+\contentsline {subsection}{\numberline {8.6}跳格子}{15}{}%
+\contentsline {subsection}{\numberline {8.7}分錢幣問題}{15}{}%
+\contentsline {subsection}{\numberline {8.8}Kadane's Algorithm (最大子陣列和)}{15}{}%
+\contentsline {section}{\numberline {9}Greedy}{15}{}%
+\contentsline {subsection}{\numberline {9.1}一維區間全覆蓋}{15}{}%
+\contentsline {subsection}{\numberline {9.2}間格跳躍}{15}{}%
+\contentsline {subsection}{\numberline {9.3}最大不重疊區間}{16}{}%
+\contentsline {subsection}{\numberline {9.4}最小覆蓋區間}{16}{}%
+\contentsline {subsection}{\numberline {9.5}區間選點問題}{16}{}%
+\contentsline {subsection}{\numberline {9.6}最小化最大延遲問題}{16}{}%
+\contentsline {subsection}{\numberline {9.7}Huffman樹}{16}{}%
+\contentsline {subsection}{\numberline {9.8}任務調度問題}{16}{}%
+\contentsline {subsection}{\numberline {9.9}多機調度問題}{17}{}%
+\contentsline {subsection}{\numberline {9.10}最大區間重疊數 Sweep Line}{17}{}%
+\contentsline {subsection}{\numberline {9.11}Josephus 約瑟夫問題}{17}{}%
+\contentsline {section}{\numberline {10}Search \& Techniques}{17}{}%
+\contentsline {subsection}{\numberline {10.1}Binary Search}{17}{}%
+\contentsline {subsection}{\numberline {10.2}Ternary Search}{17}{}%
+\contentsline {subsection}{\numberline {10.3}Two Pointer 雙指針}{18}{}%
+\contentsline {subsection}{\numberline {10.4}Sliding Window 滑動窗口}{18}{}%
+\contentsline {section}{\numberline {11}MISC}{18}{}%
+\contentsline {subsection}{\numberline {11.1}模板}{18}{}%
+\contentsline {subsection}{\numberline {11.2}一些概念}{18}{}%
+\contentsline {subsection}{\numberline {11.3}C++函式庫}{18}{}%
+\contentsline {subsection}{\numberline {11.4}對拍器}{19}{}%

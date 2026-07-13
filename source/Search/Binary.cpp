@@ -1,4 +1,4 @@
-Binary Search = 找答案，但不一定是對陣列二分搜
+Binary Search = 找答案, 但不一定是對陣列二分搜
 
 // === 基本找值 === 
 // 需要在sorted array
