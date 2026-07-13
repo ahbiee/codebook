@@ -762,28 +762,15 @@ for (int i = 1; i < MAXN; ++i) fact[i] = fact[i - 1] * i % MOD;
 invFact[MAXN - 1] = fast_pow(fact[MAXN - 1], MOD - 2); // 使用快速冪
 for(int i=MAXN-2;i >= 1; --i)invFact[i]=invFact[i + 1] * (i + 1) % MOD;
 
-用法: 單次詢問大數用 isPrime；若有大量詢問則建質數表。
-時間複雜度: O(
-1 bool isPrime(long long n) { // 一、直接查，只問極少次，且數字可能很大 (n<=
+for (ll j = (ll)i * i; j <= n; j += i) is_prime[j] = false;
 
-N )
+}
+
+}
 
 √
 
-1e14)
-
-fill(is_prime, is_prime + n + 1, true); // 初始化全設為 true
-is_prime[0] = is_prime[1] = false;
-
-primes.push_back(i); // 放到 primes vector 中記錄
-
-for (ll j = (ll)i * i; j <= n; j += i) is_prime[j] = false;
-
-if (n % i == 0 || n % (i + 2) == 0) return false;
-
-}
-
-}
+N )
 
 if (is_prime[i]) {
 
@@ -794,11 +781,22 @@ for (int i = 2; i <= n; ++i) {
 
 for (long long i = 5; i * i <= n; i += 6) {
 
+if (n % i == 0 || n % (i + 2) == 0) return false;
+
+primes.push_back(i); // 放到 primes vector 中記錄
+
 if (n < 2) return false;
 if (n == 2 || n == 3) return true;
 if (n % 2 == 0 || n % 3 == 0) return false;
 
-2
+primes.clear(); // 初始化
+fill(is_prime, is_prime + n + 1, true); // 初始化全設為 true
+is_prime[0] = is_prime[1] = false;
+
+用法: 單次詢問大數用 isPrime；若有大量詢問則建質數表。
+時間複雜度: O(
+1 // 一、直接查，只問極少次，且數字可能很大 (n<= 1e14)
+2 bool isPrime(long long n) {
 3
 4
 5
@@ -806,15 +804,15 @@ if (n % 2 == 0 || n % 3 == 0) return false;
 7
 8
 9
-10 }
-11
-12 // 二、埃式篩，建質數表，大量查詢 1 ~ 10^7 內的質數
-13 const int MAXN = 1e7 + 10;
-14 vector<int> primes;
-15 bool is_prime[MAXN];
-16
-17 void build(int n) {
-18
+10
+11 }
+12
+13 // 二、埃式篩，建質數表，大量查詢 1 ~ 10^7 內的質數
+14 const int MAXN = 1e7 + 10;
+15 vector<int> primes;
+16 bool is_prime[MAXN];
+17
+18 void build(int n) {
 19
 20
 21
@@ -824,16 +822,16 @@ if (n % 2 == 0 || n % 3 == 0) return false;
 25
 26
 27
-28 }
+28
 29
-30 // 三、歐拉篩
-31 #define MAXN 47000 //sqrt(2^31)=46,340...
-32 bool isPrime[MAXN];
-33 int p[MAXN];
-34 int pSize=0;
-35 void getPrimes(){
-36
-37
+30 }
+31
+32 // 三、歐拉篩
+33 #define MAXN 47000 //sqrt(2^31)=46,340...
+34 bool isPrime[MAXN];
+35 int p[MAXN];
+36 int pSize=0;
+37 void getPrimes(){
 38
 39
 40
@@ -841,31 +839,34 @@ if (n % 2 == 0 || n % 3 == 0) return false;
 42
 43
 44
-45 }
+45
 46
 47
-48 /*
-49 problem :
-50 給定整數 N，求 N 最少可以拆成多少個質數的和。
-51 如果 N 是質數，則答案為 1。
-52 如果 N 是偶數 (N!=2)，則答案為 2(強歌德巴赫猜想)。
-53 如果 N 是奇數且 N−2 是質數，則答案為 2(2+ 質數)。
-54 其他狀況答案為 3(弱歌德巴赫猜想)。
-55 */
-56 bool isPrime(int n){
-57
-58
-59
+48 }
+49
+50
+51 /*
+52 problem :
+53 給定整數 N，求 N 最少可以拆成多少個質數的和。
+54 如果 N 是質數，則答案為 1。
+55 如果 N 是偶數 (N!=2)，則答案為 2(強歌德巴赫猜想)。
+56 如果 N 是奇數且 N−2 是質數，則答案為 2(2+ 質數)。
+57 其他狀況答案為 3(弱歌德巴赫猜想)。
+58 */
+59 bool isPrime(int n){
 60
 61
-62 }
-63 int main(){
+62
+63
 64
-65
-66
+65 }
+66 int main(){
 67
 68
-69 }
+69
+70
+71
+72 }
 
 int n;
 cin>>n;
@@ -873,9 +874,13 @@ if(isPrime(n)) cout<<"1\n";
 else if(n%2==0||isPrime(n-2)) cout<<"2\n";
 else cout<<"3\n";
 
+pSize = 0; // 初始化
 memset(isPrime, true, sizeof(isPrime));
 isPrime[0] = isPrime[1] = false;
 for(int i=2 ; i<MAXN ; i++){
+
+if(isPrime[i]) p[pSize++] = i;
+for(int j=0 ; j<pSize && i*p[j] <= MAXN ; ++j){
 
 isPrime[i*p[j]] = false;
 if(i%p[j]==0) break;
@@ -891,9 +896,6 @@ for(int i=2;i<n;++i){
 }
 
 }
-
-if(isPrime[i]) p[pSize++] = i;
-for(int j=0 ; j<pSize && i*p[j] <= MAXN ; ++j){
 
 Range
 109
@@ -951,20 +953,19 @@ if (a.empty() || b.empty()) return {0};
 if ((a.size() == 1 && a[0] == 0) || (b.size() == 1 && b[0] == 0)) return
 {0};
 
-18
-19
-
-vector<int> c(a.size() + b.size(), 0); // 結果的最大可能長度為兩者長度相加
-
 FJCU – UltraGrammer
 
 Page 4 of 20
 
+18
+19
 20
 21
 22
 23
 24
+
+vector<int> c(a.size() + b.size(), 0); // 結果的最大可能長度為兩者長度相加
 
 for (size_t i = 0; i < a.size(); i++) {
 
@@ -1238,18 +1239,18 @@ return ans;
 
 長度
 
+// 取得整個字串的最長相同前後綴長度
+int maxPrefixLength = pi[n - 1] + 1; // 若 pi[n-1] == -1，則長度為 0
+
 }
 return pi;
 
 // 計算可能的最小循環節長度
 int period = n - maxPrefixLength;
 
-// 取得整個字串的最長相同前後綴長度
-int maxPrefixLength = pi[n - 1];
-
 int n = s.length();
 if (n == 0) return 0;
-vector<int> pi = build_pi(s);
+vector<int> pi = build_pi(s); // 取得 index 陣列
 
 int m = s.length();
 vector<int> pi(m, -1);
@@ -1318,7 +1319,7 @@ while (j >= 0 && text[i] != pattern[j+1]) j = pi[j];
 if (text[i] == pattern[j+1]) j++;
 
 vector<int> pi = build_pi(pattern);
-for (int i = 0, j = =1; i < text.length(); ++i) {
+for (int i = 0, j = -1; i < text.length(); ++i) {
 
 // 檢查總長度是否能被 period 整除
 if (maxPrefixLength > 0 && n % period == 0) {
@@ -2852,6 +2853,8 @@ bcc_nodes.push_back({1});
 
 分為左 (S)、右 (T) 兩側，以及 left 陣列紀錄右側所選的對象
 
+// T[v] 記錄右側點 v 在單次 DFS 中是否已拜訪
+
 時間複雜度: O(V · E)
 1 #include <bits/stdc++.h>
 2 using namespace std;
@@ -2859,17 +2862,14 @@ bcc_nodes.push_back({1});
 4 const int MAXN = 30005; // 依題目需求調整右側/左側最大點數
 5 int n, m, e;
 6 vector<int> G[MAXN];
-7 int lef[MAXN];
+7 int L[MAXN];
 8 bool T[MAXN];
 9
 
 // n: 左側點數, m: 右側點數
 // G[u] 存左側點 u 連向右側的哪些點
-// lef[v] 記錄右側點 v 配對到的左側點
-// T[v] 記錄右側點 v 在單次 DFS 中是否已拜訪
 
-int ans = 0;
-memset(left, -1, sizeof(left)); // 依照需求假設點編號為 0-based 或 1-based
+// L[v] 記錄右側點 v 配對到的左側點
 
 // 假設左側點編號為 1 ~ n (若為 0 ~ n-1 請自行改迴圈範圍)
 for (int i = 1; i <= n; ++i) {
@@ -2884,11 +2884,11 @@ return false;
 if (T[v]) continue;
 T[v] = true;
 
-lef[v] = u; // 配對成功
+L[v] = u; // 配對成功
 return true;
 
 // 若右側點 v 還沒選對象，或其原本對象可以讓出位子
-if (lef[v] == -1 || match(lef[v])) {
+if (L[v] == -1 || match(L[v])) {
 
 10 bool match(int u) { // 核心 DFS：幫左側點 u 尋找增廣路徑
 11
@@ -2956,6 +2956,9 @@ G[i].clear();
 }
 
 }
+
+int ans = 0;
+memset(L, -1, sizeof(L)); // 依照需求假設點編號為 0-based 或 1-based
 
 if (v == p) continue; // 不走回頭路 (父節點)
 
@@ -4611,7 +4614,10 @@ return {mst_weight, sec_mst_weight};
 20, 21, . . . , 2i 步的祖先是誰
 時間複雜度: 最差O(N )
 1 const int MAXN = 2e5 + 5; // 依據題目給定的最大節點數量調整 MAXN
-2 const int LOG = 19; // LOG = __lg(MAXN) + 1，2e5 的情況下 18+1=19 即可
+2 const int LOG = 19; // 2e5 的情況下 18+1=19 即可，若數字超 2e5 則 LOG =
+
+__lg(MAXN) + 1
+
 3
 4 vector<int> adj[MAXN];
 5 int up[MAXN][LOG];
@@ -4619,6 +4625,20 @@ return {mst_weight, sec_mst_weight};
 7
 8 // DFS 預處理深度與 2^i 祖先
 9 void dfs(int u, int p) {
+
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22 }
 
 up[u][0] = p; // 2^0 的祖先就是直屬父親 p
 
@@ -4638,21 +4658,6 @@ dfs(v, u);
 
 }
 
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22 }
-23
-
 Page 12 of 20
 
 for (int i = LOG - 1; i >= 0; --i) { // 同時往上跳，尋找 LCA 的直屬子節點
@@ -4671,6 +4676,7 @@ if (u == v) return u;
 for (int i = LOG - 1; i >= 0; --i) { // 深度對齊
 if (depth[u] - (1 << i) >= depth[v]) {
 
+23
 24 int get_lca(int u, int v) { // 查詢最近公共祖先 (LCA)
 25
 26
@@ -4825,15 +4831,14 @@ DP 通用解題四步驟:
 for (int j = 0; j < w[i]; ++j) // 如果當前考慮重量小於 Wi，代表沒辦法裝下第
 i 個物品，直接繼承前一項
 
-for (int j = w[i]; j <= MAXW; ++j) // 否則就用 transition function 找 max
-
-dp[i][j] = dp[i - 1][j];
-
 25
 26
 27
 28 }
-29 cout << dp[MAXN][MAXW] << '\n'; // 最終答案在最右下那格
+
+dp[i][j] = dp[i - 1][j];
+
+for (int j = w[i]; j <= MAXW; ++j) // 否則就用 transition function 找 max
 
 dp[i][j] = max(dp[i - 1][j], dp[i - 1][j - w[i]] + v[i]);
 
@@ -4841,6 +4846,7 @@ dp[i][j] = max(dp[i - 1][j], dp[i - 1][j - w[i]] + v[i]);
 
 Page 13 of 20
 
+29 cout << dp[MAXN][MAXW] << '\n'; // 最終答案在最右下那格
 30
 31 /*
 32 ===== 滾動陣列優化 =====
@@ -5018,6 +5024,7 @@ return 0;
 
 126
 127 題解：首先判斷總重是否為二的倍數，如果不是就直接輸出 NO 然後下一個 case
+
 128 如果可以的話就使用一維 DP 解，總重/2 當作 MAXW (dp 大小)，每件行李的重量是價值，
 
 看是否存在 dp[MAXW] = MAXW (在裝入一半行李的情況下，總重剛好也是一半)
@@ -5204,12 +5211,11 @@ j--;
 
 於 LDS），記錄每個位置開頭的 LDS 長度。兩者相加減 1 的最大值即為所求。
 
-17 */
-
 FJCU – UltraGrammer
 
 Page 14 of 20
 
+17 */
 18
 19 // 1. 最長遞增子序列 (LIS) - (嚴格) 遞增
 20 int get_lis(const vector<int>& arr) {
@@ -5413,7 +5419,6 @@ if (n == 0) return 0;
 15
 16
 17
-18
 
 // dp[i][j] 代表字串 s 區間 [i, j] 內的最長迴文子序列長度
 vector<vector<int>> dp(n, vector<int>(n, 0));
@@ -5425,156 +5430,7 @@ for (int i = n - 1; i >= 0; --i) {
 // Base case: 單一字元本身就是長度為 1 的迴文
 dp[i][i] = 1;
 
-// j 從 i 的下一個位置開始向右擴展
-
-for (int j = i + 1; j < n; ++j) {
-
-if (s[i] == s[j]) {
-
-// 若頭尾字元相同，長度為內部區間的迴文長度 + 2
-// 因為 i 是倒著掃，j 是正著掃，所以 dp[i+1][j-1] 絕對已經
-算過了
-dp[i][j] = dp[i + 1][j - 1] + 2;
-
-} else {
-
-// 若頭尾不同，看是捨棄左邊 (s[i]) 還是捨棄右邊 (s[j]) 比較
-長
-dp[i][j] = max(dp[i + 1][j], dp[i][j - 1]);
-
-}
-
-}
-
-}
-
-// 最終答案就是涵蓋整個字串的區間 [0, n-1]
-return dp[0][n - 1];
-
-}
-
-// 求解變成迴文的最少編輯距離 (包含插入、刪除、替換)
-// 如果求最少 插入/刪除 字元，才能讓字串變成迴文的題目，請用 strlen - LPS(s)
-pair<int, string> solvePalindromicDistance(const string& s) {
-
-// 1. 找最少編輯次數
-int n = s.length();
-if (n == 0) return {0, ""};
-
-// dp[i][j] 代表將字串 s 區間 [i, j] 變成迴文的最少編輯次數
-vector<vector<int>> dp(n, vector<int>(n, 0));
-
-// i 從字串的「尾巴」往「頭」掃
-for (int i = n - 1; i >= 0; --i) {
-
-dp[i][i] = 0; // 單一字元本身就是迴文，編輯距離為 0
-
-// j 從 i 的下一個位置開始向右擴展
-for (int j = i + 1; j < n; ++j) {
-
-if (s[i] == s[j]) {
-
-// 頭尾相同，不需要編輯
-// 當 j == i+1 時，dp[i+1][j-1] 即 dp[i+1][i] 會是 0 (因
-為預設值)
-dp[i][j] = dp[i + 1][j - 1];
-
-} else {
-
-// 頭尾不同，取三種操作的最小值 + 1
-// 1. dp[i+1][j]
-// 2. dp[i][j-1]
-// 3. dp[i+1][j-1] -> 直接把 s[i] 替換成 s[j] 或反之
-dp[i][j] = min({dp[i + 1][j], dp[i][j - 1], dp[i + 1][j
-- 1]}) + 1; // 如果有定義 cost 要記得改
-
--> 插入/刪除對應 s[i]
--> 插入/刪除對應 s[j]
-
-}
-
-}
-
-}
-
-// 2. 狀態回溯 (Backtracking)
-string left_part = "", right_part = "";
-int i = 0, j = n - 1;
-
-while (i < j) {
-
-if (s[i] == s[j]) { // 若頭尾相同，直接加入答案
-
-left_part += s[i];
-right_part += s[i];
-i++; j--;
-
-} else {
-
-= (dp[i + 1][j - 1] + 1 == dp[i][j]); // 選擇
-
-// 若頭尾不同，檢查是哪條最佳路徑轉移過來的
-bool can_sub
-用替代的
-bool can_del_i = (dp[i + 1][j] + 1 == dp[i][j]); // 選擇刪除
-i 的
-bool can_del_j = (dp[i][j - 1] + 1 == dp[i][j]); // 選擇刪除
-j 的
-
-char best_c = 127; // 用來尋找字典序最小的字元 (ASCII 上限)
-int choice = -1;
-
-// 1: 替換, 2: 處理左側, 3: 處理右側
-
-// 評估替換策略 (選擇兩者中較小的字元)
-if (can_sub) {
-
-char c = min(s[i], s[j]);
-if (c < best_c) { best_c = c; choice = 1; }
-
-}
-// 評估處理左側策略 (對應 s[i])
-if (can_del_i) {
-
-char c = s[i];
-if (c < best_c) { best_c = c; choice = 2; }
-
-}
-// 評估處理右側策略 (對應 s[j])
-if (can_del_j) {
-
-char c = s[j];
-if (c < best_c) { best_c = c; choice = 3; }
-
-}
-
-// 寫入最佳字元
-left_part += best_c;
-right_part += best_c;
-
-// 根據最佳策略移動指標
-if (choice == 1) { i++; j--; }
-else if (choice == 2) { i++; }
-else if (choice == 3) { j--; }
-
-}
-
-}
-
-// 若最後指標交會於同一個字元，該字元放正中間
-if (i == j) {
-
-left_part += s[i];
-
-}
-
-// 組合最終字串 (右半部需要反轉)
-reverse(right_part.begin(), right_part.end());
-
-return {dp[0][n-1], left_part + right_part};
-
-}
-
+18
 19
 20
 21
@@ -5684,12 +5540,161 @@ return {dp[0][n-1], left_part + right_part};
 118
 119
 120 };
-121
+
+// j 從 i 的下一個位置開始向右擴展
+for (int j = i + 1; j < n; ++j) {
+
+if (s[i] == s[j]) {
+
+// 若頭尾字元相同，長度為內部區間的迴文長度 + 2
+// 因為 i 是倒著掃，j 是正著掃，所以 dp[i+1][j-1] 絕對已經
+算過了
+dp[i][j] = dp[i + 1][j - 1] + 2;
+
+} else {
+
+// 若頭尾不同，看是捨棄左邊 (s[i]) 還是捨棄右邊 (s[j]) 比較
+長
+dp[i][j] = max(dp[i + 1][j], dp[i][j - 1]);
+
+}
+
+}
+
+}
+
+// 最終答案就是涵蓋整個字串的區間 [0, n-1]
+return dp[0][n - 1];
+
+}
+
+// 求解變成迴文的最少編輯距離 (包含插入、刪除、替換)
+// 如果求最少 插入/刪除 字元，才能讓字串變成迴文的題目，請用 strlen - LPS(s)
+pair<int, string> solvePalindromicDistance(const string& s) {
+
+// 1. 找最少編輯次數
+int n = s.length();
+if (n == 0) return {0, ""};
+
+// dp[i][j] 代表將字串 s 區間 [i, j] 變成迴文的最少編輯次數
+vector<vector<int>> dp(n, vector<int>(n, 0));
+
+// i 從字串的「尾巴」往「頭」掃
+for (int i = n - 1; i >= 0; --i) {
+
+dp[i][i] = 0; // 單一字元本身就是迴文，編輯距離為 0
+
+// j 從 i 的下一個位置開始向右擴展
+for (int j = i + 1; j < n; ++j) {
+
+if (s[i] == s[j]) {
+
+// 頭尾相同，不需要編輯
+// 當 j == i+1 時，dp[i+1][j-1] 即 dp[i+1][i] 會是 0 (因
+為預設值)
+dp[i][j] = dp[i + 1][j - 1];
+
+} else {
+
+// 頭尾不同，取三種操作的最小值 + 1
+// 1. dp[i+1][j]
+// 2. dp[i][j-1]
+// 3. dp[i+1][j-1] -> 直接把 s[i] 替換成 s[j] 或反之
+dp[i][j] = min({dp[i + 1][j], dp[i][j - 1], dp[i + 1][j
+- 1]}) + 1; // 如果有定義 cost 要記得改
+
+-> 插入/刪除對應 s[i]
+-> 插入/刪除對應 s[j]
+
+}
+
+}
+
+}
+
+// 2. 狀態回溯 (Backtracking)
+string left_part = "", right_part = "";
+int i = 0, j = n - 1;
+
+while (i < j) {
+
+if (s[i] == s[j]) { // 若頭尾相同，直接加入答案
+
+left_part += s[i];
+right_part += s[i];
+i++; j--;
+
+} else {
+
+= (dp[i + 1][j - 1] + 1 == dp[i][j]); // 選擇
+
+// 若頭尾不同，檢查是哪條最佳路徑轉移過來的
+bool can_sub
+用替代的
+bool can_del_i = (dp[i + 1][j] + 1 == dp[i][j]); // 選擇刪除
+i 的
+bool can_del_j = (dp[i][j - 1] + 1 == dp[i][j]); // 選擇刪除
+j 的
+
+int best_c = 256; // 用來尋找字典序最小的字元 (ASCII 上限)
+int choice = -1;
+
+// 1: 替換, 2: 處理左側, 3: 處理右側
+
+// 評估替換策略 (選擇兩者中較小的字元)
+if (can_sub) {
+
+char c = min(s[i], s[j]);
+if (c < best_c) { best_c = c; choice = 1; }
+
+}
+// 評估處理左側策略 (對應 s[i])
+if (can_del_i) {
+
+char c = s[i];
+if (c < best_c) { best_c = c; choice = 2; }
+
+}
+// 評估處理右側策略 (對應 s[j])
+if (can_del_j) {
+
+char c = s[j];
+if (c < best_c) { best_c = c; choice = 3; }
+
+}
+
+// 寫入最佳字元
+left_part += (char)best_c;
+right_part += (char)best_c;
+
+// 根據最佳策略移動指標
+if (choice == 1) { i++; j--; }
+else if (choice == 2) { i++; }
+else if (choice == 3) { j--; }
+
+}
+
+}
+
+// 若最後指標交會於同一個字元，該字元放正中間
+if (i == j) {
+
+left_part += s[i];
+
+}
+
+// 組合最終字串 (右半部需要反轉)
+reverse(right_part.begin(), right_part.end());
+
+return {dp[0][n-1], left_part + right_part};
+
+}
 
 FJCU – UltraGrammer
 
 Page 15 of 20
 
+121
 122 /*
 123 有關迴文的其他題目補充
 124 變化 1: 計算迴文子序列的「總數」 (排容原理)
@@ -5872,13 +5877,10 @@ dp[0] = 1;
 19
 20
 21
-22
 
 // 【核心陷阱：必須先枚舉硬幣，再枚舉金額】
 // 這樣求出來的才是「組合數」(1+5 和 5+1 視為同一種方法)
 for (int coin : coins) {
-
-dp[j] += dp[j - coin];
 
 // 從該硬幣的面額開始往上推，因為金額小於硬幣面額時根本用不到這枚硬幣
 for (int j = coin; j < MAX_AMOUNT; ++j) {
@@ -5887,6 +5889,9 @@ for (int j = coin; j < MAX_AMOUNT; ++j) {
 
 }
 
+dp[j] += dp[j - coin];
+
+22
 23
 24
 25 }
@@ -6056,7 +6061,6 @@ bool noAns = false;
 9
 10
 11
-12
 
 // 注意：迴圈只走到 nums.size() - 2
 // 因為如果已經站在最後一個位置，就不需要再起跳了
@@ -6069,6 +6073,7 @@ farthest = max(farthest, i + nums[i]);
 
 Page 16 of 20
 
+12
 13
 14
 15
@@ -6271,11 +6276,11 @@ sort(intervals.begin(), intervals.end());
 13
 14
 15
-16
 
 int cnt = 1;
 int current_r = intervals[0].r;
 
+16
 17
 18
 19
@@ -6398,6 +6403,10 @@ return total_cost;
 用 法: 依 照 懲 罰 由 大 到 小 排 序， 每 項 工 作 依 序 嘗 試 可 不 可 以 放 在
 
 Di−Ti+1,Di−Ti,...,1,0，如果有空閒就放進去，否則延後執行。
+僅限 N,deadline le106，如果更大須使用 Greedy + MinHeap，只以 dead-
+line 遞增排序，接著走訪所有任務的同時，將懲罰值 push 進 heap。如果
+當前 Heap 的大小大於當前任務的 deadline，代表你排了太多任務會逾期。
+這時直接把 Heap 裡面懲罰值最小的那個 pop 掉。
 
 int deadline, penalty;
 // 依懲罰由大到小排序
@@ -6423,8 +6432,6 @@ parent.resize(n + 1);
 for (int i = 0; i <= n; ++i) parent[i] = i;
 
 }
-
-sort(tasks.begin(), tasks.end());
 
 }
 int find(int x) {
@@ -6455,13 +6462,6 @@ DSU(int n) {
 30
 31
 32
-33
-34
-35
-36
-37
-38
-39
 
 int max_deadline = 0;
 for (const auto& t : tasks) {
@@ -6469,32 +6469,41 @@ for (const auto& t : tasks) {
 DSU dsu(max_deadline);
 long long total_penalty = 0;
 
+sort(tasks.begin(), tasks.end());
+
 for (const auto& t : tasks) {
-
-if (available_slot > 0) {
-
-} else {
 
 }
 
-// 尋找此任務到期日之前，最晚可用的空檔
-int available_slot = dsu.find(t.deadline);
-
 max_deadline = max(max_deadline, t.deadline);
-
-// 有空位：佔用這天，並將這天的 parent 指向前一天
-dsu.parent[available_slot] = dsu.find(available_slot - 1);
 
 FJCU – UltraGrammer
 
 Page 17 of 20
 
+33
+34
+35
+36
+37
+38
+39
 40
 41
 42
 43
 44
 45 }
+
+// 尋找此任務到期日之前，最晚可用的空檔
+int available_slot = dsu.find(t.deadline);
+
+if (available_slot > 0) {
+
+// 有空位：佔用這天，並將這天的 parent 指向前一天
+dsu.parent[available_slot] = dsu.find(available_slot - 1);
+
+} else {
 
 // 沒空位：只能放棄並承受懲罰
 total_penalty += t.penalty;
@@ -6652,9 +6661,6 @@ return max_overlap;
 
 9.11 Josephus 約瑟夫問題
 
-int winner = 0;
-for (int i = 1; i <= n; ++i)
-
 用法: 詢問約瑟夫問題的最後贏家 (存活者)
 時間複雜度: O(KlogN )
 1 // JosephusProblem，只是規定要先砍 1 號
@@ -6671,30 +6677,25 @@ for (int i = 1; i <= n; ++i)
 12
 13 int main() {
 14
-15
-16
-17
-18
-19
-20
-21
 
---n; // 因為要用 初始 idx 為 0
-for (int k = 1; k <= n; ++k) {
-
-int n;
-while (cin >> n && n) {
-
-printf("%d\n", k);
-break;
+int winner = 0;
+for (int i = 1; i <= n; ++i)
 
 winner = (winner + k) % i;
 
 return winner;
 
-}
+int n;
+
+--n; // 因為要用 初始 idx 為 0
+for (int k = 1; k <= n; ++k) {
 
 if (getWinner(n, k) == 11) { // 依據目標進行修改
+
+printf("%d\n", k);
+break;
+
+}
 
 }
 
@@ -6702,6 +6703,15 @@ if (getWinner(n, k) == 11) { // 依據目標進行修改
 
 return 0;
 
+while (cin >> n && n) {
+
+15
+16
+17
+18
+19
+20
+21
 22
 23
 24
@@ -6795,9 +6805,9 @@ else r = mid-1;
 
 int mid = l + (r - l + 1) / 2; // 一定要 +1 才能找最大
 
-r = mid; // 縮短右邊界，盡可能找最小
-
 l = mid; // 縮短左邊界，盡可能找最大
+
+r = mid; // 縮短右邊界，盡可能找最小
 
 int mid = l + (r - l) / 2;
 
@@ -6805,9 +6815,9 @@ if (checkValid(mid))
 
 if (checkValid(mid))
 
-r = mid - 1;
-
 l = mid + 1;
+
+r = mid - 1;
 
 else
 
@@ -6820,9 +6830,6 @@ else
 2 時改用 for 暴力找極值以避開死迴圈。
 
 return x * x - 4 * x + 4; // x^2 - 4x + 4
-
-double m1 = L + (R - L) / 3.0;
-double m2 = R - (R - L) / 3.0;
 
 // 浮點數一律固定跑 100~200 次 可以保證不會有無窮迴圈與精度問題
 for (int i = 0; i < 100; ++i) {
@@ -6849,6 +6856,29 @@ for (int i = 0; i < 100; ++i) {
 19 }
 20
 21 // 整數三分搜 (尋找單谷函數的最小值)
+
+// 若找最小值：如果 f(m1) > f(m2)，代表真正的底谷一定在 m1 的右邊
+// (若題目為尋找單峰函數的【最大值】，將 > 改成 < 即可)
+if (f(m1) > f(m2)) L = m1;
+else R = m2;
+
+double m1 = L + (R - L) / 3.0;
+double m2 = R - (R - L) / 3.0;
+
+}
+return f(L);
+
+FJCU – UltraGrammer
+
+Page 18 of 20
+
+while (R - L > 2) { // 當區間大於 2 時才進行三分搜
+
+long long m1 = L + (R - L) / 3;
+long long m2 = R - (R - L) / 3;
+if (f(m1) > f(m2)) L = m1;
+else R = m2;
+
 22 long long ternary_search_int(long long L, long long R) {
 23
 24
@@ -6856,28 +6886,6 @@ for (int i = 0; i < 100; ++i) {
 26
 27
 28
-
-// 若找最小值：如果 f(m1) > f(m2)，代表真正的底谷一定在 m1 的右邊
-// (若題目為尋找單峰函數的【最大值】，將 > 改成 < 即可)
-if (f(m1) > f(m2)) L = m1;
-else R = m2;
-
-long long m1 = L + (R - L) / 3;
-long long m2 = R - (R - L) / 3;
-if (f(m1) > f(m2)) L = m1;
-else R = m2;
-
-while (R - L > 2) { // 當區間大於 2 時才進行三分搜
-
-}
-return f(L);
-
-}
-
-FJCU – UltraGrammer
-
-Page 18 of 20
-
 29
 30
 31
@@ -6886,6 +6894,7 @@ Page 18 of 20
 34
 35 }
 
+}
 // 區間縮小到 2 以內時，直接暴力枚舉 L ~ R 找極值，完美避開死迴圈
 long long ans = f(L);
 for (long long i = L + 1; i <= R; ++i) {
@@ -7019,14 +7028,13 @@ return 0;
 用法: 想不到怎麼解或優化的時候可以參考這些想法
 時間複雜度: N U LL
 1 /*
-2 前綴和
-3 枚舉 (dfs、減少變數降低維度、集合拆半後枚舉、剪枝)
-4 貪心 (每次都選局部最佳，但不能保證局部最佳解是全域最佳解)
-5 Random Select(QuickSort)
-6
-7 Nim Game (賽局理論基礎): 桌上有 N 堆石頭， A1, A2 ... An，兩人輪流拿。
-8 若 A1 ^ A2 ^ A3 ^ ... ^ An != 0，則先手必勝；若 XOR 總和為 0，則後手必勝。
-9 */
+2 枚舉 (dfs、減少變數降低維度、集合拆半後枚舉、剪枝)
+3 貪心 (每次都選局部最佳，但不能保證局部最佳解是全域最佳解)
+4 Random Select(QuickSort)
+5
+6 Nim Game (賽局理論基礎): 桌上有 N 堆石頭， A1, A2 ... An，兩人輪流拿。
+7 若 A1 ^ A2 ^ A3 ^ ... ^ An != 0，則先手必勝；若 XOR 總和為 0，則後手必勝。
+8 */
 
 11.3 C++ 函式庫
 
@@ -7509,9 +7517,9 @@ cout << l << " " << r << "\n";
 190
 191 ---
 192
-193 //!/bin/bash
+193 #，以下內容直接複製貼上到 bash 即可
 194
-195 // 1. 編譯所有相關程式 (加上 -O2 模擬正式評測環境)
+195 # 1. 編譯所有相關程式 (加上 -O2 模擬正式評測環境)
 196 g++ gen.cpp -o gen -O2
 197 g++ sol.cpp -o sol -O2
 198 g++ brute.cpp -o brute -O2
@@ -7519,7 +7527,7 @@ cout << l << " " << r << "\n";
 200 echo " 編譯完成，開始對拍..."
 201 echo "-------------------"
 202
-203 // 2. 進入無限迴圈進行對拍
+203 # 2. 進入無限迴圈進行對拍
 204 for ((i=1; ; ++i)); do
 205
 206
@@ -7531,13 +7539,13 @@ cout << l << " " << r << "\n";
 212
 213
 
-// 將測資餵給你寫的待測程式，輸出到 out.txt
+# 將測資餵給你寫的待測程式，輸出到 out.txt
 ./sol < in.txt > out.txt
 
-// 將測資餵給正確的暴力解，輸出到 ans.txt
+# 將測資餵給正確的暴力解，輸出到 ans.txt
 ./brute < in.txt > ans.txt
 
-// 生成測資並存入 in.txt
+# 生成測資並存入 in.txt
 ./gen > in.txt
 
 return 0;
@@ -7562,15 +7570,17 @@ gen_dag(N, M, true); // 產生 10 點 15 邊的帶權 DAG
 
 Page 20 of 20
 
+fi
+
 else
 
-// 如果沒有差異，印出 AC
+# 如果沒有差異，印出 AC
 echo "Test Case $i: AC"
 
-// 使用 diff 比對兩個輸出檔 (-w 忽略行尾與空白差異，也可不寫)
-if diff -w out.txt ans.txt > /dev/null; then //
+# 使用 diff 比對兩個輸出檔 (-w 忽略行尾與空白差異)
+if diff -w out.txt ans.txt > /dev/null; then
 
-// 如果有差異，停止腳本並報錯
+# 如果有差異，停止腳本並報錯
 echo "Test Case $i: WA! 發現錯誤測資！"
 break
 
@@ -7583,108 +7593,110 @@ break
 220
 221
 222
-223 done
-224
-225 echo " 對拍結束。"
-226
+223
+224 done
+225
+226 echo " 對拍結束。"
 227
-228 /*
-229 在同一個資料夾下，準備好四個檔案：
-230 sol.cpp：你寫的，會吃 WA 但跑很快的最佳化程式碼。
-231 brute.cpp：你寫的，保證絕對正確，但肯定會 TLE 的暴力解程式碼（例如 O(N!) 枚舉、
-
-fi
+228
+229 /*
+230 執行方法
+231
+232 1. 準備檔案
+233 在同一個資料夾下，準備好四個檔案：
+234 sol.cpp：你寫的，會吃 WA 但跑很快的最佳化程式碼。
+235 brute.cpp：你寫的，保證絕對正確，但肯定會 TLE 的暴力解程式碼（例如 O(N!) 枚舉、
 
 O(N^3) 暴力轉移等）。
-232 gen.cpp：上述的測資生成器。
-233 checker.sh：上述的 Bash 腳本。
-234
-235 打開 gen.cpp，修改 main 函式裡面的變數。
-236 測資規模（如 N 或數值範圍）一定要調小。如果 N 設到 10^5，找到錯誤測資也無法用手算
+236 gen.cpp：上述的測資生成器。
+237 checker.sh：上述的 Bash 腳本。
+238
+239 2.
+240 打開 gen.cpp，修改 main 函式裡面的變數。
+241 測資規模（如 N 或數值範圍）一定要調小。如果 N 設到 10^5，找到錯誤測資也無法用手算
 
 推導。
 
-237 通常設 N <= 10，數值 <= 100 就足夠觸發大部分的 Edge case。
-238
-239 打開 terminal 執行
-240 ```
-241 // 賦予腳本執行權限 (只需要做一次)
-242 chmod +x checker.sh
+242 通常設 N <= 10，數值 <= 100 就足夠觸發大部分的 Edge case。
 243
-244 // 執行對拍
-245 ./checker.sh
-246 ```
-247
-248 當螢幕印出 Test Case X: WA! 發現錯誤測資！時，腳本會自動停止。此時你該資料夾下會
+244 3. 切換到該資料夾目錄下後，打開 terminal 執行
+245
+246 4. 賦予腳本執行權限 (只需要做一次)
+247 chmod +x checker.sh
+248
+249 5. 執行對拍
+250 ./checker.sh
+251
+252 當螢幕印出 Test Case X: WA! 發現錯誤測資！時，腳本會自動停止。此時你該資料夾下會
 
 擁有：
 
-249 in.txt：引發錯誤的極小測資。（打開它，這就是你一直找不到的 Counter Example）。
-250 ans.txt：暴力解跑出來的正確答案。
-251 out.txt：你寫的程式跑出來的錯誤答案。
-252 */
-253
-254 /*
-255 文字找碴版:
-256 一、資料規模與全域陷阱整數溢位（Integer Overflow）：
-257 這是最致命也最常見的失誤。兩個 int 相乘或相加是否會超過 32-bit 的上限？
-258 在 C++ 中計算時，記得提早轉型，例如寫成 1LL * a * b。
-259 多筆測資未清空：在 Codeforces 或 LeetCode 刷題時，如果題目有多筆測試資料，全域變
+253 in.txt：引發錯誤的極小測資。（打開它，這就是你一直找不到的 Counter Example）。
+254 ans.txt：暴力解跑出來的正確答案。
+255 out.txt：你寫的程式跑出來的錯誤答案。
+256 */
+257
+258 /*
+259 文字找碴版:
+260 一、資料規模與全域陷阱整數溢位（Integer Overflow）：
+261 這是最致命也最常見的失誤。兩個 int 相乘或相加是否會超過 32-bit 的上限？
+262 在 C++ 中計算時，記得提早轉型，例如寫成 1LL * a * b。
+263 多筆測資未清空：在 Codeforces 或 LeetCode 刷題時，如果題目有多筆測試資料，全域變
 
 數、vector、map 或 set 是否在每一輪開始前都有確實執行 clear()？
 
-260 未清空會直接污染下一筆測資。
-261
-262 二、陣列與字串處理極小規模：
-263 陣列長度 N=0 或 N=1。很多迴圈邏輯或雙指標在這種長度下會直接崩潰或發生越界。
-264 元素全同：陣列內所有數字都一樣（例如 [2, 2, 2, 2]）。貪心演算法或雙指標有沒有可能
+264 未清空會直接污染下一筆測資。
+265
+266 二、陣列與字串處理極小規模：
+267 陣列長度 N=0 或 N=1。很多迴圈邏輯或雙指標在這種長度下會直接崩潰或發生越界。
+268 元素全同：陣列內所有數字都一樣（例如 [2, 2, 2, 2]）。貪心演算法或雙指標有沒有可能
 
 因此陷入無窮迴圈？
 
-265 找不到目標：字串或陣列中完全沒有符合條件的元素。程式是否能正確回傳題目要求的值
+269 找不到目標：字串或陣列中完全沒有符合條件的元素。程式是否能正確回傳題目要求的值
 
 （例如 -1 或 0），而不是噴出例外錯誤。
 
-266 索引越界（Out of Bounds）：只要程式碼裡出現 i-1、i+1 或是二維陣列的八方位搜尋，務
+270 索引越界（Out of Bounds）：只要程式碼裡出現 i-1、i+1 或是二維陣列的八方位搜尋，務
 
 必檢查邊界條件。
 
-267
-268 三、圖論與樹圖不連通（Disconnected Graph）：
-269 題目如果沒有保證圖是連通的，你的 DFS 或 BFS 是否能走訪到所有節點？
-270 執行 Kruskal's 演算法找最小生成樹後，選取的邊數是否確實為 V-1？
-271 自環與重邊（Self-loops & Multiple edges）：節點自己連向自己，或是節點 A 到節點 B
+271
+272 三、圖論與樹圖不連通（Disconnected Graph）：
+273 題目如果沒有保證圖是連通的，你的 DFS 或 BFS 是否能走訪到所有節點？
+274 執行 Kruskal's 演算法找最小生成樹後，選取的邊數是否確實為 V-1？
+275 自環與重邊（Self-loops & Multiple edges）：節點自己連向自己，或是節點 A 到節點 B
 
 之間有兩條權重不同的邊。建圖時是否正確處理了這些冗餘資訊？
 
-272 退化結構：樹退化成一條直線（Linked list），這會導致遞迴深度達到 $O(N)$，容易引發
+276 退化結構：樹退化成一條直線（Linked list），這會導致遞迴深度達到 $O(N)$，容易引發
 Stack Overflow；或是退化成一個中心連向所有點的星狀圖（Star graph），考驗時間複雜
 度。
 
-273 孤島節點：節點數 V=1 但邊數 E=0 的情況。
-274
-275 四、進階資料結構與演算法線段樹（Segment Tree）與 BIT：
-276 在處理區間查詢 [L, R] 時，是否有考慮到 L > R 的非法情況？或是 L = R 時單點更新是
+277 孤島節點：節點數 V=1 但邊數 E=0 的情況。
+278
+279 四、進階資料結構與演算法線段樹（Segment Tree）與 BIT：
+280 在處理區間查詢 [L, R] 時，是否有考慮到 L > R 的非法情況？或是 L = R 時單點更新是
 
 否正確？
 
-277 掃描線（Sweep Line）：遇到 X 座標完全相同的多個點時，事件的處理順序是否正確？（通常
+281 掃描線（Sweep Line）：遇到 X 座標完全相同的多個點時，事件的處理順序是否正確？（通常
 必須先處理「加入區間」的事件，再處理「移除區間」的事件，才不會造成重疊區間斷裂）。
-278 DP 初始狀態（Base Cases）：動態規劃的狀態轉移前，dp 陣列的初始值設定是否合理？求極
+282 DP 初始狀態（Base Cases）：動態規劃的狀態轉移前，dp 陣列的初始值設定是否合理？求極
 
 小值時有沒有確實初始化為 INF？
 
-279
-280 五、數值與數學運算除以零與模運算（Modulo）：
-281 任何除法或取餘數操作，除數有沒有可能是 0？
-282 另外，C++ 的負數取模結果會是負的，遇到減法取模時，必須寫成 (x % M + M) % M 來保
+283
+284 五、數值與數學運算除以零與模運算（Modulo）：
+285 任何除法或取餘數操作，除數有沒有可能是 0？
+286 另外，C++ 的負數取模結果會是負的，遇到減法取模時，必須寫成 (x % M + M) % M 來保
 
 證正數。
 
-283 質數與因數邊界：判斷質數時，有沒有正確處理 0 和 1 既不是質數也不是合數的特例？
-284 浮點數誤差：比較兩個浮點數是否相等時，絕對不能直接使用 ==，請使用 abs(A - B) <
+287 質數與因數邊界：判斷質數時，有沒有正確處理 0 和 1 既不是質數也不是合數的特例？
+288 浮點數誤差：比較兩個浮點數是否相等時，絕對不能直接使用 ==，請使用 abs(A - B) <
 
 1e-9 （或自定義的 epsilon 容差值）來判斷。
 
-285 */
+289 */
 

@@ -34,8 +34,4 @@ for (int i = 0; i < n; i++) {
 
     st.push(i);
 }
-
-while (!st.empty()) {
-    ans[st.top()] = -1;
-    st.pop();
-}
+// 最後 ans 陣列就是答案
