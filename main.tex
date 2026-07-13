@@ -70,6 +70,12 @@
 
 \Algorithm{Segment Tree 線段樹}{給定n筆資料查詢與m次範圍更新，解決多次範圍更新的問題，找區間和或最大/小值。必須是1-based index。}{建樹$\mathcal{O}(N)$ 查詢/更新 $\mathcal{O}(\log N)$}{cpp}{source/DataStructure/SegmentTree.cpp}{}
 
+\Algorithm{Prefix Sum(前綴和) 和 Difference(差分)}{Prefix sum: 多次區間查詢/區間和，Difference: 大量區間更新}{建表$\mathcal{O}(N)$，查詢$\mathcal{O}(1)$}{cpp}{source/DataStructure/PrefixSumAndDifference.cpp}{}
+
+\Algorithm{Monotonic Stack 單調棧}{找類似 Next Greater Element 這樣的題目}{$\mathcal{O}(N)$}{cpp}{source/DataStructure/MonotonicStack.cpp}{}
+
+\Algorithm{Monotonic Queue 單調隊列}{直接用來找 Sliding Window Maximum/Minimum，使用 deque}{$\mathcal{O}(N)$}{cpp}{source/DataStructure/MonotonicQueue.cpp}{}
+
 \section{數論}
 
 \Algorithm{快速冪}{計算 $a^b \pmod m$。}{$\mathcal{O}(\log b)$}{cpp}{source/Math/FastPower.cpp}{}
@@ -86,11 +92,11 @@
 \begin{table}[h]
 \centering
 \begin{tabular}{ccc}
-Range & 因數總個數 & 最多因數的數 \\
-$10^9$ & 1344 & 735134400 \\
-$2^{31}$ & 1600 & 2095133040 \\
-$10^{18}$ & 103680 & 897612484786617600 \\
-$2^{64}$ & 161280 & 9200527969062830400 \\
+Range & 擁有最多因數的數字 & 其因數總個數\\
+$10^9$ & 735134400 & 1344 \\
+$2^{31}$ & 2095133040 & 1600 \\
+$10^{18}$ & 897612484786617600 & 103680 \\
+$2^{64}$ & 9200527969062830400 & 161280 \\
 \end{tabular}
 \end{table}
 
@@ -383,13 +389,20 @@ DP通用解題四步驟: \\
 {cpp}{source/Greedy/SweepLineOverlap.cpp}
 {}
 
-\Algorithm{三分搜}
-{求單峰/單谷函數極值。浮點數固定跑 100 次迴圈；整數在 R-L < 2 時改用 for 暴力找極值以避開死迴圈。}
+\Algorithm{Josephus 約瑟夫問題}{詢問約瑟夫問題的最後贏家 (存活者)}{$\mathcal{O}(K log N)$}{cpp}{source/Greedy/Josephus.cpp}{}
+
+\section{Search & Techniques}
+
+\Algorithm{Binary Search}{二分搜技巧}{$\mathcal{O}(log N)$}{cpp}{source/Search/Binary.cpp}{}
+
+\Algorithm{Ternary Search}{求單峰/單谷函數極值。浮點數固定跑 100 次迴圈；整數在 R-L < 2 時改用 for 暴力找極值以避開死迴圈。}
 {$\mathcal{O}(\log_3(\text{值域}))$}
-{cpp}{source/Greedy/TernarySearch.cpp}
+{cpp}{source/Search/TernarySearch.cpp}
 {}
 
-\Algorithm{Josephus 約瑟夫問題}{詢問約瑟夫問題的最後贏家 (存活者)}{$\mathcal{O}(K log N)$}{cpp}{source/Greedy/Josephus.cpp}{}
+\Algorithm{Two Pointer 雙指針}{用於 sorted array，找某個區間如兩數和==target}{$\mathcal{O}(N)$}{cpp}{source/Search/TwoPointer.cpp}{}
+
+\Algorithm{Sliding Window 滑動窗口}{同向雙指針的延伸，找最長/短合法區間，或固定長度下的最大區間和}{$\mathcal{O}(N)$}{cpp}{source/Search/SlidingWindow.cpp}{}
 
 \section{MISC}
 
