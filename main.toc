@@ -6,7 +6,7 @@
 \contentsline {subsection}{\numberline {2.2}Segment Tree 線段樹}{2}{}%
 \contentsline {subsection}{\numberline {2.3}Prefix Sum(前綴和) 和 Difference(差分)}{2}{}%
 \contentsline {subsection}{\numberline {2.4}Monotonic Stack 單調棧}{2}{}%
-\contentsline {subsection}{\numberline {2.5}Monotonic Queue 單調隊列}{3}{}%
+\contentsline {subsection}{\numberline {2.5}Monotonic Queue 單調隊列}{2}{}%
 \contentsline {section}{\numberline {3}數論}{3}{}%
 \contentsline {subsection}{\numberline {3.1}快速冪}{3}{}%
 \contentsline {subsection}{\numberline {3.2}模逆元與費馬小定理}{3}{}%
@@ -26,11 +26,11 @@
 \contentsline {section}{\numberline {5}圖論}{6}{}%
 \contentsline {subsection}{\numberline {5.1}BFS與拓樸排序}{6}{}%
 \contentsline {subsection}{\numberline {5.2}DFS}{6}{}%
-\contentsline {subsection}{\numberline {5.3}Dijkstra 單源最短路徑}{7}{}%
+\contentsline {subsection}{\numberline {5.3}Dijkstra 單源最短路徑}{6}{}%
 \contentsline {subsection}{\numberline {5.4}SPFA 單源最短路徑}{7}{}%
 \contentsline {subsection}{\numberline {5.5}Floyd-Warshall 多源最短路徑}{7}{}%
 \contentsline {subsection}{\numberline {5.6}二分圖判定 (著色問題)}{7}{}%
-\contentsline {subsection}{\numberline {5.7}割點與雙連通分量}{8}{}%
+\contentsline {subsection}{\numberline {5.7}割點與雙連通分量}{7}{}%
 \contentsline {subsection}{\numberline {5.8}匈牙利演算法}{8}{}%
 \contentsline {subsection}{\numberline {5.9}KM演算法}{8}{}%
 \contentsline {subsection}{\numberline {5.10}Dinic 最大流}{9}{}%
@@ -38,12 +38,12 @@
 \contentsline {subsection}{\numberline {6.1}點與向量基礎 (Point \& Vector)}{10}{}%
 \contentsline {subsection}{\numberline {6.2}判斷線段、矩形相交 (Segment Intersection)}{10}{}%
 \contentsline {subsection}{\numberline {6.3}點與線段關係 (Point \& Line)}{10}{}%
-\contentsline {subsection}{\numberline {6.4}任意多邊形面積}{11}{}%
+\contentsline {subsection}{\numberline {6.4}任意多邊形面積}{10}{}%
 \contentsline {subsection}{\numberline {6.5}凸包 Convex Hull}{11}{}%
 \contentsline {section}{\numberline {7}樹論}{11}{}%
 \contentsline {subsection}{\numberline {7.1}Disjoint Set}{11}{}%
 \contentsline {subsection}{\numberline {7.2}Kruskal 最小生成樹}{11}{}%
-\contentsline {subsection}{\numberline {7.3}次小生成樹}{12}{}%
+\contentsline {subsection}{\numberline {7.3}次小生成樹}{11}{}%
 \contentsline {subsection}{\numberline {7.4}最近共同祖先 LCA}{12}{}%
 \contentsline {section}{\numberline {8}DP}{12}{}%
 \contentsline {subsection}{\numberline {8.1}01 Knapsack 背包}{12}{}%
@@ -68,7 +68,7 @@
 \contentsline {subsection}{\numberline {9.11}Josephus 約瑟夫問題}{17}{}%
 \contentsline {section}{\numberline {10}Search \& Techniques}{17}{}%
 \contentsline {subsection}{\numberline {10.1}Binary Search}{17}{}%
-\contentsline {subsection}{\numberline {10.2}Ternary Search}{17}{}%
+\contentsline {subsection}{\numberline {10.2}Ternary Search}{18}{}%
 \contentsline {subsection}{\numberline {10.3}Two Pointer 雙指針}{18}{}%
 \contentsline {subsection}{\numberline {10.4}Sliding Window 滑動窗口}{18}{}%
 \contentsline {section}{\numberline {11}MISC}{18}{}%

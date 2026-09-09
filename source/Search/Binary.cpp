@@ -13,8 +13,62 @@ while(l <= r){
 // === 對答案二分搜 ===
 /* 
 找 「最大值的最小值 Minimax」 或 「最小值的最大值 Maximin」
-要求答案具有單調性 即 X 合法，則 <= 或 >= X 者都合法
+要求答案具有單調性 即 X 合法，則 <= 或 >= X 者都合法，常見於構造題
+
+例題: 給定長度為N的前綴和正負號狀態 (+, -, 0)，求構造符合狀態且元素不含0的陣列內元素最大絕對值的最小值。
+如: +0++- 最小cost為2，正確array為: [2, -2, 2, -1, -2]，而非 [1, -1, 1, 1, -3]
 */
+bool check(int M, int n, const string& s) { // 步長為M
+    long long L = 0, R = 0; // 答案可達到的左(低)、右(高)邊界
+    
+    for (int i = 0; i < n; i++) {
+        char c = s[i];
+        long long prevL = L, prevR = R;
+        
+        L = L - M;
+        R = R + M;
+        
+        if (c == '+') L = max(L, 1LL); // 要求+，左邊界至少要是1
+        else if (c == '-') R = min(R, -1LL); // 要求-，右邊界至少要是-1
+        else if (c == '0') { // 要求0，左右邊界都必須0
+            L = max(L, 0LL);
+            R = min(R, 0LL);
+        }
+        
+        if (M == 1) {
+            if (abs(L) % 2 != (i + 1) % 2) L++;
+            if (abs(R) % 2 != (i + 1) % 2) R--;
+        } else {
+            if (prevL == prevR && L == prevL && R == prevR) { // L, R 因為M不夠大，被迫不變(a為0)
+                return false;
+            }
+        }
+        
+        if (L > R) return false; // 如果左邊界大於右邊界則這個M無法成功
+    }
+    return true;
+}
+
+void solve() {
+    int n;
+    cin >> n;
+    string s;
+    cin >> s;
+    
+    int left = 1, right = n, ans = -1;
+    
+    while (left <= right) {
+        int mid = left + (right - left) / 2;
+        if (check(mid, n, s)) {
+            ans = mid;
+            right = mid - 1;
+        } else {
+            left = mid + 1;
+        }
+    }
+    
+    cout << ans << "\n";
+}
 
 // === 實數二分搜 ===
 /*
