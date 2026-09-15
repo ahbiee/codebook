@@ -398,9 +398,7 @@ DP通用解題四步驟: \\
 {cpp}{source/Search/TernarySearch.cpp}
 {}
 
-\Algorithm{Two Pointer 雙指針}{用於 sorted array，找某個區間如兩數和==target}{$\mathcal{O}(N)$}{cpp}{source/Search/TwoPointer.cpp}{}
-
-\Algorithm{Sliding Window 滑動窗口}{同向雙指針的延伸，找最長/短合法區間，或固定長度下的最大區間和}{$\mathcal{O}(N)$}{cpp}{source/Search/SlidingWindow.cpp}{}
+\Algorithm{Two Pointer 雙指針}{需先自己對陣列做排序}{\text{大部分 }$\mathcal{O}(N)$}{cpp}{source/Search/TwoPointer.cpp}{}
 
 \section{MISC}
 
@@ -408,9 +406,9 @@ DP通用解題四步驟: \\
 
 \Algorithm{一些概念}{想不到怎麼解或優化的時候可以參考這些想法}{$NULL$}{cpp}{source/Others/Concepts.cpp}{}
 
-\Algorithm{C++函式庫}{好用的東西可以參考}{$NULL$}{cpp}{source/Others/functions.cpp}{}
+\Algorithm{自訂 Hash Function}{使用 unordered map 或 unordered set 時，避免被惡意測資卡成 $\mathcal{O}(N)$ 時需自訂Hash function的情況}{保證 $\mathcal{O}(1)$}{cpp}{source/Others/hash.cpp}{}
 
-\Algorithm{自訂 Hash Function}{使用 unordered_map / unordered_set 時，避免被惡意測資卡成 O(N)， 需自訂Hash function}{保證 $\mathcal{O}(1)$}{cpp}{source/Others/hash.cpp}{}
+\Algorithm{C++函式庫}{好用的東西可以參考}{$NULL$}{cpp}{source/Others/functions.cpp}{}
 
 \Algorithm{對拍器}{有一個想法，也保證暴力解法全對時，可以使用 對拍器 檢查答案}{$NULL$}{cpp}{source/Others/gen.cpp}{}
 
