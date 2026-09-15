@@ -1,21 +1,21 @@
 using ll = long long;
 
-vector<ll> arr, sum, add; //宣告成全域，arr是原始數據，sum是範圍累加和，add是lazy tag儲存的值
+vector<ll> arr, sum/tree, add; //宣告成全域，arr是原始數據(輸入)，sum/tree是範圍累加和/區間查詢，add是lazy tag儲存的值
 
-void up(int i){ // 往上加回去
+void up(int i){ // range_sum = +, max = max, min = min, gcd = __gcd
     sum[i] = sum[i*2] + sum[i*2+1];
 }
 
 void lazy(int i, ll v, int n){ // 懶標記(lazy tag)，暫存當前覆蓋範圍
-    sum[i] += v*n;
+    sum[i] += v*n; // 如果不是累加和，改成 tree[i] += v;
     add[i] += v;
 }
 
 void down(int i, int ln, int rn){ // 往下分發lazy tag
-    if(add[i] != 0){
+    if(add[i] != 0){ // 0或INF或-INF，依線段樹邏輯選擇
         lazy(i*2, add[i], ln);
         lazy(i*2+1, add[i], rn);
-        add[i] = 0;
+        add[i] = 0; // 0或INF或-INF，依線段樹邏輯選擇
     }
 }
 
@@ -27,7 +27,7 @@ void build(int l, int r, int i){ // 遞迴式初始化 (init)
         build(mid+1, r, i*2+1); // 右半邊build
         up(i); // 自己 = 左+右 區間和
     }
-    add[i] = 0; // 初始化所有add[i] = 0
+    add[i] = 0; // 0或INF或-INF，依線段樹邏輯選擇
 }
 
 void update(int jobl, int jobr, ll jobv, int l, int r, int i){ // 更新區間數值(jobl ~ jobr 加上 jobv)，用l, r, i判斷範圍
@@ -37,7 +37,7 @@ void update(int jobl, int jobr, ll jobv, int l, int r, int i){ // 更新區間�
         down(i, mid-l+1, r-mid); // 記得往下分發lazy tag
         if(jobl <= mid) update(jobl, jobr, jobv, l, mid, i*2); // 判斷左右區段是否需要更新
         if(jobr > mid) update(jobl, jobr, jobv, mid+1, r, i*2+1);
-        up(i); // 最後往上加總回去更新sum
+        up(i); // 最後往上回傳
     }
 }
 
@@ -46,8 +46,8 @@ ll query(int jobl, int jobr, int l, int r, int i){
     
     int mid = l + (r-l)/2;
     down(i, mid-l+1, r-mid); // 記得往下分發lazy tag
-    ll total = 0;
-    if(jobl <= mid) total += query(jobl, jobr, l, mid, i*2);
+    ll total = 0; // range sum / gcd = 0, max = -INF, min = INF
+    if(jobl <= mid) total += query(jobl, jobr, l, mid, i*2); // range_sum = +=, max = max, min = min, gcd = __gcd
     if(jobr > mid) total += query(jobl, jobr, mid+1, r, i*2+1);
     return total; // 因為只是query，沒有修改，所以不用up更新回去
 }
@@ -58,6 +58,7 @@ int main() {
     arr.assign(n+1, 0);
     sum.assign(4*(n+1), 0); // 大小必須開到4倍n+1
     add.assign(4*(n+1), 0);
+    
     
     for(int i=1; i<=n; ++i) cin >> arr[i];
     build(1, n, 1);

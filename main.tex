@@ -68,7 +68,9 @@
 
 \Algorithm{BIT (Fenwick Tree)}{支援單點修改與區間求和。必須是1-based index。}{$\mathcal{O}(\log n)$}{cpp}{source/DataStructure/BIT.cpp}{}
 
-\Algorithm{Segment Tree 線段樹}{給定n筆資料查詢與m次範圍更新，解決多次範圍更新的問題，找區間和或最大/小值。必須是1-based index。}{建樹$\mathcal{O}(N)$ 查詢/更新 $\mathcal{O}(\log N)$}{cpp}{source/DataStructure/SegmentTree.cpp}{}
+\Algorithm{Sparse Table}{完全只為區間(最大最小值)查詢}{建表$\mathcal{O}(\log n)$ 查詢$\mathcal{O}(1)$}{cpp}{source/DataStructure/SparseTable.cpp}{}
+
+\Algorithm{Segment Tree 線段樹}{給定n筆資料查詢與m次範圍更新，解決多次範圍更新的問題，找"區間和"或最大/小值。必須是1-based index。}{建樹$\mathcal{O}(N)$ 查詢/更新 $\mathcal{O}(\log N)$}{cpp}{source/DataStructure/SegmentTree.cpp}{}
 
 \Algorithm{Prefix Sum(前綴和) 和 Difference(差分)}{Prefix sum: 多次區間查詢/區間和，Difference: 大量區間更新}{建表$\mathcal{O}(N)$，查詢$\mathcal{O}(1)$}{cpp}{source/DataStructure/PrefixSumAndDifference.cpp}{}
 
@@ -164,7 +166,7 @@ multigraph 兩點之間有多條直接的路徑 \\
 
 \Algorithm{SPFA 單源最短路徑}
 {也是找單個起點的最短路徑，但支援負權邊。只在"可能有負邊"或"必須檢查負環"時才用}
-{預期 $\mathcal{O}(V+E)$，最差 $\mathcal{O}(VE)$}
+{預期 $\mathcal{O}(V+E)$，最差(網格圖) $\mathcal{O}(VE)$}
 {cpp}{source/Graph/SPFA.cpp}
 {}
 
@@ -407,6 +409,8 @@ DP通用解題四步驟: \\
 \Algorithm{一些概念}{想不到怎麼解或優化的時候可以參考這些想法}{$NULL$}{cpp}{source/Others/Concepts.cpp}{}
 
 \Algorithm{C++函式庫}{好用的東西可以參考}{$NULL$}{cpp}{source/Others/functions.cpp}{}
+
+\Algorithm{自訂 Hash Function}{使用 unordered_map / unordered_set 時，避免被惡意測資卡成 O(N)， 需自訂Hash function}{保證 $\mathcal{O}(1)$}{cpp}{source/Others/hash.cpp}{}
 
 \Algorithm{對拍器}{有一個想法，也保證暴力解法全對時，可以使用 對拍器 檢查答案}{$NULL$}{cpp}{source/Others/gen.cpp}{}
 
