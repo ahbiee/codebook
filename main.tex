@@ -68,7 +68,7 @@
 
 \Algorithm{BIT (Fenwick Tree)}{支援單點修改與區間求和。必須是1-based index。}{$\mathcal{O}(\log n)$}{cpp}{source/DataStructure/BIT.cpp}{}
 
-\Algorithm{Sparse Table}{完全只為區間(最大最小值)查詢}{建表$\mathcal{O}(\log n)$ 查詢$\mathcal{O}(1)$}{cpp}{source/DataStructure/SparseTable.cpp}{}
+\Algorithm{Sparse Table 稀疏表}{完全只為區間(最大最小值)查詢}{建表$\mathcal{O}(\log n)$ 查詢$\mathcal{O}(1)$}{cpp}{source/DataStructure/SparseTable.cpp}{}
 
 \Algorithm{Segment Tree 線段樹}{給定n筆資料查詢與m次範圍更新，解決多次範圍更新的問題，找"區間和"或最大/小值。必須是1-based index。}{建樹$\mathcal{O}(N)$ 查詢/更新 $\mathcal{O}(\log N)$}{cpp}{source/DataStructure/SegmentTree.cpp}{}
 
@@ -313,7 +313,7 @@ c^2 = a^2 + b^2 - 2ab \cos(\angle C)
  
 \section{樹論}
 
-\Algorithm{Disjoint Set}{解決集合、快速合併的問題。優化必須路徑壓縮，可選小掛大}{$\mathcal{O}(1)$}{cpp}{source/Tree/DisjointSet.cpp}{}
+\Algorithm{Disjoint Set 並查集}{解決集合、快速合併的問題。優化必須路徑壓縮，可選小掛大。另外可用於類Linked-list}{$\mathcal{O}(1)$}{cpp}{source/Tree/DisjointSet.cpp}{}
 
 \Algorithm{Kruskal 最小生成樹}{需搭配並查集使用。將所有邊排序後，利用併查集檢查是否形成環。}{$\mathcal{O}(E \log E)$}{cpp}{source/Tree/Kruskal.cpp}{}
 
@@ -323,7 +323,7 @@ c^2 = a^2 + b^2 - 2ab \cos(\angle C)
 {cpp}{source/Tree/SecondMST.cpp}
 {}
 
-\Algorithm{最近共同祖先 LCA}{使用倍增法，利用二進位的特性，預處理出每個節點向上跳 $2^0, 2^1, \dots, 2^i$ 步的祖先是誰}{$\text{最差} \mathcal{O} (N)$}{cpp}{source/Tree/LCA.cpp}{}
+\Algorithm{LCA 最近共同祖先}{使用倍增法，利用二進位的特性，預處理出每個節點向上跳 $2^0, 2^1, \dots, 2^i$ 步的祖先是誰}{$\text{最差} \mathcal{O} (N)$}{cpp}{source/Tree/LCA.cpp}{}
 
 \section{DP}
 
@@ -335,7 +335,7 @@ DP通用解題四步驟: \\
 
 \Algorithm{01 Knapsack 背包}{解決物品不可拆分的情況，若可拆分用Greedy拿比例最佳的部分}{$\mathcal{O}(N)$}{cpp}{source/DP/01.cpp}{}
 
-\Algorithm{LCS 最長共同子序列(Sequence)}{二維DP與Backtrack找原始子序列}{$\mathcal{O}(NM)$}{cpp}{source/DP/LCS.cpp}{}
+\Algorithm{LCS 最長共同SubSequence}{二維DP與Backtrack找原始子序列}{$\mathcal{O}(NM)$}{cpp}{source/DP/LCS.cpp}{}
 
 \Algorithm{LIS / LDS 最長遞增/遞減子序列}
 {嚴格遞增用 \texttt{lower\_bound}，非嚴格改用 \texttt{upper\_bound}。替換策略下的 \texttt{dp} 陣列長度正確，但內容不一定是真實子序列。}
@@ -355,9 +355,9 @@ DP通用解題四步驟: \\
 {cpp}{source/DP/Coin.cpp}
 {}
 
-\Algorithm{Kadane's Algorithm (最大子陣列和)}
+\Algorithm{Kadane's Algorithm (最大子陣列和 Maximum Subarray Sum)}
 {尋找陣列中連續元素相加的最大值。若全為負數會正確回傳最大的負數。}
-{$\mathcal{O}(N)$}
+{$\mathcal{O}(N)$ \text{(最快)}}
 {cpp}{source/DP/Kadane.cpp}
 {}
 
@@ -375,7 +375,7 @@ DP通用解題四步驟: \\
 
 \Algorithm{最小化最大延遲問題}{按照到期時間從早到晚處理。記錄當下累積的耗時，並與該任務的死線相減，取最大的延遲時間}{$\mathcal{O}(N \log N)$}{cpp}{source/Greedy/job.cpp}{}
 
-\Algorithm{Huffman樹}{每次合併兩堆，成本是兩堆的重量和，求最小總成本}{$\mathcal{O}(N \log N)$}{cpp}{source/Greedy/huffman.cpp}{}
+\Algorithm{Huffman樹、Huffman Coding}{每次合併兩堆，成本是兩堆的重量和，求最小總成本}{$\mathcal{O}(N \log N)$}{cpp}{source/Greedy/huffman.cpp}{}
 
 \Algorithm{任務調度問題}{依照懲罰由大到小排序，每項工作依序嘗試可不可以放在 Di−Ti+1,Di−Ti,...,1,0，如果有空閒就放進去，否則延後執行。\\僅限 N,deadline $le 10^6$，如果更大須使用 Greedy + MinHeap，只以 deadline 遞增排序，接著走訪所有任務的同時，將懲罰值 push 進 heap。如果當前 Heap 的大小 大於當前任務的 deadline，代表你排了太多任務會逾期。這時直接把 Heap 裡面懲罰值最小的那個 pop 掉。}{$\mathcal{O}(N)$}{cpp}{source/Greedy/JobWithDeadline.cpp}{}
 
