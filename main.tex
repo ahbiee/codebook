@@ -147,17 +147,17 @@ $2^{64}$ & 9200527969062830400 & 161280 \\
 
 需注意: \\
 是否為全連通圖（connected， 只有一個component），對於連通圖要找region可以用Euler's theorem V-E+R=2 \\
-Path是從a點走到b點，長度是經過的edge數量，若a==b表示cycle，如果每個node都只出現一次表示simple \\
+Path是從a點走到b點，長度是經過的edge數量，若a==b表示cycle，如果每個node都只出現一次且無環就表示simple \\
 undirected/directed, 是否 weighted 有權重（點或邊）\\
 multigraph 兩點之間有多條直接的路徑 \\
 有向圖的outdegree, indegree，無向圖的degree(鄰居數量) \\
 
-表示圖的方式: Adjacency matrix, adjacency list
+表示圖的方式: Adjacency matrix (網格圖), adjacency list (存各點的鄰居), edge list (存各邊所連的對象與權重 如Kruskal)
 
 
-\Algorithm{BFS與拓樸排序}{無權圖最短路徑 / 拓樸排序計算In-degree尋找相關順序，可判斷是否有環。}{$\mathcal{O}(V + E)$}{cpp}{source/Graph/BFSTopo.cpp}{}
+\Algorithm{BFS與拓樸排序}{無權圖最短路徑 / 拓樸排序計算In-degree尋找相關順序，可判斷是否有環，需要記得 visited array。}{$\mathcal{O}(V + E)$}{cpp}{source/Graph/BFSTopo.cpp}{}
 
-\Algorithm{DFS}{用遞迴走訪。}{$\mathcal{O}(V + E)$}{cpp}{source/Graph/DFS.cpp}{}
+\Algorithm{DFS}{用遞迴走訪，需要記得 visited array。跑一次DFS可以檢查graph是否全連通(有個點沒被visit)與cycle(重複visit)}{$\mathcal{O}(V + E)$}{cpp}{source/Graph/DFS.cpp}{}
 
 \Algorithm{Dijkstra 單源最短路徑}
 {找單個起點的最短路徑，不支援負權邊，支援自環，支援有/無向圖。}
