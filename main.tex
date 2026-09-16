@@ -147,11 +147,10 @@ $2^{64}$ & 9200527969062830400 & 161280 \\
 
 需注意: \\
 是否為全連通圖（connected， 只有一個component），對於連通圖要找region可以用Euler's theorem V-E+R=2 \\
-undirected 無自環 \\
-directed \\
-weighted 有權重（點或邊）\\
+Path是從a點走到b點，長度是經過的edge數量，若a==b表示cycle，如果每個node都只出現一次表示simple \\
+undirected/directed, 是否 weighted 有權重（點或邊）\\
 multigraph 兩點之間有多條直接的路徑 \\
-有向圖的outdegree, indegree，無向圖的degree \\
+有向圖的outdegree, indegree，無向圖的degree(鄰居數量) \\
 
 表示圖的方式: Adjacency matrix, adjacency list
 
