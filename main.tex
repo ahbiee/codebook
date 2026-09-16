@@ -312,6 +312,10 @@ c^2 = a^2 + b^2 - 2ab \cos(\angle C)
  
 \section{樹論}
 
+\Algorithm{Diameter 直徑}{找樹的直徑，使用兩次DFS，樹邊權不可為負}{$\mathcal{O}(N)$}{cpp}{source/Tree/Diameter.cpp}{}
+
+\Algorithm{Traversal 遍歷}{DFS前中後序，BFS層序}{$\mathcal{O}(1)$}{cpp}{source/Tree/DisjointSet.cpp}{}
+
 \Algorithm{Disjoint Set 並查集}{解決集合、快速合併的問題。優化必須路徑壓縮，可選小掛大。另外可用於類Linked-list}{$\mathcal{O}(1)$}{cpp}{source/Tree/DisjointSet.cpp}{}
 
 \Algorithm{Kruskal 最小生成樹}{需搭配並查集使用。將所有邊排序後，利用併查集檢查是否形成環。}{$\mathcal{O}(E \log E)$}{cpp}{source/Tree/Kruskal.cpp}{}
