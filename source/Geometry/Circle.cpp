@@ -1,6 +1,3 @@
-#include <cmath>
-using namespace std;
-
 // 依賴前面的 Point, sign, cross, length 函數
 
 struct Circle {

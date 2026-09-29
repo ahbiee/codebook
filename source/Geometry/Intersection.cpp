@@ -1,6 +1,3 @@
-#include <algorithm>
-using namespace std;
-
 // 依賴上一節的 Point 結構與 sign, cross 函數
 
 // 輔助函數：判斷點 P 是否在線段 AB 的「邊界框 (Bounding Box)」內

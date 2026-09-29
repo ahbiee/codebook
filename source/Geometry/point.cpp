@@ -1,6 +1,3 @@
-#include <bits/stdc++.h>
-using namespace std;
-
 const double EPS = 1e-9; // 用來處理浮點數誤差的極小值
 
 // 符號判斷函數 (極度重要！)

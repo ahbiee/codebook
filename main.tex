@@ -82,6 +82,8 @@
 
 \Algorithm{快速冪}{計算 $a^b \pmod m$。}{$\mathcal{O}(\log b)$}{cpp}{source/Math/FastPower.cpp}{}
 
+\Algorithm{矩陣快速冪}{快速計算「正方形」矩陣次方答案。}{$\mathcal{O}(\log \text{次方數})$}{cpp}{source/Math/MatrixFastPower.cpp}{}
+
 \Algorithm{模逆元與費馬小定理}{$p$ 必須是質數，且整數 $a$ 與 $p$ 互質，則 $a^{p-1} \equiv 1 \pmod p$。\\兩邊同除以 $a$ 可得 $a^{p-2} \equiv a^{-1} \pmod p$。即計算 $(x / a) \pmod p$ 等同於計算 $(x \cdot a^{p-2}) \pmod p$。}{$\mathcal{O}(\log p)$}{cpp}{source/Math/invModulo.cpp}{}
 
 \Algorithm{組合數 C(n,k)}

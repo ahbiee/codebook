@@ -1,6 +1,3 @@
-#include <cmath>
-using namespace std;
-
 // 依賴前面的 Point, Vector, sign, cross, dot
 
 // 輔助函數：求向量長度
