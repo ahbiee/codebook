@@ -84,6 +84,11 @@
 
 \Algorithm{矩陣快速冪}{快速計算「正方形」矩陣次方答案。}{$\mathcal{O}(\log \text{次方數})$}{cpp}{source/Math/MatrixFastPower.cpp}{}
 
+\Algorithm{Legendre's Formula 勒讓德公式}{計算質數 $p$ 在 $n!$ 中的次數：
+$v_p(n!)=\sum_{k\ge1}\left\lfloor n/p^k\right\rfloor$。
+組合數則為
+$v_p\left(\binom{n}{k}\right)=v_p(n!)-v_p(k!)-v_p((n-k)!)$。}{$\mathcal{O}(\log p)$}{cpp}{source/Math/Legendre.cpp}{}
+
 \Algorithm{模逆元與費馬小定理}{$p$ 必須是質數，且整數 $a$ 與 $p$ 互質，則 $a^{p-1} \equiv 1 \pmod p$。\\兩邊同除以 $a$ 可得 $a^{p-2} \equiv a^{-1} \pmod p$。即計算 $(x / a) \pmod p$ 等同於計算 $(x \cdot a^{p-2}) \pmod p$。}{$\mathcal{O}(\log p)$}{cpp}{source/Math/invModulo.cpp}{}
 
 \Algorithm{組合數 C(n,k)}
