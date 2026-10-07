@@ -1,47 +1,21 @@
-struct BipartiteCheck {
-    int n;
-    vector<vector<int>> adj;
-    vector<int> color; // 0: 未著色, 1: 顏色A, -1: 顏色B
-
-    void init(int _n) {
-        n = _n;
-        adj.assign(n + 1, vector<int>());
-        color.assign(n + 1, 0); // 初始化全為未著色
-    }
-
-    void add_edge(int u, int v) {
-        adj[u].push_back(v);
-        adj[v].push_back(u); // 二分圖判斷通常針對無向圖
-    }
-
-    bool solve() {
-        bool is_bipartite = true;
-
-        // 圖可能有多個連通分量 (Components)，必須確保每個節點都被檢查到
-        for (int i = 1; i <= n; ++i) {
-            if (color[i] == 0) { // 遇到未著色的節點，當作新 Component 的起點
-                queue<int> q;
-                q.push(i);
-                color[i] = 1; // 塗上第一種顏色
-
-                while (!q.empty()) {
-                    int u = q.front();
-                    q.pop();
-
-                    for (int v : adj[u]) {
-                        if (color[v] == 0) {
-                            // 相鄰節點未著色，塗上相反的顏色 (-color[u]) 並加入 queue
-                            color[v] = -color[u];
-                            q.push(v);
-                        } else if (color[v] == color[u]) {
-                            // 相鄰節點已著色，且與自己同色 -> 產生奇數環，非二分圖
-                            is_bipartite = false;
-                            return false; // 提早結束，不需繼續檢查
-                        }
-                    }
-                }
+// 二分圖判定 (相鄰點塗不同色)，已處理不連通。color: 0 未塗, 1 / -1
+const int MAXN = 200005;
+int n, color_[MAXN];
+vector<int> g[MAXN];
+bool is_bipartite() {
+    fill(color_, color_ + n + 1, 0);
+    for (int s = 1; s <= n; s++) {
+        if (color_[s]) continue;
+        queue<int> q; q.push(s); color_[s] = 1;
+        while (!q.empty()) {
+            int u = q.front(); q.pop();
+            for (int v : g[u]) {
+                if (!color_[v]) color_[v] = -color_[u], q.push(v);
+                else if (color_[v] == color_[u]) return false; // 奇環
             }
         }
-        return is_bipartite;
     }
-};
+    return true;
+}
+// 二分圖 <=> 沒有奇數環。分兩組/兩隊/兩種顏色的題目先想這個
+// 每個連通塊可以「翻轉顏色」→ 各塊 (黑數, 白數) 再做背包 DP 求最平均分組

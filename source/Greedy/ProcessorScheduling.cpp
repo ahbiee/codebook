@@ -1,36 +1,14 @@
-struct Machine {
-    int id;
-    long long completion_time;
-    // Min-Heap：優先選擇最快空閒的機器。若時間相同，優先分給 ID 小的
-    bool operator>(const Machine& o) const {
-        if (completion_time != o.completion_time)
-            return completion_time > o.completion_time;
-        return id > o.id; 
+// m 台機器、n 個工作，最小化最晚完工時間 (NP-hard)。LPT 近似: 耗時大的先做，交給最早空出來的機器
+ll lpt_schedule(vector<ll> jobs, int m) {
+    sort(jobs.rbegin(), jobs.rend());
+    priority_queue<pair<ll, int>, vector<pair<ll, int>>, greater<pair<ll, int>>> pq; // {完工時間, 機器編號}
+    for (int i = 0; i < m; i++) pq.push({0, i});
+    for (ll t : jobs) {
+        auto [done, id] = pq.top(); pq.pop();
+        pq.push({done + t, id});
     }
-};
-
-long long multiprocessorScheduling(vector<int>& jobs, int m) {
-    // 工作依耗時由大到小排序 (Longest Processing Time first)
-    sort(jobs.begin(), jobs.end(), greater<int>());
-
-    priority_queue<Machine, vector<Machine>, greater<Machine>> pq;
-    for (int i = 0; i < m; ++i) pq.push({i, 0});
-
-    // 依序把工作派給最快結束的機器
-    for (int job_time : jobs) {
-        Machine earliest = pq.top();
-        pq.pop();
-
-        earliest.completion_time += job_time;
-        pq.push(earliest);
-    }
-
-    // 找出所有機器中最晚完工的時間
-    long long max_time = 0;
-    while (!pq.empty()) {
-        max_time = max(max_time, pq.top().completion_time);
-        pq.pop();
-    }
-
-    return max_time;
+    ll ans = 0;
+    while (!pq.empty()) ans = max(ans, pq.top().first), pq.pop();
+    return ans;
 }
+// 注意: 這只是近似解！題目要精確最佳解時，可以「對答案二分搜 + 檢查能不能塞進 m 台」

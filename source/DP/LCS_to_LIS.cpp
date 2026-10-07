@@ -1,40 +1,18 @@
-vector<int> lcs_to_lis(const vector<int>& A, const vector<int>& B) {
-    unordered_map<int, vector<int>> pos_A;
-    
-    // 1. 紀錄序列 A 中每個元素出現的所有索引
-    for (int i = 0; i < A.size(); ++i) {
-        pos_A[A[i]].push_back(i);
-    }
-
-    vector<int> transformed;
-    
-    // 2. 走訪序列 B，將其替換為 A 中的索引
+// 兩序列 LCS，當「每個值在 A 中出現次數很少」(例如 A、B 都是排列) 時 O(K log K)
+// 把 B 中每個數換成它在 A 中的位置 (由大到小放)，對新序列求嚴格 LIS = LCS 長度
+int lcs_by_lis(const vector<int> &A, const vector<int> &B) {
+    unordered_map<int, vector<int>> pos;
+    for (int i = 0; i < (int)A.size(); i++) pos[A[i]].push_back(i);
+    vector<int> seq;
     for (int x : B) {
-        if (pos_A.count(x)) {
-            // 重點：必須從大到小（反向）加入索引！
-            // 避免 B 中的同一個元素，匹配到 A 中的多個相同元素。
-            for (int i = pos_A[x].size() - 1; i >= 0; --i) {
-                transformed.push_back(pos_A[x][i]);
-            }
-        }
+        auto it = pos.find(x);
+        if (it == pos.end()) continue;
+        for (int k = (int)it->second.size() - 1; k >= 0; k--) seq.push_back(it->second[k]); // 反向避免同一個 B 元素配到兩次
     }
-
-    // 3. 找出轉換後的 LIS 陣列
-    vector<int> lis;
-    for (int x : transformed) {
-        auto it = lower_bound(lis.begin(), lis.end(), x);
-        if (it == lis.end()) {
-            lis.push_back(x);
-        } else {
-            *it = x; // 貪心策略：替換掉第一個大於等於 x 的數字
-        }
+    vector<int> tail;
+    for (int x : seq) {
+        auto p = lower_bound(tail.begin(), tail.end(), x);
+        if (p == tail.end()) tail.push_back(x); else *p = x;
     }
-
-    return lis; // LIS長度與LCS一致，可直接 return lis.size(); 就是 LCS 的長度
+    return tail.size();
 }
-
-/*
-如果要對 LIS 序列找 LCS：
-1. A 為原序列，B 為 sort(A)
-2. 直接對 A、B 做 LCS
-*/

@@ -1,47 +1,18 @@
-/*
-題目敘述: 給定 N 個灑水器，每個灑水器包含座標P 與半徑R，已知草坪長度為L，寬度為W，請問最少需要開啟幾個灑水器就能覆蓋整個區間 (或指定哪些灑水器)
-
-題解: 先將灑水器圍轉化為 一個struct point，用l, r區間表示能覆蓋的左右範圍，然後自訂operator<
-1. 用開始位置排序
-2. 每次都在 小於當前右界的區間中，選擇能往右最多的那個
-3. 重複直到右區間<L，得到最少數量；或者是在當前右邊界內找不到可選擇的表示不存在解
-*/
-const double eps = 1e-8;
-struct point{
-    double L, R;
-    bool operator<(const point&o) const{
-        return L < o.L;
+/* 區間覆蓋: 用最少的區間蓋滿 [0, L]。灑水器版 (UVa 10382): 草地寬 W，
+   灑水器在 pos、半徑 r，能蓋到的範圍是 pos ± sqrt(r^2 - (W/2)^2)
+   作法: 依左端排序，每次在「左端 <= 目前已蓋到的位置」的區間中選右端最遠的 */
+const double eps = 1e-9;
+int min_cover(vector<pair<double, double>> seg, double L) { // seg = {左, 右}，無解回傳 -1
+    sort(seg.begin(), seg.end());
+    int cnt = 0, i = 0, n = seg.size();
+    double reach = 0;                   // [改] 起點
+    while (reach < L - eps) {
+        double best = reach;
+        while (i < n && seg[i].first <= reach + eps) best = max(best, seg[i].second), i++;
+        if (best <= reach + eps) return -1; // 接不上
+        reach = best; cnt++;            // 要輸出選了哪些: 記錄 best 是哪個區間
     }
-};
-
-vector<point> v;
-double pos, rad;
-for(int i=0; i<n; ++i){
-    cin >> pos >> rad;
-    double real;
-    if(rad - w/2.0 <  eps) continue; // 判斷如果半徑小於寬度就不可能被選，直接不加入
-    real = sqrt(rad*rad - (w/2.0)*(w/2.0)); // real表示實際可覆蓋距離
-    v.push_back({pos-real, pos+real});
+    return cnt;
 }
-sort(v.begin(), v.end());
-
-int cnt = 0; // 總計數，如果要指定哪些灑水器就用vector存每次加入的
-int i = 0;
-double furthest = 0.0;
-bool noAns = false;
-
-while(L - furthest > eps){ // L > furthest
-    double cur = furthest;
-    while(i < v.size() && v[i].L - furthest < eps){
-        cur = max(cur, v[i].R);
-        ++i;
-    }
-    if(cur - furthest < eps){
-        noAns = true;
-        break;
-    }
-    furthest = cur;
-    ++cnt;
-}
-if(noAns) cout << -1 << '\n';
-else cout << cnt << '\n'; 
+// 灑水器轉區間: if (r * 2 <= W) 跳過；half = sqrt(r*r - W*W/4.0); seg.push_back({pos - half, pos + half});
+// 整數點版本 (要蓋住點 1..L，[1,3] 與 [4,5] 算接起來): 條件改成 seg[i].first <= reach + 1

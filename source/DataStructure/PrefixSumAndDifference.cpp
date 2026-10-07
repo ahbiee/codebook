@@ -1,61 +1,36 @@
-using ll = long long; 
+// 全部 1-based，讓 index 0 當作 0，免判斷邊界
+const int MAXN = 1005;
+int n, m;
+ll a[MAXN], pre[MAXN];               // 1D
+ll A[MAXN][MAXN], P[MAXN][MAXN];     // 2D
+ll d[MAXN], D[MAXN][MAXN];           // 差分
 
-// === 1D prefix ===
-// 建前綴表 build
-for (int i = 1; i <= n; i++)
-    pre[i] = pre[i - 1] + a[i];
+void build1() { for (int i = 1; i <= n; i++) pre[i] = pre[i - 1] + a[i]; } // [改] XOR: ^
+ll query1(int l, int r) { return pre[r] - pre[l - 1]; }                     // XOR: pre[r]^pre[l-1]
 
-    // 如果是XOR就把+換^ -> pre[i] = pre[i-1] ^ a[i];
-
-// 查詢含l,r的區間 query [l, r] = query [0, r] - query [0, l-1]
-ll query(int l, int r) {
-    return pre[r] - pre[l - 1];
-    // XOR(l,r) = pre[r] ^ pre[l-1];
+void build2() {
+    for (int i = 1; i <= n; i++)
+        for (int j = 1; j <= m; j++)
+            P[i][j] = P[i - 1][j] + P[i][j - 1] - P[i - 1][j - 1] + A[i][j];
+}
+ll query2(int x1, int y1, int x2, int y2) { // 左上 (x1,y1) 右下 (x2,y2)
+    return P[x2][y2] - P[x1 - 1][y2] - P[x2][y1 - 1] + P[x1 - 1][y1 - 1];
 }
 
-// === 2D prefix ===
+// 1D 差分: 大量「區間加」，最後才查
+void add1(int l, int r, ll v) { d[l] += v; d[r + 1] -= v; }
+void restore1() { for (int i = 1; i <= n; i++) d[i] += d[i - 1]; } // 之後 a[i] += d[i]
 
-// pre 是 前綴和 array，a 是 原始數據 array
-// 必須全是 "1-indexed"，避免[-1]的判斷
-// i是row，從1~n 、 j是col，從1~m
-void build() {
-    // 迴圈從 1 開始，當 i=1 或 j=1 時，存取到 0 的位置都會剛好是 0，完美相消
-    for (int i = 1; i <= n; ++i) {
-        for (int j = 1; j <= m; ++j) {
-            pre[i][j] = pre[i-1][j] + pre[i][j-1] - pre[i-1][j-1] + a[i][j];
-        }
-    }
+// 2D 差分
+void add2(int x1, int y1, int x2, int y2, ll v) {
+    D[x1][y1] += v; D[x2 + 1][y1] -= v; D[x1][y2 + 1] -= v; D[x2 + 1][y2 + 1] += v;
 }
-
-// query[(x1, y1) ~ (x2, y2)]，傳入的 x1, y1, x2, y2 也必須是 1-based 的索引
-int query(int x1, int y1, int x2, int y2) {
-    return pre[x2][y2] - pre[x1-1][y2] - pre[x2][y1-1] + pre[x1-1][y1-1];
+void restore2() {
+    for (int i = 1; i <= n; i++)
+        for (int j = 1; j <= m; j++) D[i][j] += D[i - 1][j] + D[i][j - 1] - D[i - 1][j - 1];
 }
-
-// === 1D Difference ===
-
-// 區間加 val -> 從 l + val，到 r+1 不再加 val
-diff[l] += val;
-diff[r + 1] -= val;
-
-// 還原值
-for (int i = 1; i <= n; i++)
-    a[i] = a[i - 1] + diff[i];
-
-// === 2D Difference ===
-
-// 區間加 k
-diff[x1][y1] += k;
-diff[x2+1][y1] -= k;
-diff[x1][y2+1] -= k;
-diff[x2+1][y2+1] += k;
-
-// 還原
-for (int i = 1; i <= n; i++) {
-    for (int j = 1; j <= m; j++) {
-        diff[i][j] += diff[i-1][j]
-                    + diff[i][j-1]
-                    - diff[i-1][j-1];
-    }
-}
-// 此時 diff[i][j] 是 "經過處理後的值"，如果有原始陣列 a，需再加上 a[i][j]
+/* [變形]
+- 子陣列和 = k 的個數 (有負數): map<ll,int> cnt; cnt[0]=1; 每步 ans += cnt[pre-k]; cnt[pre]++
+- 子陣列和可被 k 整除: 同上，key 改成 ((pre%k)+k)%k
+- 最長和為 0 的子陣列: 記錄每個 pre 值「第一次出現」的位置
+*/

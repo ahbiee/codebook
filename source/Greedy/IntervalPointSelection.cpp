@@ -1,25 +1,9 @@
-struct Interval {
-    int l, r;
-    // 依右界由小到大排序，右界相同時左界小的優先
-    bool operator<(const Interval& o) const {
-        if (r != o.r) return r < o.r;
-        return l < o.l;
-    }
-};
-
-int minPoints(vector<Interval>& intervals) {
-    if (intervals.empty()) return 0;
-    sort(intervals.begin(), intervals.end());
-
-    int cnt = 1;
-    int current_r = intervals[0].r;
-
-    for (int i = 1; i < intervals.size(); ++i) {
-        // 若當前區間左界 > 目前紀錄的右界，代表無法共用同一個點
-        if (intervals[i].l > current_r) {
-            cnt++;
-            current_r = intervals[i].r; // 更新右界
-        }
-    }
+// 區間選點: 最少選幾個點，使每個區間 [l, r] 內至少有一個點。依「右端」排序，點盡量放右端
+int min_points(vector<pair<int, int>> seg) { // seg = {l, r}
+    sort(seg.begin(), seg.end(), [](auto &a, auto &b) { return a.second < b.second; });
+    int cnt = 0; ll last = LLONG_MIN;
+    for (auto [l, r] : seg)
+        if (l > last) cnt++, last = r; // 這個區間還沒被蓋到 → 在它的右端放一個點
     return cnt;
 }
+// 答案也等於「最多能選幾個互不相交的區間」(同一個 greedy)

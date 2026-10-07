@@ -1,75 +1,47 @@
-const int MAXN = 2e5 + 5; // 依據題目給定的最大節點數量調整 MAXN
-const int LOG = 19; // 2e5 的情況下 18+1=19 即可，若數字超 2e5 則 LOG = __lg(MAXN) + 1
-
-vector<int> adj[MAXN];
-int up[MAXN][LOG];
-int depth[MAXN];
-
-// DFS 預處理深度與 2^i 祖先
-void dfs(int u, int p) {
-    up[u][0] = p; // 2^0 的祖先就是直屬父親 p
-    
-    for (int i = 1; i < LOG; ++i) { // 狀態轉移：倍增建表
-        up[u][i] = up[up[u][i - 1]][i - 1];
-    }
-    
-    for (int v : adj[u]) {
-        if (v != p) {
-            depth[v] = depth[u] + 1;
-            dfs(v, u);
+// 倍增 LCA: 預處理 O(N log N)、查詢 O(log N)。同時求路徑上的最大邊權
+const int MAXN = 200005, LOG = 18; // 2^LOG > N
+int n, up[LOG][MAXN], dep[MAXN];
+ll mx[LOG][MAXN], distr[MAXN];     // mx[j][v]: v 往上 2^j 條邊中的最大邊權；distr: 到根距離
+vector<pair<int, ll>> g[MAXN];
+void build(int root) { // BFS 版，鏈狀樹也不會 stack overflow
+    vector<int> order; order.reserve(n);
+    fill(dep, dep + n + 1, -1);
+    queue<int> q; q.push(root);
+    dep[root] = 0; up[0][root] = root; mx[0][root] = 0; distr[root] = 0;
+    while (!q.empty()) {
+        int u = q.front(); q.pop(); order.push_back(u);
+        for (auto [v, w] : g[u]) if (dep[v] == -1) {
+            dep[v] = dep[u] + 1; up[0][v] = u; mx[0][v] = w; distr[v] = distr[u] + w;
+            q.push(v);
         }
     }
+    for (int j = 1; j < LOG; j++)
+        for (int v : order) {
+            up[j][v] = up[j - 1][up[j - 1][v]];
+            mx[j][v] = max(mx[j - 1][v], mx[j - 1][up[j - 1][v]]); // [改] min / sum
+        }
 }
-
-int get_lca(int u, int v) { // 查詢最近公共祖先 (LCA)
-    if (depth[u] < depth[v]) swap(u, v); // 確保 u 是比較深的那個點
-    
-    for (int i = LOG - 1; i >= 0; --i) { // 深度對齊
-        if (depth[u] - (1 << i) >= depth[v]) {
-            u = up[u][i];
-        }
-    }
+int kth_ancestor(int v, int k) { for (int j = 0; j < LOG; j++) if (k >> j & 1) v = up[j][v]; return v; }
+int lca(int u, int v) {
+    if (dep[u] < dep[v]) swap(u, v);
+    u = kth_ancestor(u, dep[u] - dep[v]);
     if (u == v) return u;
-
-    for (int i = LOG - 1; i >= 0; --i) { // 同時往上跳，尋找 LCA 的直屬子節點
-        if (up[u][i] != up[v][i]) {
-            u = up[u][i];
-            v = up[v][i];
+    for (int j = LOG - 1; j >= 0; j--)
+        if (up[j][u] != up[j][v]) u = up[j][u], v = up[j][v];
+    return up[0][u];
+}
+ll path_max(int u, int v) { // u-v 路徑上的最大邊權
+    ll res = 0;
+    if (dep[u] < dep[v]) swap(u, v);
+    for (int j = LOG - 1; j >= 0; j--)
+        if (dep[u] - (1 << j) >= dep[v]) res = max(res, mx[j][u]), u = up[j][u];
+    if (u == v) return res;
+    for (int j = LOG - 1; j >= 0; j--)
+        if (up[j][u] != up[j][v]) {
+            res = max({res, mx[j][u], mx[j][v]});
+            u = up[j][u]; v = up[j][v];
         }
-    }
-    return up[u][0];
+    return max({res, mx[0][u], mx[0][v]});
 }
-
-int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(0);
-
-    int n, q;
-    // 假設題目輸入為 n 個點，q 筆 LCA 查詢
-    if (!(cin >> n >> q)) return 0;
-
-    for(int i = 1; i <= n; ++i) adj[i].clear(); // 若題目有多筆測資，必須初始化
-
-    for (int i = 0; i < n - 1; ++i) { // 讀取 n-1 條無向樹邊
-        int u, v;
-        cin >> u >> v;
-        adj[u].push_back(v);
-        adj[v].push_back(u);
-    }
-
-    depth[1] = 0; // 選擇根節點 (通常題目為 1，或0)，並初始化根節點的深度與 DFS 預處理
-    dfs(1, 1); // 根節點的父親設為自己，防止倍增跳躍時越界
-
-    while (q--) { // 處理 Q 筆查詢
-        int u, v;
-        cin >> u >> v;
-        
-        int lca = get_lca(u, v);
-        cout << lca << "\n";
-        
-        // 延伸：若題目要求輸出兩點間的距離 (邊數)
-        // cout << depth[u] + depth[v] - 2 * depth[lca] << "\n";
-    }
-
-    return 0;
-}
+// 兩點距離 = distr[u] + distr[v] - 2 * distr[lca(u, v)]  (邊數: 用 dep)
+// u 是否在 v 的子樹內: lca(u, v) == v

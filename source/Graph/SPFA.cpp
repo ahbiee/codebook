@@ -1,55 +1,31 @@
-#include <bits/stdc++.h>
-using namespace std;
-
-const int MAXN = 1005;
-const long long INF = 1e18;
-
-struct Edge { 
-    int v; 
-    long long w; 
-};
-
-vector<Edge> G[MAXN]; // adjacency list存圖
-long long dist[MAXN]; // 起點到任意點的距離
-int n, m; // n個點, m個邊
-
-bool SPFA(int start) { // 回傳 false 代表圖中存在負環；回傳 true 代表最短路徑計算成功
-    bool inq[MAXN]; // inq[i] 記錄點 i 目前是否在 queue 裡面
-    int cnt[MAXN];  // cnt[i] 記錄點 i 進入 queue 的總次數
-    queue<int> q;
-
+// 可有負權邊的單源最短路 + 負環偵測。平均快，最差 O(VE)
+const int MAXN = 100005;
+const ll INF = 1e18;
+int n, cnt_[MAXN];
+ll dist[MAXN];
+bool inq[MAXN];
+vector<pair<int, ll>> g[MAXN];
+bool spfa(int s) { // false = 從 s 走得到負環
     fill(dist, dist + n + 1, INF);
-    memset(inq, false ,sizeof(inq));
-    memset(cnt, 0, sizeof(cnt));
-    
-    dist[start] = 0; // 從start節點開始
-    q.push(start);
-    inq[start] = true;
-    cnt[start] = 1;
-
+    fill(inq, inq + n + 1, false);
+    fill(cnt_, cnt_ + n + 1, 0);
+    queue<int> q;
+    dist[s] = 0; q.push(s); inq[s] = true;
     while (!q.empty()) {
-        int u = q.front();
-        q.pop();
-        inq[u] = false; // 拿出來後就不在 queue 裡了
-
-        for (auto& edge : G[u]) {
-            int v = edge.v;
-            long long w = edge.w;
-
-            // 鬆弛操作 (relax)
-            if (dist[u] + w < dist[v]) {
-                dist[v] = dist[u] + w;
-                
-                // 如果被鬆弛的點不在 queue 裡面，就把它加進去
-                if (!inq[v]) {
-                    q.push(v);
-                    inq[v] = true;
-                    cnt[v]++;
-                    
-                    if (cnt[v] >= n) return false; // 【關鍵】一個點入隊次數 >= n (點總數)，必定有負環
-                }
+        int u = q.front(); q.pop(); inq[u] = false;
+        for (auto [v, w] : g[u]) if (dist[u] + w < dist[v]) {
+            dist[v] = dist[u] + w;
+            if (!inq[v]) {
+                if (++cnt_[v] >= n) return false; // 入隊 >= n 次 → 負環
+                q.push(v); inq[v] = true;
             }
         }
     }
-    return true; 
+    return true;
 }
+/* [變形]
+- 判斷「整張圖」有沒有負環: 建超級源點 0 連到每個點權 0，從 0 跑 (n 要算進 0 → 用 n+1 判斷)
+- 差分約束: 條件 x[v] - x[u] <= w → 邊 u→v 權 w。超級源點 0 → 每點權 0
+  有負環 = 無解；否則 dist 就是一組解 (x[v]-x[u] >= w 改寫成 x[u]-x[v] <= -w)
+- 最長路: 權重取負後跑最短路 (正環 = 最長路無限大)
+*/

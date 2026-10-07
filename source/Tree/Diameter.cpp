@@ -1,35 +1,24 @@
-/*
-如果發現題目要找樹的直徑時，可以使用兩次dfs求解 (前提是樹邊權不能是負的)
-如: 樹上最遠兩點距離? 從一個人開始通知，每秒傳到相鄰節點，最短多久可以全收到? 路徑唯一最長鏈?
+// 樹直徑: 從任意點找最遠點 a，再從 a 找最遠點 b，dist(a,b) 即直徑。邊權須 >= 0
+const int MAXN = 200005;
+int n, par_[MAXN];
+ll d[MAXN];
+vector<pair<int, ll>> g[MAXN]; // 無權樹: w = 1
+int farthest(int s) { // BFS 版 (樹上路徑唯一，不必 Dijkstra)，避免遞迴太深
+    fill(d, d + n + 1, -1);
+    queue<int> q; q.push(s); d[s] = 0; par_[s] = 0;
+    int best = s;
+    while (!q.empty()) {
+        int u = q.front(); q.pop();
+        if (d[u] > d[best]) best = u;
+        for (auto [v, w] : g[u]) if (d[v] == -1) d[v] = d[u] + w, par_[v] = u, q.push(v);
+    }
+    return best;
+}
+ll diameter(int &a, int &b) {
+    a = farthest(1); b = farthest(a);
+    return d[b]; // 路徑: 從 b 沿 par_ 走回 a
+}
+/* [應用]
+- 每個點的最遠距離 = max(dist(v,a), dist(v,b))  (各跑一次 BFS)
+- 樹的中心 (最小化最遠距離): 直徑路徑的中點；從一點廣播到全樹的最短時間 = ceil(直徑/2)
 */
-vector<int> adj[MAXN];
-int max_dist;
-int farthest_node;
-
-void dfs(int cur, int parent, int dist){
-    if(dist > max_dist){
-        max_dist = dist;
-        farthest_node = cur;
-    }
-    for(int &next : adj[cur]){
-        if(next != parent) dfs(cur->next, cur, dist+1);
-    }
-}
-
-void solve(){
-    int n, e;
-    cin >> n >> e;
-    for(int i=0; i<e; ++i){ // 讀入圖
-        int a, b;
-        cin >> a >> b;
-        adj[a].push_back(b);
-        adj[b].push_back(a);
-    }
-    max_dist = -1;
-    dist(1, -1, 0); // 一開始從任意點第一次DFS
-
-    int first_farthest = farthest_node;
-    max_dist = -1;
-    dist(first_farthest, -1, 0);
-    // 最長距離為max_dist, 點:first_farthest, farthest_node
-}

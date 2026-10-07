@@ -15,6 +15,8 @@
     \setCJKmainfont{Noto Sans TC}      % 給本機 Windows 用的
     \setCJKmonofont{Noto Sans TC}
 }
+\usepackage{array}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
 
 \teamnote{FJCU}{UltraGrammer}{} % ahbiee
 
@@ -26,400 +28,363 @@
 
 \maketitlepage
 
-% Make Pagebreak if you want.
-% \pagebreak 
+\section{解題流程}
 
-\section{你是否有...}
+\subsection{本 codebook 的用法}
+\begin{itemize}
+    \item 每份 code 都假設已經有「模板」的 \texttt{bits/stdc++.h}、\texttt{using namespace std}、\texttt{typedef long long ll}。全部是\textbf{全域陣列 + 函式}，沒有 struct。
+    \item 註解 \texttt{// [改]} 的那一行 = 題目變形時「通常要改的地方」。先找 [改]，再看檔案最後的 \texttt{[變形]} 清單。
+    \item 每份檔案各自獨立。同時貼兩份時，重複的 \texttt{MAXN / INF / n / g} 要刪掉或改名。需要別的檔案時註解會寫「需要 XXX.cpp」。
+    \item 多筆測資：全域陣列、\texttt{g[i].clear()}、計數器，每筆都要重設。
+\end{itemize}
+
+\subsection{看 N 決定複雜度 (1 秒約 $10^8$ 次運算)}
+\begin{tabular}{@{}L{1.2cm}L{1.7cm}L{5.3cm}@{}}
+\hline
+N 的範圍 & 複雜度 & 可能的作法 \\ \hline
+$\le 10$ & $O(N!)$ & 全排列、回溯 \\
+$\le 20$ & $O(2^N N)$ & 位元枚舉 \\
+$\le 40$ & $O(2^{N/2})$ & 折半枚舉 \\
+$\le 500$ & $O(N^3)$ & Floyd、區間 DP、KM \\
+$\le 5000$ & $O(N^2)$ & 二維 DP、LCS、枚舉兩端點 \\
+$\le 2\cdot10^5$ & $O(N\log N)$ & 排序、二分、BIT/線段樹、Dijkstra \\
+$\le 10^6$ & $O(N)$ & 雙指針、前綴和、KMP/Z、線性篩 \\
+$\le 10^{12}$ & $O(\sqrt N)$ & 因數分解、數論分塊 \\
+$\le 10^{18}$ & $O(\log N)$ & 快速冪、矩陣快速冪、二分答案 \\ \hline
+\end{tabular}
+
+\subsection{題目關鍵字 $\rightarrow$ 先想這些}
+\begin{tabular}{@{}L{3.5cm}L{5.0cm}@{}}
+\hline
+看到… & 想到… \\ \hline
+最大值最小、最小值最大、至少需要多少 & 對答案二分搜 + greedy 檢查 \\
+最少步數 (每步代價相同) & BFS (網格、多源、0-1 BFS) \\
+最短路 (有權 / 負權 / 全點對) & Dijkstra / SPFA / Floyd \\
+最短路 + 多一個條件 (次數、鑰匙、時間、油量) & \textbf{分層圖 / 狀態圖} \\
+先後順序、依賴關係、有沒有環 & 拓樸排序、DFS 判環 \\
+合併、是否同一組、連通塊 & DSU、DFS \\
+花最少成本把所有點連起來 & MST (Kruskal) \\
+區間和、大量區間修改 & 前綴和、差分、BIT、線段樹 \\
+區間最大最小 (不修改)、視窗最大 & Sparse Table、單調隊列 \\
+左/右邊第一個更大 (更小) & 單調棧 \\
+子陣列和 $= k$ & 非負: 雙指針；有負: 前綴和 + map \\
+找字串 / 多個字串 / 迴文 & KMP、Z / AC 自動機 / Manacher \\
+方法數 mod p、$C(n,k)$、除法取模 & 組合數、模逆元 \\
+遞迴式但 $n$ 到 $10^{18}$ & 矩陣快速冪 \\
+選或不選、容量限制 & 背包 DP \\
+配對、分派 (有權重 / 有容量) & 匈牙利 (KM / Dinic) \\
+拔掉後會斷開的點/邊 & 割點、橋 (BCC) \\
+樹上兩點路徑、距離 & LCA (倍增) \\
+兩人輪流、誰必勝 & Nim、SG 函數、打表找規律 \\
+排程、選最多不重疊區間 & Greedy (依結束時間排序) \\
+不重疊的工作、每個有獎勵，求最大獎勵 & 加權區間排程 DP \\
+ \hline
+\end{tabular}
+
+\subsection{模板不能直接套時 (題目變形)}
+\begin{enumerate}
+    \item \textbf{多了一個條件} $\rightarrow$ 把它塞進「狀態」：最短路變成 (點, 條件) 的分層圖；DP 多開一維。狀態數 $\times$ 轉移數 $\le 10^8$ 就能做。
+    \item \textbf{終點固定、起點很多} $\rightarrow$ 反向建圖從終點跑一次；\textbf{起點很多} $\rightarrow$ 超級源點或多源 BFS。
+    \item \textbf{直接求很難、但「猜答案 $x$」後很好檢查} $\rightarrow$ 二分搜答案。
+    \item \textbf{換個問法}：總數 $-$ 不合法數；最小割 = 最大流；最小點覆蓋 = 最大匹配；最大獨立集 = $N -$ 匹配。
+    \item \textbf{換枚舉的東西}：枚舉答案、枚舉中間點、枚舉比較小的那一維；「所有子陣列的總和」$\rightarrow$ 算每個元素被算幾次 (貢獻法)。
+    \item \textbf{離線處理}：把詢問排序；刪除很難 $\rightarrow$ 倒過來變加入 (DSU)。
+    \item \textbf{化簡}：先排序 (很多東西會變單調)；$|x_1-x_2|+|y_1-y_2|$ 轉成 $(x+y, x-y)$ 取 max；值域大但個數少 $\rightarrow$ 座標壓縮。
+    \item \textbf{完全沒想法}：寫暴力把小範圍答案印出來找規律 (打表)，再用對拍驗證。
+\end{enumerate}
 
 \subsection{嘗試...}
-
 \begin{itemize}
-    \item \textcolor{red}{\textbf{再讀一遍題目}}
-    \item 懷疑你認為「理所當然」的直覺?
-    \item 試著寫下直覺的規律? (有助於觀察)
-    \item 換個方向思考?
-    \item 暴力解?
-    \item 貪心解?
-    \item 對答案二分搜?
-    \item 動態規劃(DP)?
-    \item 狀態建模, 把問題轉化成圖論?
-    \item 只在奇數index反轉狀態?
-    \item 用乘法取代除法? ($/2 = *2^{-1}$，模逆元)
+    \item \textcolor{red}{\textbf{再讀一遍題目}}，用範例手動模擬一次
+    \item 懷疑你認為「理所當然」的直覺？試著寫下直覺的規律 (有助於觀察)
+    \item 換個方向思考？暴力解？貪心解？對答案二分搜？動態規劃？
+    \item 狀態建模，把問題轉化成圖論？
+    \item 只在奇數 index 反轉狀態？用乘法取代除法？($/2 = \times 2^{-1}$，模逆元)
 \end{itemize}
 
 \subsection{檢查...}
-
 \begin{itemize}
-    \item \textcolor{red}{\textbf{確定沒漏看敘述?}}
-    \item 確認數值範圍? (溢位, 精度位數, 陣列大小...)
-    \item 不同的陣列/字串 使用同個index導致超出範圍?
-    \item 模板抄錯?
-    \item 多筆資料之間初始化?
-    \item 題目額外的敘述, 暗示?
-    \item 未定義行為? (陣列越界, 未初始化)
-    \item overflow? (int -> long long)
-    \item 非void function忘記return?
-    \item 浮點數誤差? (極小的eps, 是否需要long double)
-    \item 隱轉換? (int*int爆了後才存到long long)
-    \item signed與unsigned int之間的compare?
+    \item \textcolor{red}{\textbf{確定沒漏看敘述？}} 題目額外的敘述、暗示？輸出格式 (空白、換行、大小寫)？
+    \item 數值範圍：溢位 (\texttt{int*int} 先轉 \texttt{1LL*})、陣列大小、精度位數
+    \item 多筆測資之間的初始化？$N=0$、$N=1$、全部相同、找不到答案時的輸出？
+    \item 圖：不連通？自環、重邊？鏈狀樹 (遞迴太深)？$V=1, E=0$？
+    \item 模板抄錯？不同陣列/字串用同一個 index 而越界？非 void 函式忘記 return？
+    \item 浮點數誤差 (用 eps，必要時 long double)？負數取模 \texttt{(x\%m+m)\%m}？除以 0？
+    \item signed 與 unsigned 比較 (\texttt{v.size()-1} 在 size 為 0 時)？
+    \item 區間的端點：開區間還是閉區間？同一時間點的事件誰先處理？
 \end{itemize}
+
+\section{基礎}
+
+\Algorithm{模板}{競賽用基礎模板。所有其他 code 都假設有這份的前 6 行。}{}{cpp}{source/Others/Template.cpp}{}
+
+\Algorithm{Fast IO 與 \_\_int128}{輸入超過 $10^6$ 個數時用 \texttt{read()}；\_\_int128 可存到約 $1.7\times10^{38}$，但要自己印。}{}{cpp}{source/Others/FastIO.cpp}{}
+
+\Algorithm{C++ 函式庫速查}{常用 STL 與注意事項。}{}{cpp}{source/Others/functions.cpp}{}
+
+\Algorithm{位元與數學小技巧}{}{}{cpp}{source/Others/Concepts.cpp}{}
 
 \section{資料結構}
 
-\Algorithm{BIT (Fenwick Tree)}{支援單點修改與區間求和。必須是1-based index。}{$\mathcal{O}(\log n)$}{cpp}{source/DataStructure/BIT.cpp}{}
+\Algorithm{BIT (Fenwick Tree)}{單點修改、前綴和。1-based。變形：區間加區間和 (兩棵 BIT)、第 $k$ 小、逆序對。}{$O(\log N)$}{cpp}{source/DataStructure/BIT.cpp}{}
 
-\Algorithm{Sparse Table 稀疏表}{完全只為區間(最大最小值)查詢}{建表$\mathcal{O}(\log n)$ 查詢$\mathcal{O}(1)$}{cpp}{source/DataStructure/SparseTable.cpp}{}
+\Algorithm{Segment Tree 線段樹 (lazy)}{區間加值 + 區間和。改成區間 max/min 只要改標 [改] 的 4 行。1-based。}{建樹 $O(N)$，修改/查詢 $O(\log N)$}{cpp}{source/DataStructure/SegmentTree.cpp}{}
 
-\Algorithm{Segment Tree 線段樹}{給定n筆資料查詢與m次範圍更新，解決多次範圍更新的問題，找"區間和"或最大/小值。必須是1-based index。}{建樹$\mathcal{O}(N)$ 查詢/更新 $\mathcal{O}(\log N)$}{cpp}{source/DataStructure/SegmentTree.cpp}{}
+\Algorithm{Sparse Table 稀疏表}{不修改的區間 max/min/gcd 查詢。0-based。}{建表 $O(N\log N)$，查詢 $O(1)$}{cpp}{source/DataStructure/SparseTable.cpp}{}
 
-\Algorithm{Prefix Sum(前綴和) 和 Difference(差分)}{Prefix sum: 多次區間查詢/區間和，Difference: 大量區間更新}{建表$\mathcal{O}(N)$，查詢$\mathcal{O}(1)$}{cpp}{source/DataStructure/PrefixSumAndDifference.cpp}{}
+\Algorithm{Prefix Sum 前綴和 與 Difference 差分}{前綴和: 多次區間查詢；差分: 大量區間加值、最後才查。1D/2D 皆 1-based。}{建表 $O(N)$，查詢 $O(1)$}{cpp}{source/DataStructure/PrefixSumAndDifference.cpp}{}
 
-\Algorithm{Monotonic Stack 單調棧}{找類似 Next Greater Element 這樣的題目}{$\mathcal{O}(N)$}{cpp}{source/DataStructure/MonotonicStack.cpp}{}
+\Algorithm{Monotonic Stack 單調棧}{左/右邊第一個比自己大 (小) 的位置。}{$O(N)$}{cpp}{source/DataStructure/MonotonicStack.cpp}{}
 
-\Algorithm{Monotonic Queue 單調隊列}{直接用來找 Sliding Window Maximum/Minimum，使用 deque}{$\mathcal{O}(N)$}{cpp}{source/DataStructure/MonotonicQueue.cpp}{}
+\Algorithm{Monotonic Queue 單調隊列}{固定長度視窗的最大/最小值。}{$O(N)$}{cpp}{source/DataStructure/MonotonicQueue.cpp}{}
 
-\section{數論}
+\Algorithm{Disjoint Set 並查集}{合併集合、判斷是否同一組。路徑壓縮 + 小掛大。}{均攤近似 $O(1)$}{cpp}{source/Tree/DisjointSet.cpp}{}
 
-\Algorithm{快速冪}{計算 $a^b \pmod m$。}{$\mathcal{O}(\log b)$}{cpp}{source/Math/FastPower.cpp}{}
+\Algorithm{座標壓縮、pb\_ds 平衡樹}{值很大但個數少 $\rightarrow$ 壓到 $1\sim k$。ordered\_set 可查第 $k$ 小與名次。}{$O(N\log N)$}{cpp}{source/DataStructure/Compress.cpp}{}
 
-\Algorithm{矩陣快速冪}{快速計算「正方形」矩陣次方答案。}{$\mathcal{O}(\log \text{次方數})$}{cpp}{source/Math/MatrixFastPower.cpp}{}
+% [未學，學會後刪掉行首的 % 即可] \Algorithm{莫隊 (Mo's Algorithm)}{離線區間查詢，答案無法用線段樹合併時 (例: 區間相異數字個數)。只要能 $O(1)$ 加入/移除一個元素。}{$O((N+Q)\sqrt N)$}{cpp}{source/DataStructure/Mo.cpp}{}
 
-\Algorithm{Legendre's Formula 勒讓德公式}{計算質數 $p$ 在 $n!$ 中的次數：
-$v_p(n!)=\sum_{k\ge1}\left\lfloor n/p^k\right\rfloor$。
-組合數則為
-$v_p\left(\binom{n}{k}\right)=v_p(n!)-v_p(k!)-v_p((n-k)!)$。}{$\mathcal{O}(\log p)$}{cpp}{source/Math/Legendre.cpp}{}
+\section{數學}
 
-\Algorithm{模逆元與費馬小定理}{$p$ 必須是質數，且整數 $a$ 與 $p$ 互質，則 $a^{p-1} \equiv 1 \pmod p$。\\兩邊同除以 $a$ 可得 $a^{p-2} \equiv a^{-1} \pmod p$。即計算 $(x / a) \pmod p$ 等同於計算 $(x \cdot a^{p-2}) \pmod p$。}{$\mathcal{O}(\log p)$}{cpp}{source/Math/invModulo.cpp}{}
+\Algorithm{快速冪}{計算 $a^b \bmod m$。}{$O(\log b)$}{cpp}{source/Math/FastPower.cpp}{}
 
-\Algorithm{組合數 C(n,k)}
-{N $\le$ 2000 用帕斯卡三角形。N $\le$ $10^6$ 且模數為質數時，用預處理階乘與模逆元}
-{$\mathcal{O}(N^2)$ 或 $\mathcal{O}(N)$}
-{cpp}{source/Math/Combinatorics.cpp}{}
+\Algorithm{模逆元 (費馬小定理)}{$p$ 為質數且 $p \nmid a$：$a^{-1} \equiv a^{p-2} \pmod p$，所以 $x/a \equiv x\cdot a^{p-2}$。另附 $O(N)$ 建逆元表。}{$O(\log p)$}{cpp}{source/Math/invModulo.cpp}{}
 
-\Algorithm{質數檢查}{單次詢問大數用 \texttt{isPrime}；若有大量詢問則建質數表。}{$\mathcal{O}(\sqrt{N})$}{cpp}{source/Math/Prime.cpp}{}
+\Algorithm{擴展歐幾里得}{解 $ax+by=\gcd(a,b)$；模數不是質數時的模逆元。}{$O(\log \min(a,b))$}{cpp}{source/Math/exGCD.cpp}{}
 
-\begin{table}[h]
-\centering
-\begin{tabular}{ccc}
-Range & 擁有最多因數的數字 & 其因數總個數\\
+% [未學，學會後刪掉行首的 % 即可] \Algorithm{中國剩餘定理 CRT}{解同餘方程組 (模數可不互質)。需要 exGCD.cpp。}{$O(k\log M)$}{cpp}{source/Math/CRT.cpp}{}
+
+\Algorithm{組合數 C(n,k)}{$n \le 2000$ 用帕斯卡 (模數可非質數)；$n \le 10^6$ 用階乘 + 逆元 (模數須為質數)；$n$ 到 $10^{18}$、質數模數小用 Lucas。}{$O(N^2)$ / $O(N)$ 建表、$O(1)$ 查詢}{cpp}{source/Math/Combinatorics.cpp}{}
+
+\Algorithm{質數、質因數分解、線性篩}{單一數字 $O(\sqrt N)$；大量查詢用線性篩 (順便得到最小質因數 spf)。}{$O(\sqrt N)$ / 篩 $O(N)$}{cpp}{source/Math/Prime.cpp}{}
+
+\begin{tabular}{@{}lll@{}}
+範圍 & 擁有最多因數的數 & 因數個數 \\
 $10^9$ & 735134400 & 1344 \\
 $2^{31}$ & 2095133040 & 1600 \\
 $10^{18}$ & 897612484786617600 & 103680 \\
-$2^{64}$ & 9200527969062830400 & 161280 \\
 \end{tabular}
-\end{table}
+\vspace{2pt}
 
-\Algorithm{大數乘法}{未知長度的大數相乘}{$\mathcal{O}(N \times M)$}{cpp}{source/Math/BigNumMultiply.cpp}{}
+% [未學，學會後刪掉行首的 % 即可] \Algorithm{Miller-Rabin、Pollard Rho}{$10^{18}$ 以內的質數判斷 (確定性) 與快速質因數分解。}{判斷 $O(\log^2 N)$，分解約 $O(N^{1/4})$}{cpp}{source/Math/MillerRabin.cpp}{}
 
-\Algorithm{排容原理}
-{解決「至少符合一項條件」的計數問題。遵守奇加偶減原則。}
-{$\mathcal{O}(2^M \cdot M)$}
-{cpp}{source/Math/PIE.cpp}
-{}
+\Algorithm{尤拉函數 $\varphi$}{$1\sim N$ 中與 $N$ 互質的個數；另附 $1\sim N$ 全部建表。}{$O(\sqrt N)$ / 建表 $O(N\log\log N)$}{cpp}{source/Math/EulerPhi.cpp}{}
 
-\Algorithm{擴展歐幾里得 (Extended GCD)}
-{求解 $ax + by = \gcd(a, b)$，以及當模數 $m$ 非質數時的萬能模逆元。}
-{$\mathcal{O}(\log(\min(a, b)))$}
-{cpp}{source/Math/exGCD.cpp}
-{}
+\Algorithm{Legendre's Formula 勒讓德公式}{$n!$ 中質數 $p$ 的次數 $v_p(n!)=\sum_{k\ge1}\lfloor n/p^k\rfloor$；$v_p\binom{n}{k}=v_p(n!)-v_p(k!)-v_p((n-k)!)$。}{$O(\log_p n)$}{cpp}{source/Math/Legendre.cpp}{}
 
-\Algorithm{尤拉函數}
-{求 $1 \sim N$ 中與 $N$ 互質的整數個數。}
-{$\mathcal{O}(\sqrt{N})$}
-{cpp}{source/Math/EulerPhi.cpp}
-{}
+\Algorithm{數論分塊}{快速計算 $\sum_{i=1}^{n} \lfloor n/i \rfloor$ ($\lfloor n/i \rfloor$ 只有 $O(\sqrt n)$ 種值)。}{$O(\sqrt N)$}{cpp}{source/Math/MathBlock.cpp}{}
 
+\Algorithm{排容原理}{「至少滿足一個條件」的計數，奇加偶減。}{$O(2^M M)$}{cpp}{source/Math/PIE.cpp}{}
 
-\Algorithm{數論分塊}
-{快速計算 $\sum \lfloor \frac{N}{i} \rfloor$。利用商的階梯狀分布，將 $\mathcal{O}(N)$ 降至 $\mathcal{O}(\sqrt{N})$。}
-{$\mathcal{O}(\sqrt{N})$}
-{cpp}{source/Math/MathBlock.cpp}
-{}
+\Algorithm{矩陣快速冪}{線性遞迴 $f(n)=\sum c_i f(n-i)$ 在 $n$ 很大時。含取模。}{$O(k^3 \log n)$}{cpp}{source/Math/MatrixFastPower.cpp}{}
+
+\Algorithm{高斯消去、XOR 線性基}{解聯立方程組 (判斷無解/唯一/無限多解)；一堆數選子集的最大 XOR。}{$O(N^3)$ / $O(\log V)$ 每次插入}{cpp}{source/Math/Gauss.cpp}{}
+
+% [未學，學會後刪掉行首的 % 即可] \Algorithm{NTT 多項式乘法}{卷積 mod 998244353。也可做長大數乘法。}{$O(N\log N)$}{cpp}{source/Math/NTT.cpp}{}
+
+\Algorithm{大數運算}{加、減、比較、乘小數、乘大數、除以小數。先確認 \_\_int128 夠不夠。}{乘法 $O(NM)$，其餘 $O(N)$}{cpp}{source/Math/BigNumMultiply.cpp}{}
+
+\Algorithm{博弈論 (Nim、SG 函數)}{}{$O(N \cdot |\text{moves}|)$}{cpp}{source/Math/Game.cpp}{}
+
+\subsection{常用公式}
+\begin{itemize}
+    \item Catalan: $C_n=\frac{1}{n+1}\binom{2n}{n}$，1, 1, 2, 5, 14, 42, 132。合法括號、二元樹個數、不越過對角線的路徑。
+    \item 第二類 Stirling (n 個相異球放進 k 個相同非空盒): $S(n,k)=kS(n-1,k)+S(n-1,k-1)$。
+    \item 錯排: $D_n=(n-1)(D_{n-1}+D_{n-2})$，$D_1=0, D_2=1$。
+    \item 插板法: $x_1+\dots+x_k=n$ 的非負整數解 $\binom{n+k-1}{k-1}$；正整數解 $\binom{n-1}{k-1}$。
+    \item 格子路徑 $(0,0)\to(a,b)$ 只往右/上: $\binom{a+b}{a}$。
+    \item $\sum i^2=\frac{n(n+1)(2n+1)}{6}$，$\sum i^3=\left(\frac{n(n+1)}{2}\right)^2$，等比 $\sum_{i=0}^{n-1} r^i=\frac{r^n-1}{r-1}$。
+    \item 費馬: $a^{p-1}\equiv1$；尤拉: $a^{\varphi(m)}\equiv1$ ($\gcd(a,m)=1$)；Wilson: $(p-1)!\equiv-1 \pmod p$。
+    \item $\gcd(a,b)=\gcd(b,a\bmod b)$，$\text{lcm}(a,b)=a/\gcd(a,b)\cdot b$ (先除再乘防溢位)。
+    \item 平面圖 Euler: $V-E+F=2$ (連通，F 含外部面)。Pick: $A=I+B/2-1$。
+    % [未學] \item Möbius: $\sum_{d\mid n}\mu(d)=[n=1]$；$1\le i,j\le n$ 中 $\gcd(i,j)=1$ 的對數 $=\sum_{d}\mu(d)\lfloor n/d\rfloor^2$ (配數論分塊)。
+    % [未學] \item Burnside (旋轉後相同算同一種): 方法數 $=\frac{1}{n}\sum_{i=0}^{n-1} k^{\gcd(i,n)}$ (長度 $n$ 的項鍊、$k$ 種顏色)。
+\end{itemize}
 
 \section{字串}
 
-\Algorithm{KMP 字串匹配}{尋找 \texttt{pattern} 出現位置。\texttt{pi} 陣列可求最小循環節。回傳 0-based 起始位置，未匹配為 $-1$。pi[i] 代表前綴 S[0 $\dots$ i] 中最長的「相等真前後綴」長度。}
-{$\mathcal{O}(N + M)$}{cpp}{source/String/KMP.cpp}{}
+\Algorithm{KMP 字串匹配}{\texttt{pi[i]} = $s[0..i]$ 最長「相等真前後綴」的\textbf{長度}。回傳所有 0-based 起點；也可求最小循環節。}{$O(N+M)$}{cpp}{source/String/KMP.cpp}{}
 
-\Algorithm{Z-Algorithm 字串匹配}{\texttt{z[i]} 代表 $S$ 與 $S[i \dots N-1]$ 的最長共同前綴。必須是0-based index。}{$\mathcal{O}(N)$}{cpp}{source/String/Z.cpp}{}
+\Algorithm{Z-Algorithm}{\texttt{z[i]} = $s$ 與 $s[i..]$ 的最長共同前綴。0-based。}{$O(N)$}{cpp}{source/String/Z.cpp}{}
 
-\Algorithm{Manacher 迴文判斷}{求最長迴文子字串。預處理字串塞入 \texttt{\#} 將所有迴文轉為奇數長度。}
-{$\mathcal{O}(N)$}{cpp}{source/String/Manacher.cpp}{}
+\Algorithm{Manacher 迴文}{最長迴文子字串、迴文子字串總數、$O(1)$ 判斷 $s[l..r]$ 是否迴文。}{$O(N)$}{cpp}{source/String/Manacher.cpp}{}
 
-\Algorithm{Trie 字典樹}{字串前綴統計或最大 XOR 問題。必須是0-based index。}{$\mathcal{O}(|S|)$}{cpp}{source/String/Trie.cpp}{}
+\Algorithm{Trie 字典樹}{字串出現次數、前綴個數、刪除；SIGMA=2 時可做最大 XOR。root = 0。}{$O(|S|)$}{cpp}{source/String/Trie.cpp}{}
 
-\Algorithm{AC自動機}{多字串匹配 (Trie + KMP)，必須是0-based index。fail[i] 指向當前狀態最長的、且在 Trie 中存在的後綴狀態。}{$\mathcal{O}(N + M)$}{cpp}{source/String/AC.cpp}{}
+\Algorithm{AC 自動機}{多個 pattern 同時匹配，求每個 pattern 在文章中出現幾次。fail[v] 指向 v 的最長且存在於 Trie 中的真後綴。}{$O(\text{總長} \cdot \Sigma + |T|)$}{cpp}{source/String/AC.cpp}{}
 
-\section {圖論}
+% [未學，學會後刪掉行首的 % 即可] \Algorithm{字串雜湊 Rolling Hash}{$O(1)$ 比較任意兩子字串。mod $2^{61}-1$ + 隨機 base，幾乎不會碰撞。}{建表 $O(N)$，查詢 $O(1)$}{cpp}{source/String/Hash.cpp}{}
 
-需注意: \\
-是否為全連通圖（connected， 只有一個component），對於連通圖要找region可以用Euler's theorem V-E+R=2 \\
-Path是從a點走到b點，長度是經過的edge數量，若a==b表示cycle，如果每個node都只出現一次且無環就表示simple \\
-undirected/directed, 是否 weighted 有權重（點或邊）\\
-multigraph 兩點之間有多條直接的路徑 \\
-有向圖的outdegree, indegree，無向圖的degree(鄰居數量) \\
+% [未學，學會後刪掉行首的 % 即可] \Algorithm{Suffix Array 後綴陣列 + LCP}{所有後綴排序；相異子字串數、最長重複子字串。}{$O(N\log N)$}{cpp}{source/String/SuffixArray.cpp}{}
 
-表示圖的方式: Adjacency matrix (網格圖), adjacency list (存各點的鄰居), edge list (存各邊所連的對象與權重 如Kruskal)
+\section{圖論}
 
+表示圖: 鄰接串列 \texttt{vector<int> g[MAXN]} (帶權用 \texttt{pair<int,ll>})、鄰接矩陣 (Floyd、$V \le 500$)、邊列表 (Kruskal)。
+注意: 有向/無向、有沒有權重、是否連通、自環與重邊。連通平面圖的區域數可用 $V-E+F=2$。
 
-\Algorithm{BFS與拓樸排序}{無權圖最短路徑 / 拓樸排序計算In-degree尋找相關順序，可判斷是否有環，需要記得 visited array。}{$\mathcal{O}(V + E)$}{cpp}{source/Graph/BFSTopo.cpp}{}
+\Algorithm{BFS、拓樸排序、網格 BFS、0-1 BFS}{無權最短路；拓樸排序 (可判環、DAG DP)；網格四方向；邊權只有 0/1 時用 deque。}{$O(V+E)$}{cpp}{source/Graph/BFSTopo.cpp}{}
 
-\Algorithm{DFS}{用遞迴走訪，需要記得 visited array。跑一次DFS可以檢查graph是否全連通(有個點沒被visit)與cycle(重複visit)}{$\mathcal{O}(V + E)$}{cpp}{source/Graph/DFS.cpp}{}
+\Algorithm{DFS}{連通塊、有向圖判環 (三色)、小 $N$ 枚舉所有路徑 (回溯)。}{$O(V+E)$}{cpp}{source/Graph/DFS.cpp}{}
 
-\Algorithm{Dijkstra 單源最短路徑}
-{找單個起點的最短路徑，不支援負權邊，支援自環，支援有/無向圖。}
-{$\mathcal{O}((V+E)\log V)$}{cpp}{source/Graph/Dijkstra.cpp}{}
+\Algorithm{Dijkstra 單源最短路}{邊權 $\ge 0$。附路徑還原、最短路條數、瓶頸路寫法與常見變形。}{$O((V+E)\log V)$}{cpp}{source/Graph/Dijkstra.cpp}{}
 
-\Algorithm{SPFA 單源最短路徑}
-{也是找單個起點的最短路徑，但支援負權邊。只在"可能有負邊"或"必須檢查負環"時才用}
-{預期 $\mathcal{O}(V+E)$，最差(網格圖) $\mathcal{O}(VE)$}
-{cpp}{source/Graph/SPFA.cpp}
-{}
+\Algorithm{分層圖 / 狀態圖 (最短路 + 額外條件)}{題目多一個條件時，把「(點, 條件)」當成新的點。方法一直接建大圖再呼叫原本的 Dijkstra；方法二把條件放進 dist 的第二維。}{$O(K(V+E)\log(KV))$}{cpp}{source/Graph/LayeredGraph.cpp}{}
 
-\Algorithm{Floyd-Warshall 多源最短路徑}
-{求任意兩點之間距離。利用滾動陣列降維，\texttt{k} 必須在最外層迴圈。注意避開 \texttt{INF} 加上負權邊的陷阱。}
-{時間 $\mathcal{O}(V^3)$，空間 $\mathcal{O}(V^2)$}
-{cpp}{source/Graph/Floyd.cpp}
-{}
+\Algorithm{SPFA (Bellman-Ford)}{可有負權邊、可判負環、差分約束。只在有負邊時用。}{平均快，最差 $O(VE)$}{cpp}{source/Graph/SPFA.cpp}{}
 
-\Algorithm{二分圖判定 (著色問題)}
-{規定相鄰節點必須塗上不同顏色，如果在著色過程中，發現相鄰節點已經被塗上相同的顏色，則代表此圖包含奇數環Odd Cycle，不是二分圖。已考量到不連通圖的情況}
-{$\mathcal{O}(V + E)$}
-{cpp}{source/Graph/BipartiteCheck.cpp}
-{}
+\Algorithm{Floyd-Warshall 全點對最短路}{$k$ 一定在最外層。附路徑還原、負環、遞移閉包。}{$O(V^3)$}{cpp}{source/Graph/Floyd.cpp}{}
 
-\Algorithm{割點與雙連通分量}
-{處理網路穩定性、單點故障分析。透過 DFS 一次遍歷找出所有的割點以及 v-BCC。由於一個割點可能同時屬於多個 BCC，我們利用 stack 記錄 DFS 走過的點，當發現割點條件成立時，再把點從 stack 彈出形成 BCC。}
-{$\mathcal{O}(V + E)$}
-{cpp}{source/Graph/BCC.cpp}
-{}
+\Algorithm{二分圖判定 (著色)}{相鄰點塗不同色，衝突 = 有奇環。已處理不連通。}{$O(V+E)$}{cpp}{source/Graph/BipartiteCheck.cpp}{}
 
-\Algorithm{匈牙利演算法}
-{無權二分圖最大匹配，透過回溯尋找增廣路徑，以達到最大匹配。分為左(S)、右(T)兩側，以及left陣列紀錄右側所選的對象}
-{$\mathcal{O}(V \cdot E)$}
-{cpp}{source/Graph/Hungarian.cpp}
-{}
+\Algorithm{割點、橋、點雙連通分量}{一次 Tarjan 找出割點、橋與所有 v-BCC (孤立點自成一個)。用邊編號處理重邊。}{$O(V+E)$}{cpp}{source/Graph/BCC.cpp}{}
 
-\Algorithm{KM演算法}{適用於左右節點數皆為 $N$ 的帶權完全二分圖}{$\mathcal{O}(N^3)$}{cpp}{source/Graph/KM.cpp}{}
+% [未學，學會後刪掉行首的 % 即可] \Algorithm{SCC 強連通分量 (Tarjan) 與縮點}{有向圖中互相可達的點分成一組，縮點後得到 DAG。}{$O(V+E)$}{cpp}{source/Graph/SCC.cpp}{}
 
-\Algorithm{Dinic 最大流}
-{建圖時需加入反向邊做為退流機制。多筆測資要記得清空 \texttt{adj}。}
-{$\mathcal{O}(V^2E)$，二分圖匹配 $\mathcal{O}(E\sqrt{V})$}
-{cpp}{source/Graph/Dinic.cpp}
-{}
+% [未學，學會後刪掉行首的 % 即可] \Algorithm{2-SAT}{每個變數真/假，條件都是「$a$ 或 $b$」。需要 SCC.cpp。}{$O(N+M)$}{cpp}{source/Graph/TwoSAT.cpp}{}
+
+% [未學，學會後刪掉行首的 % 即可] \Algorithm{歐拉路徑 (Hierholzer)}{每條邊恰好走一次。迭代版，有向/無向皆可。}{$O(V+E)$}{cpp}{source/Graph/Euler.cpp}{}
+
+\Algorithm{匈牙利演算法 (二分圖最大匹配)}{左右兩側，\texttt{match\_r[v]} 記錄右邊 $v$ 配到誰。附二分圖重要定理。}{$O(VE)$}{cpp}{source/Graph/Hungarian.cpp}{}
+
+\Algorithm{KM 演算法}{帶權二分圖最大權完美匹配，左右各 $N$ 點 (不足補虛點)。}{$O(N^3)$}{cpp}{source/Graph/KM.cpp}{}
+
+\Algorithm{Dinic 最大流}{反向邊 = \texttt{e\^{}1}。附最小割與常見建模。多筆測資呼叫 \texttt{init(n)}。}{$O(V^2E)$，二分圖 $O(E\sqrt V)$}{cpp}{source/Graph/Dinic.cpp}{}
+
+% [未學，學會後刪掉行首的 % 即可] \Algorithm{MCMF 最小費用最大流}{每條邊有容量與單位費用。}{$O(F \cdot VE)$}{cpp}{source/Graph/MCMF.cpp}{}
+
+\section{樹}
+
+\Algorithm{Diameter 直徑}{兩次 BFS 找最遠點，支援邊權 ($\ge 0$)。}{$O(N)$}{cpp}{source/Tree/Diameter.cpp}{}
+
+\Algorithm{Traversal 遍歷}{陣列存二元樹的前/中/後序、層序；由前序 + 中序求後序。}{$O(N)$ (重建 $O(N^2)$)}{cpp}{source/Tree/Traversal.cpp}{}
+
+\Algorithm{LCA 最近共同祖先 (倍增)}{BFS 建表 (不怕鏈狀樹)。附第 $k$ 個祖先、兩點距離、路徑最大邊權。}{預處理 $O(N\log N)$，查詢 $O(\log N)$}{cpp}{source/Tree/LCA.cpp}{}
+
+% [未學，學會後刪掉行首的 % 即可] \Algorithm{樹鏈剖分 HLD}{樹上路徑修改/查詢拆成 $O(\log N)$ 段連續區間，交給 BIT/線段樹。需要 BIT.cpp。}{每次操作 $O(\log^2 N)$}{cpp}{source/Tree/HLD.cpp}{}
+
+\Algorithm{Kruskal 最小生成樹}{邊排序後用 DSU 判環。需要 DisjointSet.cpp。}{$O(E\log E)$}{cpp}{source/Tree/Kruskal.cpp}{}
+
+\Algorithm{嚴格次小生成樹}{MST + 倍增維護路徑上最大與嚴格次大邊。需要 DisjointSet.cpp。}{$O(E\log V)$}{cpp}{source/Tree/SecondMST.cpp}{}
+
+% [未學，學會後刪掉行首的 % 即可] \Algorithm{樹 DP、換根 DP、樹壓平}{用 BFS 序由下往上做 DP；換根求每個點當根的答案；Euler Tour 把子樹變成區間。}{$O(N)$}{cpp}{source/Tree/TreeDP.cpp}{}
 
 \section{幾何}
 
-\section*{A. Circle and Line}
-點 $P(x_0, y_0)$ \\
-到直線 $L : ax + by + c = 0$ 的距離
-\[
-d(P, L) = \frac{|ax_0 + by_0 + c|}{\sqrt{a^2 + b^2}}
-\]
-兩平行直線 $L_1 : ax + by + c_1 = 0$ \\
-與 $L_2 : ax + by + c_2 = 0$ 的距離
-\[
-d(L_1, L_2) = \frac{|c_1 - c_2|}{\sqrt{a^2 + b^2}}
-\]
+\subsection*{A. 點與直線}
+點 $(x_0,y_0)$ 到直線 $ax+by+c=0$ 的距離 $\frac{|ax_0+by_0+c|}{\sqrt{a^2+b^2}}$；
+兩平行線 $ax+by+c_1=0$、$ax+by+c_2=0$ 距離 $\frac{|c_1-c_2|}{\sqrt{a^2+b^2}}$。
 
-\section*{B. Triangle}
-設三角形頂點為 $A(x_1, y_1), B(x_2, y_2), C(x_3, y_3)$ \\
-點 $A, B, C$ 的對邊長分別為 $a, b, c$ \\
-三角形面積為 $\Delta$ \\
-重心為 $(G_x, G_y)$，內心為 $(I_x, I_y)$，\\
-外心為 $(O_x, O_y)$ 和垂心為 $(H_x, H_y)$
-
+\subsection*{B. 三角形}
+頂點 $A(x_1,y_1), B(x_2,y_2), C(x_3,y_3)$，對邊長 $a,b,c$，面積 $\Delta$。
 \[
-\Delta = \frac{1}{2} \begin{vmatrix} x_1 & y_1 & 1 \\ x_2 & y_2 & 1 \\ x_3 & y_3 & 1 \end{vmatrix}
+\Delta = \frac{1}{2} \left|\begin{vmatrix} x_1 & y_1 & 1 \\ x_2 & y_2 & 1 \\ x_3 & y_3 & 1 \end{vmatrix}\right|,\quad
+\Delta=\sqrt{s(s-a)(s-b)(s-c)},\ s=\tfrac{a+b+c}{2}
 \]
+重心 $G=\frac{A+B+C}{3}$；內心 $I=\frac{aA+bB+cC}{a+b+c}$；外心 $O$ 見 Circle.cpp；
+垂心 $H = 3G - 2O$ (重心、外心、垂心共線)。
 \[
-G_x = \frac{1}{3}(x_1 + x_2 + x_3)
-\]
-\[
-G_y = \frac{1}{3}(y_1 + y_2 + y_3)
-\]
-\[
-I_x = \frac{ax_1 + bx_2 + cx_3}{a + b + c}
-\]
-\[
-I_y = \frac{ay_1 + by_2 + cy_3}{a + b + c}
-\]
-\[
-O_x = \frac{1}{4\Delta} \begin{vmatrix} x_1^2 + y_1^2 & y_1 & 1 \\ x_2^2 + y_2^2 & y_2 & 1 \\ x_3^2 + y_3^2 & y_3 & 1 \end{vmatrix}
-\]
-\[
+O_x = \frac{1}{4\Delta} \begin{vmatrix} x_1^2 + y_1^2 & y_1 & 1 \\ x_2^2 + y_2^2 & y_2 & 1 \\ x_3^2 + y_3^2 & y_3 & 1 \end{vmatrix},\quad
 O_y = \frac{1}{4\Delta} \begin{vmatrix} x_1 & x_1^2 + y_1^2 & 1 \\ x_2 & x_2^2 + y_2^2 & 1 \\ x_3 & x_3^2 + y_3^2 & 1 \end{vmatrix}
 \]
-\[
-H_x = -\frac{1}{2\Delta} \begin{vmatrix} x_2x_3 + y_2y_3 & y_1 & 1 \\ x_1x_3 + y_1y_3 & y_2 & 1 \\ x_1x_2 + y_1y_2 & y_3 & 1 \end{vmatrix}
-\]
-\[
-H_y = -\frac{1}{2\Delta} \begin{vmatrix} x_1 & x_2x_3 + y_2y_3 & 1 \\ x_2 & x_1x_3 + y_1y_3 & 1 \\ x_3 & x_1x_2 + y_1y_2 & 1 \end{vmatrix}
-\]
+餘弦定理 $c^2=a^2+b^2-2ab\cos C$；正弦定理 $\frac{a}{\sin A}=2R$；內切圓半徑 $r=\frac{\Delta}{s}$；外接圓 $R=\frac{abc}{4\Delta}$。
 
-任意三角形，重心、外心、垂心共線
-\[
-G_x = \frac{2}{3} O_x + \frac{1}{3} H_x
-\]
-\[
-G_y = \frac{2}{3} O_y + \frac{1}{3} H_y
-\]
+\subsection*{C. 四邊形}
+凸四邊形邊長 $a,b,c,d$，$s=\frac{a+b+c+d}{2}$，已知 $\angle A+\angle C$：
+面積 $=\sqrt{(s-a)(s-b)(s-c)(s-d) - abcd\cos^2\frac{A+C}{2}}$。圓內接四邊形時第二項為 0。
+只知道一個角：用餘弦定理求對角線，再用海龍公式算兩個三角形。
 
-\section*{C. Quadrilateral}
-任意凸四邊形 $ABCD$ 的四邊長分別為 $a, b, c, d$ \\
-且已知 $\angle A + \angle C$，則四邊形 $ABCD$ 的面積為
-\[
-\sqrt{(s-a)(s-b)(s-c)(s-d) - \Delta}
-\]
-\textbf{where}
-\[
-s = \frac{a+b+c+d}{2}
-\]
-\[
-\Delta = abcd \cos^2 \left( \frac{A+C}{2} \right)
-\]
+\Algorithm{點與向量基礎}{點用 \texttt{pair<ld,ld>} 表示，附 \texttt{+ - * /}、內積 \texttt{dot}、外積 \texttt{cross}、\texttt{sign} (處理誤差)。座標全為整數時把 ld 改 ll。}{$O(1)$}{cpp}{source/Geometry/point.cpp}{}
 
-特例：若 $ABCD$ 為圓內接四邊形，則 $\Delta = 0$
+\Algorithm{線段相交、直線交點}{外積跨立實驗，可處理端點接觸與共線重疊；矩形交集面積公式。}{$O(1)$}{cpp}{source/Geometry/Intersection.cpp}{}
 
-若只知道其中一角，則可用餘弦定理
-\[
-c^2 = a^2 + b^2 - 2ab \cos(\angle C)
-\]
-求出對角線長，再用海龍計算兩個三角形面積即可。
+\Algorithm{點與直線/線段}{點到直線、點到線段距離；投影點、鏡射點。}{$O(1)$}{cpp}{source/Geometry/PointLine.cpp}{}
 
-\Algorithm{點與向量基礎 (Point \& Vector)}
-{幾何基礎，定義struct與operator。包含浮點數誤差處理 \texttt{sign}，以及核心工具 \texttt{dot} (內積) 與 \texttt{cross} (外積)。}
-{$\mathcal{O}(1)$}
-{cpp}{source/Geometry/point.cpp}
-{}
+\Algorithm{多邊形面積、點在多邊形內}{鞋帶公式 (凹多邊形可)；射線法判斷內/外/邊上；Pick 定理。}{$O(N)$}{cpp}{source/Geometry/PolygonArea.cpp}{}
 
-\Algorithm{判斷線段、矩形相交 (Segment Intersection)}
-{利用外積進行跨立實驗。避開斜率除以零的問題，可處理端點相切與共線重疊。}
-{$\mathcal{O}(1)$}
-{cpp}{source/Geometry/Intersection.cpp}
-{}
+\Algorithm{凸包 Convex Hull、旋轉卡尺}{Andrew 單調鏈，回傳逆時針凸包；旋轉卡尺求最遠點對。}{$O(N\log N)$}{cpp}{source/Geometry/ConvexHull.cpp}{}
 
-\Algorithm{點與線段關係 (Point \& Line)}
-{判斷 1.點是否在線段上 2.求點到直線/線段最短距離。利用內外積避免解方程式與浮點數除以零。}
-{$\mathcal{O}(1)$}
-{cpp}{source/Geometry/PointLine.cpp}
-{}
+\Algorithm{圓}{三點求外接圓、直線與圓的交點、兩圓關係。}{$O(1)$}{cpp}{source/Geometry/Circle.cpp}{}
 
-\Algorithm{任意多邊形面積}
-{利用外積求多邊形面積(鞋帶公式)。頂點必須依順時針或逆時針順序給定。支援凹凸多邊形。}
-{$\mathcal{O}(N)$}
-{cpp}{source/Geometry/PolygonArea.cpp}
-{}
+% [未學，學會後刪掉行首的 % 即可] \Algorithm{最近點對}{整數座標，分治法。回傳距離平方。}{$O(N\log N)$}{cpp}{source/Geometry/ClosestPair.cpp}{}
 
-\Algorithm{凸包 Convex Hull}
-{求包圍所有點的最小凸多邊形。先排 $X$ 再排 $Y$。由左至右建下半部，由右至左建上半部。利用外積判斷並踢除右轉點。}
-{$\mathcal{O}(N \log N)$}
-{cpp}{source/Geometry/ConvexHull.cpp}
-{}
- 
-\section{樹論}
-
-\Algorithm{Diameter 直徑}{找樹的直徑，使用兩次DFS，樹邊權不可為負}{$\mathcal{O}(N)$}{cpp}{source/Tree/Diameter.cpp}{}
-
-\Algorithm{Traversal 遍歷}{DFS前中後序，BFS層序}{$\mathcal{O}(1)$}{cpp}{source/Tree/DisjointSet.cpp}{}
-
-\Algorithm{Disjoint Set 並查集}{解決集合、快速合併的問題。優化必須路徑壓縮，可選小掛大。另外可用於類Linked-list}{$\mathcal{O}(1)$}{cpp}{source/Tree/DisjointSet.cpp}{}
-
-\Algorithm{Kruskal 最小生成樹}{需搭配並查集使用。將所有邊排序後，利用併查集檢查是否形成環。}{$\mathcal{O}(E \log E)$}{cpp}{source/Tree/Kruskal.cpp}{}
-
-\Algorithm{次小生成樹}
-{基於 Kruskal。會先求出最小生成樹，再暴力枚舉拔除 MST 上的每一條邊，找剩下的最小生成樹，取最小值即為次小生成樹。}
-{$\mathcal{O}(V \times E)$}
-{cpp}{source/Tree/SecondMST.cpp}
-{}
-
-\Algorithm{LCA 最近共同祖先}{使用倍增法，利用二進位的特性，預處理出每個節點向上跳 $2^0, 2^1, \dots, 2^i$ 步的祖先是誰}{$\text{最差} \mathcal{O} (N)$}{cpp}{source/Tree/LCA.cpp}{}
+% [未學，學會後刪掉行首的 % 即可] \Algorithm{矩形面積聯集}{掃描線 + 線段樹 (覆蓋次數、被蓋住的長度)。}{$O(N\log N)$}{cpp}{source/Geometry/RectUnion.cpp}{}
 
 \section{DP}
 
-DP通用解題四步驟: \\
-1. 定義陣列意義：明確寫出 dp[i] (或dp[i][j]) 代表什麼。 \\
-2. 找出遞迴關係式：推導出當前狀態如何由過去狀態轉移而來。 \\ 
-3. 設定邊界條件：初始化起點或基礎 dp 值（如： dp[0] = 0 ）。 \\ 
-4. 確認遍歷順序：決定迴圈是從前到後（Bottom-Up）還是後到前 (Top-Down) 計算。(通常是Bottom-Up，思考 "我是如何到這一步的"去推) \\
+\textbf{DP 四步驟}：
+1. 定義狀態：寫清楚 \texttt{dp[i][j]} 代表什麼 (\textbf{題目多一個條件 = 多一維})。
+2. 轉移：「最後一步」是什麼？由哪些較小的狀態來？
+3. 初始值：\texttt{dp[0]}、不可能的狀態設 $\pm$INF。
+4. 計算順序：確保用到的狀態都已算好 (通常由小到大)。答案在哪一格？
 
-\Algorithm{01 Knapsack 背包}{解決物品不可拆分的情況，若可拆分用Greedy拿比例最佳的部分}{$\mathcal{O}(N)$}{cpp}{source/DP/01.cpp}{}
+\textbf{常見狀態}：前 $i$ 個 (線性)、區間 $[l,r]$ (區間)、拓樸序 (DAG)。
 
-\Algorithm{LCS 最長共同SubSequence}{二維DP與Backtrack找原始子序列}{$\mathcal{O}(NM)$}{cpp}{source/DP/LCS.cpp}{}
+\Algorithm{背包問題}{0/1 (含回溯)、\textbf{二維費用 (兩種資源同時限制，例: 時間 + 雞蛋)}、完全、多重 (二進位拆分)、分組；子集合和 bitset、方法數、容量很大時的變形。}{$O(NW)$}{cpp}{source/DP/01.cpp}{}
 
-\Algorithm{LIS / LDS 最長遞增/遞減子序列}
-{嚴格遞增用 \texttt{lower\_bound}，非嚴格改用 \texttt{upper\_bound}。替換策略下的 \texttt{dp} 陣列長度正確，但內容不一定是真實子序列。}
-{$\mathcal{O}(N \log N)$}
-{cpp}{source/DP/LIS_LDS.cpp}
-{}
+\Algorithm{分錢幣問題}{完全背包的變形：組合數 (外層硬幣)、排列數 (外層金額)、最少硬幣數。}{$O(\text{硬幣數}\times K)$}{cpp}{source/DP/Coin.cpp}{}
 
-\Algorithm{LCS 轉 LIS}{兩個序列的「公共子序列」，在序列 A 中的索引必定是嚴格遞增的，所以可以將 B 中的每一個數字 替換成他在 A 中的位置(索引)，接著對新陣列求 LIS，長度就會剛好等於 LCS}{$\mathcal{O} (K log K) \text{K 為元素配對數量}$}{cpp}{source/DP/LCS_to_LIS.cpp}{}
+\Algorithm{LCS 最長共同子序列、編輯距離}{二維 DP + 回溯出字串。}{$O(NM)$}{cpp}{source/DP/LCS.cpp}{}
 
-\Algorithm{區間DP概念 (最長迴文子序列)}{區間 DP是由字串的內部向外擴張，利用已經算好的較短子字串，來推導出較長子字串的答案。}{$\mathcal{O}(N^2)$}{cpp}{source/DP/Interval.cpp}{}
+\Algorithm{LIS 最長遞增子序列}{嚴格用 \texttt{lower\_bound}、非嚴格用 \texttt{upper\_bound}。附輸出真正的 LIS 與常見題型。}{$O(N\log N)$}{cpp}{source/DP/LIS_LDS.cpp}{}
 
-\Algorithm{跳格子}{給定一組陣列，固定跳躍距離，問你最少需要跳幾次，以及所跳過的格子index。如果數值達到long long，INF需設為1e18或0x3f3f3f3f3f3f3f3f}{$\mathcal{O}(N \times K)$}{cpp}{source/DP/jump.cpp}{}
+\Algorithm{LCS 轉 LIS}{$B$ 的每個數換成它在 $A$ 中的位置，求嚴格 LIS = LCS。適合 $A,B$ 為排列時。}{$O(K\log K)$，$K$ 為配對數}{cpp}{source/DP/LCS_to_LIS.cpp}{}
 
-\Algorithm{分錢幣問題}
-{完全背包變體。求「方法數」需外層枚舉硬幣、內層枚舉金額(求組合數)。求「最少硬幣數」轉移取 \texttt{min}。於 \texttt{main} 開頭先建表。}
-{$\mathcal{O}(\text{硬幣數} \times \text{最大金額})$}
-{cpp}{source/DP/Coin.cpp}
-{}
+\Algorithm{區間 DP}{由短區間推長區間。合併石頭通用模板、最長迴文子序列、變迴文的最少編輯 (含輸出)。}{$O(N^3)$ / $O(N^2)$}{cpp}{source/DP/Interval.cpp}{}
 
-\Algorithm{Kadane's Algorithm (最大子陣列和 Maximum Subarray Sum)}
-{尋找陣列中連續元素相加的最大值。若全為負數會正確回傳最大的負數。}
-{$\mathcal{O}(N)$ \text{(最快)}}
-{cpp}{source/DP/Kadane.cpp}
-{}
+% [未學，學會後刪掉行首的 % 即可] \Algorithm{位元 DP (TSP)}{$N \le 20$，用 bitmask 表示「已經用過哪些」。}{$O(2^N N^2)$}{cpp}{source/DP/Bitmask.cpp}{}
+
+% [未學，學會後刪掉行首的 % 即可] \Algorithm{數位 DP}{$[L,R]$ 中「每一位數字」滿足某性質的個數 = solve(R) $-$ solve(L$-$1)。}{$O(\text{位數}\times\text{狀態}\times10)$}{cpp}{source/DP/Digit.cpp}{}
+
+% [未學，學會後刪掉行首的 % 即可] \Algorithm{李超線段樹 (斜率優化 DP)}{轉移為 $\min_j(m_j x_i + b_j)$ 的 DP：每個 $j$ 是一條直線，查詢某個 $x$ 的最小值。}{$O(\log C)$ 每次}{cpp}{source/DP/LiChao.cpp}{}
+
+\Algorithm{加權區間排程 (工作有獎勵)}{選互不衝突的工作使獎勵和最大，並回溯輸出選了哪些。依結束時間排序 + 二分搜前一個不衝突的工作。\texttt{TOUCH\_OK} 決定「端點相接」算不算衝突。}{$O(N\log N)$}{cpp}{source/DP/WeightedInterval.cpp}{}
+
+\Algorithm{Kadane 最大子陣列和}{全為負數時回傳最大的負數。附二維、環狀等變形。}{$O(N)$}{cpp}{source/DP/Kadane.cpp}{}
+
+\Algorithm{跳格子 (路徑還原)}{一次最多跳 $K$ 格，最少步數並輸出路徑。}{$O(NK)$}{cpp}{source/DP/jump.cpp}{}
 
 \section{Greedy}
 
-\Algorithm{一維區間全覆蓋}{需要先把輸入轉化成一個包含l, r的struct，自訂operator<，起始位置由小到大排序}{$\mathcal{O}(N \log N)$}{cpp}{source/Greedy/1Dcoverage.cpp}{}
+\textbf{Greedy 不確定對不對時}：用「交換論證」(相鄰兩個交換會不會更好) 推出排序方式；或寫暴力對拍。
 
-\Algorithm{間格跳躍}{給定一組陣列，距離為index的值，問你最少需要跳多少次才能到終點}{$\mathcal{O}(N)$}{cpp}{source/Greedy/jump.cpp}{}
+\Algorithm{區間覆蓋 (灑水器)}{用最少區間蓋滿 $[0, L]$：依左端排序，每次選能延伸最遠的。}{$O(N\log N)$}{cpp}{source/Greedy/1Dcoverage.cpp}{}
 
-\Algorithm{最大不重疊區間}{對一組任務做排程，請問最多可以移除多少個任務 -> 最早結束的先選。}{$\mathcal{O}(N \log N)$}{cpp}{source/Greedy/Nonoverlapping.cpp}{}
+\Algorithm{區間選點}{最少幾個點讓每個區間都含點：依右端排序。}{$O(N\log N)$}{cpp}{source/Greedy/IntervalPointSelection.cpp}{}
 
-\Algorithm{最小覆蓋區間}{給定一組陣列，包含開始時間與結束時間，求最少需要幾個房間就能完成所有任務}{$\mathcal{O}(N \log N)$}{cpp}{source/Greedy/room.cpp}{}
+\Algorithm{最多不重疊區間}{依結束時間排序，能選就選。最少刪除數 = $N -$ 答案。}{$O(N\log N)$}{cpp}{source/Greedy/Nonoverlapping.cpp}{}
 
-\Algorithm{區間選點問題}{將區間依照右界由小到大排序。遍歷所有區段，如果當前區間的左界大於目前選定點的右界，代表必須多選一個點}{$\mathcal{O}(N \log N)$}{cpp}{source/Greedy/IntervalPointSelection.cpp}{}
+\Algorithm{最少會議室}{依開始時間排序，heap 存使用中房間的結束時間。}{$O(N\log N)$}{cpp}{source/Greedy/room.cpp}{}
 
-\Algorithm{最小化最大延遲問題}{按照到期時間從早到晚處理。記錄當下累積的耗時，並與該任務的死線相減，取最大的延遲時間}{$\mathcal{O}(N \log N)$}{cpp}{source/Greedy/job.cpp}{}
+\Algorithm{掃描線：最大重疊數}{開始 $+1$、結束 $-1$。\textbf{同時間的處理順序取決於開/閉區間}，見註解。}{$O(N\log N)$}{cpp}{source/Greedy/SweepLineOverlap.cpp}{}
 
-\Algorithm{Huffman樹、Huffman Coding}{每次合併兩堆，成本是兩堆的重量和，求最小總成本}{$\mathcal{O}(N \log N)$}{cpp}{source/Greedy/huffman.cpp}{}
+\Algorithm{最小化最大延遲}{依期限由早到晚做。附 SJF、加權完成時間、交換論證。}{$O(N\log N)$}{cpp}{source/Greedy/job.cpp}{}
 
-\Algorithm{任務調度問題}{依照懲罰由大到小排序，每項工作依序嘗試可不可以放在 Di−Ti+1,Di−Ti,...,1,0，如果有空閒就放進去，否則延後執行。\\僅限 N,deadline $le 10^6$，如果更大須使用 Greedy + MinHeap，只以 deadline 遞增排序，接著走訪所有任務的同時，將懲罰值 push 進 heap。如果當前 Heap 的大小 大於當前任務的 deadline，代表你排了太多任務會逾期。這時直接把 Heap 裡面懲罰值最小的那個 pop 掉。}{$\mathcal{O}(N)$}{cpp}{source/Greedy/JobWithDeadline.cpp}{}
+\Algorithm{有期限的單位工作排程}{最小化逾期懲罰。期限 $\le 10^6$ 用 DSU 找空位；期限很大用依期限排序 + min-heap。}{$O(N\log N)$}{cpp}{source/Greedy/JobWithDeadline.cpp}{}
 
-\Algorithm{多機調度問題}{將工作依耗時「由大到小」排序 。每次將工作交給最快空閒出來的機器。}{$\mathcal{O}(N \log N)$}{cpp}{source/Greedy/ProcessorScheduling.cpp}{}
+\Algorithm{多機排程 (LPT 近似)}{耗時大的先做，交給最早空出來的機器。\textbf{只是近似解}。}{$O(N\log N)$}{cpp}{source/Greedy/ProcessorScheduling.cpp}{}
 
-\Algorithm{最大區間重疊數 Sweep Line}
-{詢問在任意時刻可達到的最大重疊數量為何。將區間拆分為 +1 (開始) 與 -1 (結束) 事件。時間相同時 -1 優先處理，避免多算重疊數。}
-{$\mathcal{O}(N \log N)$}
-{cpp}{source/Greedy/SweepLineOverlap.cpp}
-{}
+\Algorithm{跳躍遊戲 (最少跳幾次)}{\texttt{a[i]} 為從 $i$ 最遠能跳的距離。}{$O(N)$}{cpp}{source/Greedy/jump.cpp}{}
 
-\Algorithm{Josephus 約瑟夫問題}{詢問約瑟夫問題的最後贏家 (存活者)}{$\mathcal{O}(K log N)$}{cpp}{source/Greedy/Josephus.cpp}{}
+\Algorithm{Josephus 約瑟夫問題}{最後存活者。}{$O(N)$；$k$ 小時 $O(k\log N)$}{cpp}{source/Greedy/Josephus.cpp}{}
 
-\section{Search \& Techniques}
+\Algorithm{Huffman 合併與編碼}{每次合併最小的兩堆；陣列存樹產生編碼。}{$O(N\log N)$}{cpp}{source/Greedy/huffman.cpp}{}
 
-\Algorithm{Binary Search}{二分搜技巧}{$\mathcal{O}(log N)$}{cpp}{source/Search/Binary.cpp}{}
+\section{搜尋與技巧}
 
-\Algorithm{Ternary Search}{求單峰/單谷函數極值。浮點數固定跑 100 次迴圈；整數在 R-L < 2 時改用 for 暴力找極值以避開死迴圈。}
-{$\mathcal{O}(\log_3(\text{值域}))$}
-{cpp}{source/Search/TernarySearch.cpp}
-{}
+\Algorithm{Binary Search 二分搜}{找第一個/最後一個可行的值、實數二分。附常見 check 寫法。}{$O(\log(\text{值域}) \times \text{check})$}{cpp}{source/Search/Binary.cpp}{}
 
-\Algorithm{Two Pointer 雙指針}{需先自己對陣列做排序}{\text{大部分 }$\mathcal{O}(N)$}{cpp}{source/Search/TwoPointer.cpp}{}
+\Algorithm{Ternary Search 三分搜}{單峰/單谷函數極值。浮點數固定跑 200 次；整數剩 3 個以內暴力。}{$O(\log(\text{值域}))$}{cpp}{source/Search/TernarySearch.cpp}{}
+
+\Algorithm{Two Pointer 雙指針}{同向 (視窗) 與對向 (排序後)。}{$O(N)$}{cpp}{source/Search/TwoPointer.cpp}{}
+
+\Algorithm{Sliding Window 滑動視窗}{最長不重複子字串、最多 K 種值的子陣列數。}{$O(N)$ (用 map 時 $O(N\log N)$)}{cpp}{source/Search/SlidingWindow.cpp}{}
+
+\Algorithm{暴力枚舉、回溯、折半枚舉}{子集合/排列枚舉、回溯剪枝 (N 皇后)、$N\le40$ 的折半枚舉。}{$O(2^N)$ / $O(2^{N/2}N)$}{cpp}{source/Search/Brute.cpp}{}
 
 \section{MISC}
 
-\Algorithm{模板}{競賽用基礎模板}{$NULL$}{cpp}{source/Others/Template.cpp}{}
+\Algorithm{安全的 Hash}{unordered\_map 被特殊測資卡成 $O(N)$ 時使用。}{均攤 $O(1)$}{cpp}{source/Others/hash.cpp}{}
 
-\Algorithm{一些概念}{想不到怎麼解或優化的時候可以參考這些想法}{$NULL$}{cpp}{source/Others/Concepts.cpp}{}
-
-\Algorithm{自訂 Hash Function}{使用 unordered map 或 unordered set 時，避免被惡意測資卡成 $\mathcal{O}(N)$ 時需自訂Hash function的情況}{保證 $\mathcal{O}(1)$}{cpp}{source/Others/hash.cpp}{}
-
-\Algorithm{C++函式庫}{好用的東西可以參考}{$NULL$}{cpp}{source/Others/functions.cpp}{}
-
-\Algorithm{對拍器}{有一個想法，也保證暴力解法全對時，可以使用 對拍器 檢查答案}{$NULL$}{cpp}{source/Others/gen.cpp}{}
+\Algorithm{對拍器 (測資產生器)}{有一個解法、也有保證正確的暴力解時，用隨機小測資找出反例。產生器: 陣列、排列、字串、區間、各種形狀的樹 (隨機/鏈/星/二元/毛毛蟲)、一般圖、連通圖、DAG、完全圖、網格。}{}{cpp}{source/Others/gen.cpp}{}
 
 \end{document}

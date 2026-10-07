@@ -1,44 +1,27 @@
-// 題型：給定數種硬幣，求「湊出金額 K 的最大方法數」
-// 注意：
-// 1. 大陣列 (如 1e6) 務必宣告為 Global Variable 或使用 vector，避免 Stack Overflow。
-// 2. 方法數成長極快，若無 Modulo 限制，請一律使用 long long。
-
-const int MAXN = 1e6 + 5; // 依照題目給定的最大金額調整
-const ll MOD = 1e9 + 7;
-ll dp[MAXN]; // 一維dp就夠了，coin儲存在另一個陣
-
-/* 
- * 情境一：【Permutation (排列)】- 順序不同視為不同方法 (如 CSES Coin Combinations I)
- * 例如：2+3 和 3+2 視為兩種不同的湊法。
- * 核心想法：考慮「最後一枚加上的硬幣」是哪一種。
- */
-void coin_change_permutation(const vector<int>& coins, int k) {
-    memset(dp, 0, sizeof(dp));
-    dp[0] = 1; // Base case: 湊出 0 元的方法有 1 種
-    
-    // 【外層迴圈：Target Amount】【內層迴圈：Coins】
-    for (int i = 1; i <= k; ++i) {
-        for (int coin : coins) {
-            if (i >= coin) {
-                dp[i] = (dp[i] + dp[i - coin]) % MOD;
-            }
-        }
-    }
+// 湊出金額 k (硬幣無限使用)。方法數成長很快 → 取模或 long long
+const int MAXK = 1000005;
+const ll MOD = 1e9 + 7, INF = 1e18;
+ll dp[MAXK];
+// 1. 組合數 (2+3 和 3+2 算同一種)：外層「硬幣」、內層「金額」
+ll count_combination(const vector<int> &coins, int k) {
+    fill(dp, dp + k + 1, 0); dp[0] = 1;
+    for (int c : coins)
+        for (int i = c; i <= k; i++) dp[i] = (dp[i] + dp[i - c]) % MOD;
+    return dp[k];
 }
-
-/* 
- * 情境二：【Combination (組合)】- 順序不同視為相同方法 (如 UVa 357, CSES Coin Combinations II)
- * 例如：2+3 和 3+2 視為同一種湊法。
- * 核心想法：強迫硬幣必須「按照特定順序」拿取（先拿完面額 A，才能拿面額 B）。
- */
-void coin_change_combination(const vector<int>& coins, int k) {
-    memset(dp, 0, sizeof(dp));
-    dp[0] = 1; // Base case
-    
-    // 【外層迴圈：Coins】【內層迴圈：Target Amount】
-    for (int coin : coins) {
-        for (int i = coin; i <= k; ++i) {
-            dp[i] = (dp[i] + dp[i - coin]) % MOD;
-        }
-    }
+// 2. 排列數 (順序不同算不同)：外層「金額」、內層「硬幣」
+ll count_permutation(const vector<int> &coins, int k) {
+    fill(dp, dp + k + 1, 0); dp[0] = 1;
+    for (int i = 1; i <= k; i++)
+        for (int c : coins) if (i >= c) dp[i] = (dp[i] + dp[i - c]) % MOD;
+    return dp[k];
 }
+// 3. 最少硬幣數 (湊不出回傳 -1)
+ll min_coins(const vector<int> &coins, int k) {
+    fill(dp, dp + k + 1, INF); dp[0] = 0;
+    for (int c : coins)
+        for (int i = c; i <= k; i++) if (dp[i - c] != INF) dp[i] = min(dp[i], dp[i - c] + 1);
+    return dp[k] == INF ? -1 : dp[k];
+}
+// 多筆詢問同一組硬幣: 在 main 開頭對最大金額建一次表，每筆直接查 dp[k]
+// 每種硬幣只能用一次 → 內層改成由大到小 (變 0/1 背包)

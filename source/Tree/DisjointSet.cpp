@@ -1,31 +1,20 @@
-struct DSU {
-    vector<int> f, sz; // 避免使用 size 撞名
-    
-    void init(n){
-        f.resize(n);
-        sz.assign(n, 1); // 將每個獨立集合的大小初始化為 1
-        for (int i = 0; i < n; ++i) f[i] = i;
-    }
-    
-    int find(int x) { // 路徑壓縮
-        return f[x] == x ? x : ( f[x] = find(f[x]) );
-    }
-    
-    bool isSameSet(int a, int b) {
-        return find(a) == find(b);
-    }
-    
-    // 回傳 bool 有助於在 Kruskal 演算法中判斷是否成功加上一條邊，否則void即可
-    bool unite(int a, int b) {
-        int fa = find(a), fb = find(b);
-        if (fa == fb) return false;
-        
-        // 小掛大優化：永遠讓 fa 是比較大的集合
-        if (sz[fa] < sz[fb]) swap(fa, fb); 
-        sz[fa] += sz[fb];
-        f[fb] = fa;
-        return true;
-    }
-};
-
-// 概念: successor DSU，這個disjoint set將會是用可以來記錄 "下一個位置" 的set (f[i]指向find(i+1))
+const int MAXN = 200005;
+int f[MAXN], sz[MAXN];
+void init(int n) { for (int i = 0; i <= n; i++) f[i] = i, sz[i] = 1; }
+int find(int x) { return f[x] == x ? x : f[x] = find(f[x]); } // 路徑壓縮
+bool unite(int a, int b) { // 回傳是否真的合併 (Kruskal 判環用)
+    a = find(a), b = find(b);
+    if (a == b) return false;
+    if (sz[a] < sz[b]) swap(a, b); // 小掛大
+    f[b] = a; sz[a] += sz[b];
+    return true;
+}
+/* [變形]
+1. 集合大小: sz[find(x)]；集合個數: 一開始 n，每次 unite 成功就 -1
+2. 帶權 DSU (x 到根的距離/差值 w[x])，find 時累加:
+   int find(int x){ if(f[x]==x) return x; int r=find(f[x]); w[x]+=w[f[x]]; return f[x]=r; }
+   (此時 find 不能先改 f[x]：要先存 root 再加 w，如上)
+3. 二分圖/敵人關係: 開 2n 個點，x 與 y 敵對 → unite(x, y+n), unite(x+n, y)
+4. 「下一個可用位置」(跳過已刪除): 刪 i 時 f[i] = i+1，find(i) 即右邊第一個沒刪的
+5. 離線刪邊 → 反過來變成加邊
+*/

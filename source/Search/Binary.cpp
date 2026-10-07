@@ -1,100 +1,41 @@
-Binary Search = 找答案, 但不一定是對陣列二分搜
+/* 二分搜的本質: 答案有「單調性」(x 可行 → 比 x 大的都可行，或反過來)
+   題目問「最大值的最小值 / 最小值的最大值 / 最少需要多少才能...」→ 對答案二分搜 + check()
+   寫 check(x) 時就當作「答案已知是 x」，問題通常會變成簡單的 greedy */
+bool check(ll x) { return true; } // [改] x 可行嗎？
 
-// === 基本找值 === 
-// 需要在sorted array
-while(l <= r){
-    int mid = l + (r-l)/2; // 避免 overflow
-    if(mid == target) return mid;
-    else if(mid < target) l = mid+1; // mid在target左邊
-    else r = mid-1;
-}
-// 可以直接用 lower_bound(st, ed, target) 找位置
-
-// === 對答案二分搜 ===
-/* 
-找 「最大值的最小值 Minimax」 或 「最小值的最大值 Maximin」
-要求答案具有單調性 即 X 合法，則 <= 或 >= X 者都合法，常見於構造題
-
-例題: 給定長度為N的前綴和正負號狀態 (+, -, 0)，求構造符合狀態且元素不含0的陣列內元素最大絕對值的最小值。
-如: +0++- 最小cost為2，正確array為: [2, -2, 2, -1, -2]，而非 [1, -1, 1, 1, -3]
-*/
-bool check(int M, int n, const string& s) { // 步長為M
-    long long L = 0, R = 0; // 答案可達到的左(低)、右(高)邊界
-    
-    for (int i = 0; i < n; i++) {
-        char c = s[i];
-        long long prevL = L, prevR = R;
-        
-        L = L - M;
-        R = R + M;
-        
-        if (c == '+') L = max(L, 1LL); // 要求+，左邊界至少要是1
-        else if (c == '-') R = min(R, -1LL); // 要求-，右邊界至少要是-1
-        else if (c == '0') { // 要求0，左右邊界都必須0
-            L = max(L, 0LL);
-            R = min(R, 0LL);
-        }
-        
-        if (M == 1) {
-            if (abs(L) % 2 != (i + 1) % 2) L++;
-            if (abs(R) % 2 != (i + 1) % 2) R--;
-        } else {
-            if (prevL == prevR && L == prevL && R == prevR) { // L, R 因為M不夠大，被迫不變(a為0)
-                return false;
-            }
-        }
-        
-        if (L > R) return false; // 如果左邊界大於右邊界則這個M無法成功
+// 1. 找第一個 (最小) 可行的 x：check 長得像 F F F T T T
+ll first_true(ll lo, ll hi) { // 答案在 [lo, hi]；全部不可行會回傳 hi+1
+    hi++;
+    while (lo < hi) {
+        ll mid = lo + (hi - lo) / 2;
+        if (check(mid)) hi = mid; else lo = mid + 1;
     }
-    return true;
+    return lo;
 }
-
-void solve() {
-    int n;
-    cin >> n;
-    string s;
-    cin >> s;
-    
-    int left = 1, right = n, ans = -1;
-    
-    while (left <= right) {
-        int mid = left + (right - left) / 2;
-        if (check(mid, n, s)) {
-            ans = mid;
-            right = mid - 1;
-        } else {
-            left = mid + 1;
-        }
+// 2. 找最後一個 (最大) 可行的 x：check 長得像 T T T F F F
+ll last_true(ll lo, ll hi) { // 全部不可行會回傳 lo-1
+    lo--;
+    while (lo < hi) {
+        ll mid = lo + (hi - lo + 1) / 2; // +1 才不會死迴圈
+        if (check(mid)) lo = mid; else hi = mid - 1;
     }
-    
-    cout << ans << "\n";
+    return lo;
 }
-
-// === 實數二分搜 ===
-/*
-需要用 eps 來決定停止狀態 while(r - l > eps)
-或者是固定迭代次數，例如 for 100次後停下
-*/
-
-// === 找第一個合法(最小) === 
-// 答案必在 [l, r] 間
-while (l < r) {
-    int mid = l + (r - l) / 2;
-
-    if (checkValid(mid))
-        r = mid; // 縮短右邊界，盡可能找最小
-    else
-        l = mid + 1;
+// 3. 實數: 固定跑 100 次 (比 while(r-l>eps) 安全)
+double real_bs(double lo, double hi) {
+    for (int it = 0; it < 100; it++) {
+        double mid = (lo + hi) / 2;
+        if (check(mid)) hi = mid; else lo = mid;
+    }
+    return lo;
 }
-return l; // 回傳是找到的左邊界
-
-// === 最後一個合法(最大) ===
-while (l < r) {
-    int mid = l + (r - l + 1) / 2; // 一定要 +1 才能找最大
-
-    if (checkValid(mid))
-        l = mid; // 縮短左邊界，盡可能找最大
-    else
-        r = mid - 1;
-}
-return l;
+/* 4. 陣列 (要先排序):
+   lower_bound(a, a+n, x) - a: 第一個 >= x 的 index；upper_bound: 第一個 > x
+   x 出現次數 = upper - lower；<= x 的個數 = upper_bound(...) - a
+   [常見 check]
+   - 切成 <= k 段，使每段和的最大值最小: check(x) = greedy 切，每段和 <= x，算段數 <= k
+   - 放 k 個東西，使最近距離最大 (Aggressive cows): check(x) = 從左邊開始，距離 >= x 就放
+   - 第 k 小的「某種組合」(例: 兩兩差、矩陣乘法表): 二分值 x，check = 「<= x 的有幾個」>= k
+   - 平均值最大 (分數規劃): 二分 x，每個數減 x 後看能否 >= 0 */
+// [例] 構造: 給前綴和的正負號 (+,-,0)，求元素皆非 0 時「最大絕對值」的最小值
+// check(M): 維護前綴和可能範圍 [L, R]，每步 L -= M, R += M 再依符號截斷，L > R 不可行

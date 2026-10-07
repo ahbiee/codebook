@@ -1,39 +1,22 @@
-// 依賴前面的 Point, sign, cross, length 函數
-
-struct Circle {
-    Point c;  // 圓心
-    double r; // 半徑
-    Circle(Point _c = Point(0, 0), double _r = 0) : c(_c), r(_r) {}
-};
-
-// 三點求圓 (求三角形外接圓)
-Circle get_circle(Point a, Point b, Point c) {
-    // 將座標平移，以 c 點為原點計算，可大幅簡化方程式
-    double a2 = a.x - c.x, a3 = a.y - c.y;
-    double b2 = b.x - c.x, b3 = b.y - c.y;
-    
-    double d1 = a.x * a.x + a.y * a.y - c.x * c.x - c.y * c.y;
-    double d2 = b.x * b.x + b.y * b.y - c.x * c.x - c.y * c.y;
-    
-    // 行列式值 det 其實剛好就是 cross(a-c, b-c)
-    double det = a2 * b3 - a3 * b2; 
-    
-    // 如果外積為 0，代表三點共線，無法構成圓形
-    if (sign(det) == 0) return Circle(Point(1e18, 1e18), -1); 
-    
-    // 利用克拉瑪公式求解
-    double cx = (b3 * d1 - a3 * d2) / (2 * det);
-    double cy = (a2 * d2 - b2 * d1) / (2 * det);
-    Point center(cx, cy);
-    
-    // 半徑就是圓心到任意頂點 (如 a 點) 的距離
-    return Circle(center, length(center - a));
+// 需要 point.cpp。圓用 {圓心 P, 半徑 ld} 表示
+// 三點決定的圓 (三角形外接圓)。三點共線時半徑回傳 -1
+pair<P, ld> circumcircle(P a, P b, P c) {
+    P ab = b - a, ac = c - a;
+    ld d = 2 * cross(ab, ac);
+    if (sign(d) == 0) return {{0, 0}, -1};
+    ld b2 = dot(ab, ab), c2 = dot(ac, ac);
+    P o = a + P{(ac.second * b2 - ab.second * c2) / d, (ab.first * c2 - ac.first * b2) / d};
+    return {o, len(o - a)};
 }
-
-/*
-補充: 四心
-外心(三點求圓)：利用中垂線交點來求。
-重心：就是座標平均值 (A + B + C) / 3。
-內心：內切圓的圓心。公式是三個頂點按對邊長度的加權平均：(A*a + B*b + C*c) / (a + b + c)。
-垂心：三條高的交點。利用歐拉線公式推導：垂心 = 3 * 重心 - 2 * 外心。
-*/
+// 直線 ab 與圓 (o, r) 的交點 (0~2 個)
+vector<P> circle_line(P o, ld r, P a, P b) {
+    P h = projection(o, a, b);                 // 需要 PointLine.cpp
+    ld d2 = r * r - dot(h - o, h - o);
+    if (sign(d2) < 0) return {};
+    P dir = (b - a) / len(b - a);
+    ld s = sqrtl(max((ld)0, d2));
+    if (sign(s) == 0) return {h};
+    return {h - dir * s, h + dir * s};
+}
+// 兩圓關係 (d = 圓心距): d > r1+r2 相離；d == r1+r2 外切；|r1-r2| < d < r1+r2 相交；
+// d == |r1-r2| 內切；d < |r1-r2| 內含

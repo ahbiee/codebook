@@ -1,47 +1,49 @@
-// 一、BigInt * Int，算階乘、連續乘上範圍在 int 內的數值，O(N)
-vector<int> multiply_small(const vector<int>& a, int b) {
-    if (b == 0 || (a.size() == 1 && a[0] == 0)) return {0};
-    vector<int> c;
-    long long carry = 0; // 要用 ll 才不會溢位
-    for (size_t i = 0; i < a.size() || carry > 0; i++) {
-        if (i < a.size()) carry += 1LL * a[i] * b;
-        c.push_back(carry % 10);
-        carry /= 10;
+// 大數: vector<int> 反向存 (個位在 [0])。先想想 __int128 (到 1.7e38) 夠不夠
+typedef vector<int> Big;
+Big to_big(const string &s) { Big a; for (int i = s.size() - 1; i >= 0; i--) a.push_back(s[i] - '0'); return a; }
+void trim(Big &a) { while (a.size() > 1 && a.back() == 0) a.pop_back(); }
+void print(const Big &a) { for (int i = a.size() - 1; i >= 0; i--) cout << a[i]; cout << '\n'; }
+int cmp(const Big &a, const Big &b) { // -1: a<b, 0: a==b, 1: a>b
+    if (a.size() != b.size()) return a.size() < b.size() ? -1 : 1;
+    for (int i = a.size() - 1; i >= 0; i--) if (a[i] != b[i]) return a[i] < b[i] ? -1 : 1;
+    return 0;
+}
+Big add(const Big &a, const Big &b) {
+    Big c; int carry = 0;
+    for (size_t i = 0; i < max(a.size(), b.size()) || carry; i++) {
+        if (i < a.size()) carry += a[i];
+        if (i < b.size()) carry += b[i];
+        c.push_back(carry % 10); carry /= 10;
     }
     return c;
 }
-
-// 二、BigInt * BigInt，兩個長度未知的超大整數相乘，O(N * M)
-vector<int> multiply_big(const vector<int>& a, const vector<int>& b) {
-    if (a.empty() || b.empty()) return {0};
-    if ((a.size() == 1 && a[0] == 0) || (b.size() == 1 && b[0] == 0)) return {0};
-    
-    vector<int> c(a.size() + b.size(), 0); // 結果的最大可能長度為兩者長度相加
-
-    for (size_t i = 0; i < a.size(); i++) {
-        long long carry = 0;
-        for (size_t j = 0; j < b.size() || carry > 0; j++) {
-            long long cur = c[i + j] + 1LL * a[i] * (j < b.size() ? b[j] : 0) + carry;
-            c[i + j] = cur % 10;
-            carry = cur / 10;
-        }
+Big sub(const Big &a, const Big &b) { // 需 a >= b
+    Big c = a; int borrow = 0;
+    for (size_t i = 0; i < c.size(); i++) {
+        c[i] -= borrow + (i < b.size() ? b[i] : 0);
+        borrow = c[i] < 0;
+        if (borrow) c[i] += 10;
     }
-    
-    // 移除多餘的前導零 (例如 00 變成 0)
-    while (c.size() > 1 && c.back() == 0) c.pop_back();
-    
-    return c;
+    trim(c); return c;
 }
-
-// 輔助函式：將字串轉換為大數陣列 (反向存入)
-vector<int> string_to_bigint(const string& s) {
-    vector<int> res;
-    for (int i = s.length() - 1; i >= 0; i--) res.push_back(s[i] - '0');
-    return res;
+Big mul_small(const Big &a, ll b) { // b 到 1e9 都可
+    Big c; ll carry = 0;
+    for (size_t i = 0; i < a.size() || carry; i++) {
+        if (i < a.size()) carry += a[i] * b;
+        c.push_back(carry % 10); carry /= 10;
+    }
+    trim(c); return c;
 }
-
-// 輔助函式：印出大數 (反向印出)
-void print_bigint(const vector<int>& a) {
-    for (int i = a.size() - 1; i >= 0; i--) cout << a[i];
-    cout << "\n";
+Big mul(const Big &a, const Big &b) { // O(N*M)
+    vector<ll> c(a.size() + b.size(), 0);
+    for (size_t i = 0; i < a.size(); i++)
+        for (size_t j = 0; j < b.size(); j++) c[i + j] += a[i] * b[j];
+    Big r; ll carry = 0;
+    for (size_t i = 0; i < c.size(); i++) { carry += c[i]; r.push_back(carry % 10); carry /= 10; }
+    trim(r); return r;
+}
+Big div_small(const Big &a, ll b, ll &rem) { // 商與餘數
+    Big c(a.size()); rem = 0;
+    for (int i = a.size() - 1; i >= 0; i--) { rem = rem * 10 + a[i]; c[i] = rem / b; rem %= b; }
+    trim(c); return c;
 }

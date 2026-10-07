@@ -1,79 +1,52 @@
-using ll = long long;
+// 1-based。區間加值 + 區間和 (lazy)。改成 max/min 只要改有 [改] 的行
+const int MAXN = 200005;
+int n;
+ll a[MAXN], t[4 * MAXN], lz[4 * MAXN]; // t: 節點答案, lz: 還沒往下傳的加值
 
-vector<ll> arr, sum/tree, add; //宣告成全域，arr是原始數據(輸入)，sum/tree是範圍累加和/區間查詢，add是lazy tag儲存的值
-
-void up(int i){ // range_sum = +, max = max, min = min, gcd = __gcd
-    sum[i] = sum[i*2] + sum[i*2+1];
+void apply_tag(int id, int l, int r, ll v) {
+    t[id] += v * (r - l + 1); // [改] max/min: t[id] += v;
+    lz[id] += v;
 }
-
-void lazy(int i, ll v, int n){ // 懶標記(lazy tag)，暫存當前覆蓋範圍
-    sum[i] += v*n; // 如果不是累加和，改成 tree[i] += v;
-    add[i] += v;
+void pull(int id) { t[id] = t[id * 2] + t[id * 2 + 1]; } // [改] max(..)/min(..)
+void push(int id, int l, int r) {
+    if (lz[id] == 0) return;
+    int m = (l + r) / 2;
+    apply_tag(id * 2, l, m, lz[id]);
+    apply_tag(id * 2 + 1, m + 1, r, lz[id]);
+    lz[id] = 0;
 }
-
-void down(int i, int ln, int rn){ // 往下分發lazy tag
-    if(add[i] != 0){ // 0或INF或-INF，依線段樹邏輯選擇
-        lazy(i*2, add[i], ln);
-        lazy(i*2+1, add[i], rn);
-        add[i] = 0; // 0或INF或-INF，依線段樹邏輯選擇
-    }
+void build(int id = 1, int l = 1, int r = n) {
+    lz[id] = 0;
+    if (l == r) { t[id] = a[l]; return; }
+    int m = (l + r) / 2;
+    build(id * 2, l, m); build(id * 2 + 1, m + 1, r);
+    pull(id);
 }
-
-void build(int l, int r, int i){ // 遞迴式初始化 (init)
-    if(l == r) sum[i] = arr[l]; // 如果區間只剩一個數值，就直接賦值
-    else{
-        int mid = l + (r-l)/2; // 找中點 
-        build(l, mid, i*2); // 左半邊build
-        build(mid+1, r, i*2+1); // 右半邊build
-        up(i); // 自己 = 左+右 區間和
-    }
-    add[i] = 0; // 0或INF或-INF，依線段樹邏輯選擇
+void update(int ql, int qr, ll v, int id = 1, int l = 1, int r = n) { // [ql,qr] 加 v
+    if (qr < l || r < ql) return;
+    if (ql <= l && r <= qr) { apply_tag(id, l, r, v); return; }
+    push(id, l, r);
+    int m = (l + r) / 2;
+    update(ql, qr, v, id * 2, l, m); update(ql, qr, v, id * 2 + 1, m + 1, r);
+    pull(id);
 }
-
-void update(int jobl, int jobr, ll jobv, int l, int r, int i){ // 更新區間數值(jobl ~ jobr 加上 jobv)，用l, r, i判斷範圍
-    if(jobl <= l && r <= jobr) lazy(i, jobv, r-l+1); // 如果範圍被包的話就直接lazy
-    else{
-        int mid = l + (r-l)/2;
-        down(i, mid-l+1, r-mid); // 記得往下分發lazy tag
-        if(jobl <= mid) update(jobl, jobr, jobv, l, mid, i*2); // 判斷左右區段是否需要更新
-        if(jobr > mid) update(jobl, jobr, jobv, mid+1, r, i*2+1);
-        up(i); // 最後往上回傳
-    }
+ll query(int ql, int qr, int id = 1, int l = 1, int r = n) {
+    if (qr < l || r < ql) return 0; // [改] 單位元: sum 0, max -INF, min INF
+    if (ql <= l && r <= qr) return t[id];
+    push(id, l, r);
+    int m = (l + r) / 2;
+    return query(ql, qr, id * 2, l, m) + query(ql, qr, id * 2 + 1, m + 1, r); // [改]
 }
+// 用法: 讀 n, a[1..n] → build(); update(l,r,v); query(l,r)
 
-ll query(int jobl, int jobr, int l, int r, int i){
-    if(jobl <= l && r <= jobr) return sum[i]; // 如果包範圍就直接return回去
-    
-    int mid = l + (r-l)/2;
-    down(i, mid-l+1, r-mid); // 記得往下分發lazy tag
-    ll total = 0; // range sum / gcd = 0, max = -INF, min = INF
-    if(jobl <= mid) total += query(jobl, jobr, l, mid, i*2); // range_sum = +=, max = max, min = min, gcd = __gcd
-    if(jobr > mid) total += query(jobl, jobr, mid+1, r, i*2+1);
-    return total; // 因為只是query，沒有修改，所以不用up更新回去
-}
-
-int main() {
-    int n, m;
-    cin >> n >> m;
-    arr.assign(n+1, 0);
-    sum.assign(4*(n+1), 0); // 大小必須開到4倍n+1
-    add.assign(4*(n+1), 0);
-    
-    
-    for(int i=1; i<=n; ++i) cin >> arr[i];
-    build(1, n, 1);
-    int op;
-    ll x, y, k;
-    while(m--){
-        cin >> op;
-        if(op == 1){
-            cin >> x >> y >> k;
-            update(x, y, k, 1, n, 1);
-        }
-        else{
-            cin >> x >> y;
-            cout << query(x, y, 1, n, 1) << '\n';
-        }
-    }
-    return 0;
-}
+/* [變形]
+1. 區間「設值」: 另開 bool has[]、ll st[]
+   apply_tag: t[id] = v*(r-l+1) (max: v); st[id] = v; has[id] = 1; lz[id] = 0;
+   push: 先下傳 has/st，再下傳 lz。同時有設值+加值時，設值會清掉加值
+2. 單點設值: update 走到葉子 (l==r) 直接 t[id] = v，免 lazy
+3. 需要合併多個資訊 (例: 最大子段和): 開 sum/pre/suf/best 四個陣列,
+   pull: sum=L.sum+R.sum, pre=max(L.pre,L.sum+R.pre), suf=max(R.suf,R.sum+L.suf),
+         best=max({L.best,R.best,L.suf+R.pre})
+4. 找第一個 >= x 的位置 (max 樹): 若 t[左] >= x 往左走，否則往右走
+5. 值域線段樹: 下標當「值」(先座標壓縮)，t 存個數 → 可求第 k 小 / 區間內個數
+*/

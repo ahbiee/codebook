@@ -1,91 +1,47 @@
-#include <vector>
-#include <queue>
-#include <algorithm>
-using namespace std;
-
-const int MAXV = 1005; // 依據題目點數調整
-const long long INF = 1e18;
-
-// 儲存邊的結構
-struct Edge {
-    int to;
-    long long cap, flow;
-    int rev; // 紀錄這條邊的「反向邊」在對方 adj 陣列裡的位置 (index)
-};
-
-vector<Edge> adj[MAXV];
-int level[MAXV]; // BFS 分層圖，紀錄起點到該點的距離
-int ptr[MAXV];   // 【當前弧優化】紀錄 DFS 目前探索到哪條邊，避免走廢邊
-int n, s, t;     // 總點數, 源點(Source), 匯點(Sink)
-
-// 加入一條有向邊 (若是無向邊，請再呼叫一次反方向，或直接把反向邊的 cap 也設為 w)
-void add_edge(int from, int to, long long w) {
-    adj[from].push_back({to, w, 0, (int)adj[to].size()});
-    adj[to].push_back({from, 0, 0, (int)adj[from].size() - 1});
+// 最大流 Dinic。O(V^2 E)，二分圖 O(E sqrt V)。邊 e 的反向邊是 e ^ 1
+const int MAXN = 5005, MAXE = 200005; // MAXE = 2 * 邊數
+const ll INF = 1e18;
+int n, S, T, ecnt, to[MAXE], lvl[MAXN], it_[MAXN];
+ll cap[MAXE];
+vector<int> g[MAXN]; // g[u] = 從 u 出發的邊編號
+void init(int _n) { n = _n; ecnt = 0; for (int i = 0; i <= n; i++) g[i].clear(); }
+void add_edge(int u, int v, ll c) { // 無向邊: 第二行的 0 改成 c
+    to[ecnt] = v; cap[ecnt] = c; g[u].push_back(ecnt++);
+    to[ecnt] = u; cap[ecnt] = 0; g[v].push_back(ecnt++);
 }
-
-// 1. BFS 建立分層圖
 bool bfs() {
-    fill(level, level + n + 1, -1);
-    level[s] = 0;
-    queue<int> q;
-    q.push(s);
-
+    fill(lvl, lvl + n + 1, -1);
+    queue<int> q; q.push(S); lvl[S] = 0;
     while (!q.empty()) {
-        int v = q.front();
-        q.pop();
-        for (auto& edge : adj[v]) {
-            // 如果這條邊還有剩餘容量，且終點還沒被分層
-            if (edge.cap - edge.flow > 0 && level[edge.to] == -1) {
-                level[edge.to] = level[v] + 1;
-                q.push(edge.to);
-            }
-        }
+        int u = q.front(); q.pop();
+        for (int e : g[u]) if (cap[e] > 0 && lvl[to[e]] == -1) lvl[to[e]] = lvl[u] + 1, q.push(to[e]);
     }
-    return level[t] != -1; // 回傳是否還能走到匯點 T
+    return lvl[T] != -1;
 }
-
-// 2. DFS 尋找增廣路徑並推播流量
-long long dfs(int v, long long pushed) {
-    if (pushed == 0) return 0;
-    if (v == t) return pushed;
-
-    // 利用 ptr[v] 紀錄上次走到哪一條邊，這是 Dinic 不會 TLE 的關鍵！
-    // 注意 cid 必須宣告為 reference (&) 才能真正更新 ptr 陣列
-    for (int& cid = ptr[v]; cid < adj[v].size(); ++cid) {
-        auto& edge = adj[v][cid];
-        int tr = edge.to;
-
-        // 條件：只能往下一層走，且邊要有剩餘容量
-        if (level[v] + 1 != level[tr] || edge.cap - edge.flow == 0) continue;
-
-        long long push = dfs(tr, min(pushed, edge.cap - edge.flow));
-        if (push == 0) continue;
-
-        // 更新正向與反向邊的流量
-        edge.flow += push;
-        adj[tr][edge.rev].flow -= push;
-        return push;
+ll dfs(int u, ll f) {
+    if (u == T) return f;
+    for (int &i = it_[u]; i < (int)g[u].size(); i++) { // 當前弧優化: i 是參考
+        int e = g[u][i], v = to[e];
+        if (cap[e] > 0 && lvl[v] == lvl[u] + 1) {
+            ll d = dfs(v, min(f, cap[e]));
+            if (d > 0) { cap[e] -= d; cap[e ^ 1] += d; return d; }
+        }
     }
     return 0;
 }
-
-// 主函式：計算最大流
-long long dinic(int _n, int _s, int _t) {
-    n = _n; s = _s; t = _t;
-    long long flow = 0;
-    
-    // 只要還能走到匯點，就持續建分層圖
+ll max_flow(int s, int t) {
+    S = s; T = t;
+    ll flow = 0;
     while (bfs()) {
-        fill(ptr, ptr + n + 1, 0); // 每次重新分層後，DFS 指標要歸零
-        
-        // 在同一層圖中，盡可能把所有增廣路徑榨乾
-        while (long long pushed = dfs(s, INF)) {
-            flow += pushed;
-        }
+        fill(it_, it_ + n + 1, 0);
+        while (ll f = dfs(S, INF)) flow += f;
     }
     return flow;
 }
-
-// 若有多筆測資，請記得在 main 裡面先跑：
-// for(int i = 0; i <= n; ++i) adj[i].clear();
+/* 建模技巧:
+- 最小割 = 最大流。割邊: 跑完後從 S 沿 cap>0 走得到的點集合 A，A→非A 的原始邊
+- 二分圖匹配: S→左(1)、左→右(1)、右→T(1)；每點最多配 k 個 → 對應邊容量 k
+- 點有容量: 拆點 v_in → v_out 容量 = 點容量
+- 多源多匯: 超級源點連所有源點 (容量 INF)
+- 最大權閉合子圖 (選 A 必須選 B): S→正權點(w)、負權點→T(-w)、A→B(INF)；答案 = 正權和 - 最大流
+*/

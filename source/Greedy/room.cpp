@@ -1,32 +1,12 @@
-struct Interval {
-    int st, ed;
-    bool operator<(const Interval &o) const {
-        if (st != o.st) return st < o.st;  // 先以開始時間排序
-        return ed < o.ed; // 開始時間相同，較早結束的排前面
+// 最少會議室: 依開始時間排序，heap 存「每間使用中房間的結束時間」
+int min_rooms(vector<pair<int, int>> seg) { // {start, end}
+    sort(seg.begin(), seg.end());
+    priority_queue<int, vector<int>, greater<int>> pq;
+    for (auto [s, e] : seg) {
+        if (!pq.empty() && pq.top() <= s) pq.pop(); // [改] 閉區間 (結束當下不能接): <
+        pq.push(e);
     }
-};
-
-int minMeetingRooms(vector<Interval>& intervals) {
-    if (intervals.empty()) return 0;
-
-    // 1. 依照開始時間排序
-    sort(intervals.begin(), intervals.end());
-
-    // 2. 建立一個 Min-Heap，專門用來儲存「使用中會議室的結束時間」
-    // !!如果需要印出順序，只要把int(結束時間)改成pair<int, int>(結束時間, 房間編號)!!
-    priority_queue<int, vector<int>, greater<int>> min_heap;
-
-    // 3. 掃描每一個會議
-    for (const auto& interval : intervals) {
-        // 如果pq不為空，且最早結束的會議已經可以使用了 (當前會議的開始時間 >= 最早空出來的房間時間)
-        if (!min_heap.empty() && interval.st >= min_heap.top()) {
-            min_heap.pop(); // 該會議室空出來了，把舊的結束時間 pop 掉 (準備重複利用)
-        }
-        
-        // 把當前會議的結束時間塞進去 (代表佔用了一間會議室)
-        // 不管是開了一間新房間，還是接續前一間，當前的結束時間都要記錄
-        min_heap.push(interval.ed);
-    }
-
-    return min_heap.size(); // 最終 Heap 裡面剩下幾個元素，就代表我們同時需要幾間會議室
+    return pq.size();
 }
+// 要輸出每個會議分到哪間: heap 改存 {結束時間, 房號}，pop 出來的房號給目前的會議
+// 答案也等於「同一時間最多重疊幾個區間」→ 也可以用 SweepLine

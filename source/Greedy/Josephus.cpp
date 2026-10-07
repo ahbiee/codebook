@@ -1,40 +1,19 @@
-// JosephusProblem，只是規定要先砍 1 號
-// 所以當作有 n - 1 個人，目標的 13 號移成 12
-// 再者從 0 開始比較好算，所以目標 12 順移成 11
-
-// O(n)
-int getWinner(int n, int k) {
-    int winner = 0;
-    for (int i = 1; i <= n; ++i)
-        winner = (winner + k) % i;
-    return winner;
+// n 個人 (編號 0..n-1) 圍圈，每數到第 k 個就淘汰，回傳最後存活者編號 (0-based)
+int josephus(int n, int k) { // O(n)：J(1)=0, J(i) = (J(i-1) + k) % i
+    int w = 0;
+    for (int i = 1; i <= n; i++) w = (w + k) % i;
+    return w;
 }
-
-int main() {
-    int n;
-    while (cin >> n && n) {
-        --n; // 因為要用 初始idx為 0
-        for (int k = 1; k <= n; ++k) {
-            if (getWinner(n, k) == 11) { // 依據目標進行修改
-                printf("%d\n", k);
-                break;
-            }
-        }
-    }
-
-    return 0;
-}
-
-// O(k log(n))
-int josephus(int n, int k) {
+ll josephus_fast(ll n, ll k) { // O(k log n)，n 很大 (1e18) 但 k 小時用
     if (n == 1) return 0;
     if (k == 1) return n - 1;
-    if (k > n) return (josephus(n - 1, k) + k) % n;
-
-    int res = josephus(n - n / k, k);
-    res -= n % k;
-    if (res < 0) res += n;     // 依據需求 mod n
-    else res += res / (k - 1); // 還原位置
-
+    if (k > n) return (josephus_fast(n - 1, k) + k) % n;
+    ll res = josephus_fast(n - n / k, k) - n % k;
+    if (res < 0) res += n;
+    else res += res / (k - 1);
     return res;
 }
+/* 變形 (UVa 151 Power Crisis): 一定先淘汰 1 號，再每 k 個淘汰一個，求讓 13 號最後存活的最小 k
+   → 1 號先淘汰後剩 n-1 人，從 2 號開始重新編號 0..n-2，13 號變成 11
+   for k = 1..: if (josephus(n - 1, k) == 11) 答案為 k
+   要知道「第 m 個被淘汰的人」: 用 ordered_set / BIT 第 k 小模擬，O(n log n) */

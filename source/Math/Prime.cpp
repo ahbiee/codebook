@@ -1,72 +1,36 @@
-// 一、直接查，只問極少次，且數字可能很大 (n<= 1e14)
-bool isPrime(long long n) { 
+// 一、單一數字判斷 / 分解，O(sqrt N)，N <= 1e12 可用 (更大用 Miller-Rabin)
+bool is_prime(ll n) {
     if (n < 2) return false;
-    if (n == 2 || n == 3) return true;
-    if (n % 2 == 0 || n % 3 == 0) return false;
-    
-    for (long long i = 5; i * i <= n; i += 6) {
-        if (n % i == 0 || n % (i + 2) == 0) return false;
-    }
+    for (ll i = 2; i * i <= n; i++) if (n % i == 0) return false;
     return true;
 }
-
-// 二、埃式篩，建質數表，大量查詢 1 ~ 10^7 內的質數
-const int MAXN = 1e7 + 10;
+vector<pair<ll, int>> factorize(ll n) { // {質因數, 次方}
+    vector<pair<ll, int>> res;
+    for (ll i = 2; i * i <= n; i++) {
+        if (n % i) continue;
+        int c = 0;
+        while (n % i == 0) n /= i, c++;
+        res.push_back({i, c});
+    }
+    if (n > 1) res.push_back({n, 1});
+    return res;
+}
+// 二、線性篩 O(N): 質數表 + 最小質因數 spf，N <= 1e7
+const int MAXN = 10000005;
+int spf[MAXN];
 vector<int> primes;
-bool is_prime[MAXN];
-
-void build(int n) {
-    primes.clear(); // 初始化
-    fill(is_prime, is_prime + n + 1, true); // 初始化全設為true
-    is_prime[0] = is_prime[1] = false;
-    
-    for (int i = 2; i <= n; ++i) {
-        if (is_prime[i]) {
-            primes.push_back(i); // 放到primes vector中記錄
-
-            for (ll j = (ll)i * i; j <= n; j += i) is_prime[j] = false;
+void sieve(int n) {
+    for (int i = 2; i <= n; i++) {
+        if (spf[i] == 0) spf[i] = i, primes.push_back(i);
+        for (int p : primes) {
+            if (p > spf[i] || (ll)i * p > n) break;
+            spf[i * p] = p;
         }
     }
 }
+// 有 spf 後，分解 x 只要 O(log x): while(x > 1){ int p = spf[x]; x /= p; ... }
+// 因數個數 = Π(e_i + 1)；因數和 = Π(p^(e+1)-1)/(p-1)
+// 區間篩 [L,R] (R 到 1e12, R-L 到 1e6): 用 sqrt(R) 內的質數去劃掉 [L,R] 內的倍數
 
-// 三、歐拉篩
-#define MAXN 47000 //sqrt(2^31)=46,340...
-bool isPrime[MAXN];
-int p[MAXN];
-int pSize=0;
-void getPrimes(){
-    pSize = 0; // 初始化
-    memset(isPrime, true, sizeof(isPrime));
-    isPrime[0] = isPrime[1] = false;
-    for(int i=2 ; i<MAXN ; i++){
-        if(isPrime[i]) p[pSize++] = i;
-        for(int j=0 ; j<pSize && i*p[j] <= MAXN ; ++j){
-            isPrime[i*p[j]] = false;
-            if(i%p[j]==0) break;
-        }
-    }
-}
-
-
-/*
-problem :
-給定整數 N，求N最少可以拆成多少個質數的和。
-如果N是質數，則答案為1。
-如果N是偶數(N!=2)，則答案為2(強歌德巴赫猜想)。
-如果N是奇數且N−2是質數，則答案為2(2+質數)。
-其他狀況答案為3(弱歌德巴赫猜想)。
-*/
-bool isPrime(int n){
-    for(int i=2;i<n;++i){
-        if(i*i>n) return true;
-        if(n%i==0) return false;
-    }
-    return true;
-}
-int main(){
-    int n;
-    cin>>n;
-    if(isPrime(n)) cout<<"1\n";
-    else if(n%2==0||isPrime(n-2)) cout<<"2\n";
-    else cout<<"3\n";
-}
+/* 哥德巴赫: N 最少拆成幾個質數的和
+   N 是質數 → 1；N 偶數 (N>2) → 2；N 奇數且 N-2 是質數 → 2；其他 → 3 */

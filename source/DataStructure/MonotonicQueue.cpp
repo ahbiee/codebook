@@ -1,21 +1,15 @@
-deque<int> dq; // 注意一樣是存 index
-int k = 5; // 最大窗口大小 maximum window length
-
-// 以尋找最長遞減序列為例 (maximum)
-for (int i = 0; i < n; i++) {
-    // pop掉超出窗口的部分
-    while (!dq.empty() && dq.front() <= i - k)
-        dq.pop_front();
-
-    // 維持遞減狀態
-    while (!dq.empty() && a[dq.back()] <= a[i])
-        dq.pop_back();
-    // 如果是minimum的話 改成
-    while (!dq.empty() && a[dq.back()] >= a[i])
-    
-
-    dq.push_back(i);
-
-    if (i >= k - 1)
-        ans.push_back(a[dq.front()]);
+// Sliding Window Maximum: 每個長度 k 的視窗的最大值。O(N)
+const int MAXN = 200005;
+int n, k, a[MAXN];
+vector<int> window_max() {
+    deque<int> dq; // 存 index，對應的值由前到後遞減
+    vector<int> res;
+    for (int i = 0; i < n; i++) {
+        while (!dq.empty() && dq.front() <= i - k) dq.pop_front(); // 過期
+        while (!dq.empty() && a[dq.back()] <= a[i]) dq.pop_back(); // [改] 最小值: >=
+        dq.push_back(i);
+        if (i >= k - 1) res.push_back(a[dq.front()]);
+    }
+    return res;
 }
+// [應用] DP 優化: dp[i] = max(dp[j]) + c, j in [i-k, i-1] → 對 dp 做 monotonic queue

@@ -1,37 +1,19 @@
-// 依賴上一節的 Point 結構與 sign, cross 函數
-
-// 輔助函數：判斷點 P 是否在線段 AB 的「邊界框 (Bounding Box)」內
-// 實戰意義：當三點共線時，單靠外積無法確認 P 是否在線段上(可能在延長線上)
-bool on_segment(Point p, Point a, Point b) {
-    return p.x >= min(a.x, b.x) && p.x <= max(a.x, b.x) &&
-           p.y >= min(a.y, b.y) && p.y <= max(a.y, b.y);
+// 需要 point.cpp
+bool on_segment(P p, P a, P b) { // p 是否在線段 ab 上 (含端點)
+    return sign(cross(a, b, p)) == 0 && sign(dot(a - p, b - p)) <= 0;
 }
-
-// 核心函數：判斷線段 AB 與線段 CD 是否相交
-bool segment_intersect(Point a, Point b, Point c, Point d) {
-    // 1. 計算四個外積值 (跨立實驗)
-    // 意義：判斷 C 點和 D 點分別在直線 AB 的哪一側
-    double c1 = cross(b - a, c - a);
-    double c2 = cross(b - a, d - a);
-    
-    // 意義：判斷 A 點和 B 點分別在直線 CD 的哪一側
-    double c3 = cross(d - c, a - c);
-    double c4 = cross(d - c, b - c);
-    
-    // 2. 規範相交 (Strictly Intersect)
-    // 如果 C, D 在 AB 兩側 (外積正負號相反，相乘 < 0)
-    // 且 A, B 在 CD 兩側，則保證兩線段相交
-    if (sign(c1) * sign(c2) < 0 && sign(c3) * sign(c4) < 0) {
-        return true;
-    }
-    
-    // 3. 特殊情況處理 (端點相交 或 共線重疊)
-    // 如果外積為 0，代表該點在另一條直線上。
-    // 接著必須用 on_segment 確保它真的落在「線段區間」內，而不是在延長線上。
-    if (sign(c1) == 0 && on_segment(c, a, b)) return true;
-    if (sign(c2) == 0 && on_segment(d, a, b)) return true;
-    if (sign(c3) == 0 && on_segment(a, c, d)) return true;
-    if (sign(c4) == 0 && on_segment(b, c, d)) return true;
-    
-    return false; // 以上皆非，則不相交
+// 線段 ab 與 cd 是否相交 (含端點接觸、共線重疊)
+bool seg_intersect(P a, P b, P c, P d) {
+    int d1 = sign(cross(a, b, c)), d2 = sign(cross(a, b, d));
+    int d3 = sign(cross(c, d, a)), d4 = sign(cross(c, d, b));
+    if (d1 * d2 < 0 && d3 * d4 < 0) return true; // 嚴格交叉 (跨立實驗)
+    return on_segment(c, a, b) || on_segment(d, a, b) || on_segment(a, c, d) || on_segment(b, c, d);
 }
+// 直線 ab 與直線 cd 的交點 (先確認不平行: sign(cross(b-a, d-c)) != 0)
+P line_intersection(P a, P b, P c, P d) {
+    ld t = cross(c - a, d - c) / cross(b - a, d - c);
+    return a + (b - a) * t;
+}
+/* 軸對齊矩形交集 (左下 (x1,y1) 右上 (x2,y2)，與 (x3,y3)-(x4,y4)):
+   W = max(0, min(x2,x4) - max(x1,x3)), H = max(0, min(y2,y4) - max(y1,y3))，面積 = W * H
+   (只問「有沒有碰到」: W >= 0 && H >= 0) */

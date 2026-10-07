@@ -1,25 +1,11 @@
-// n! 中質數 p 的次數
-long long Legendre(long long n, long long p) {
-    long long ans = 0;
-    while (n) {
-        n /= p;
-        ans += n;
-    }
+// n! 中質數 p 的次數 = Σ floor(n / p^k)，O(log_p n)
+ll legendre(ll n, ll p) {
+    ll ans = 0;
+    while (n) n /= p, ans += n;
     return ans;
 }
-
-// 應用在組合數中
-long long Cvp(long long n, long long k, long long p) {
-    return Legendre(n, p)
-         - Legendre(k, p)
-         - Legendre(n - k, p);
-}
-
-/*
-用途：
-
-n! 中質因數次數
-n! trailing zeros (CSES)
-判斷 m 是否整除 n!
-組合數的質因數次數
-*/
+// C(n,k) 中 p 的次數
+ll c_vp(ll n, ll k, ll p) { return legendre(n, p) - legendre(k, p) - legendre(n - k, p); }
+/* 用途: n! 尾端 0 的個數 = legendre(n, 5)
+   m 是否整除 n!: 把 m 質因數分解，每個 p^e 檢查 legendre(n,p) >= e
+   n! 在 b 進位的尾 0: b = Π p^e → min( legendre(n,p) / e ) */

@@ -1,103 +1,41 @@
-/*
-前提：完美匹配與虛擬節點
-KM 演算法要求左右兩側的節點數必須相等（形成完全二分圖）
-如果在題目中左右節點數不同，或者某些點之間沒有連線，我們必須加入「虛擬節點」與「權重為 0（或極小值）的虛擬邊」來補齊，才能讓 KM 演算法順利運作。
-*/
-
-struct KM {
-    int n;
-    vector<vector<long long>> weight; // weight[u][v] 表示左 u 到右 v 的權重
-    vector<long long> lx, ly, slack;  // lx, ly 為左右點的「期望值(頂標)」，slack 為鬆弛量
-    vector<int> match_y;              // match_y[v] = u 代表右側 v 匹配給左側 u
-    vector<int> pre;                  // 紀錄右側節點的交替樹路徑，用於 BFS 回溯
-    vector<bool> vis_y;               // 紀錄右側節點是否在當前交替樹中
-    const long long INF = 1e18;
-
-    void init(int _n) {
-        n = _n;
-        // 為了方便，採用 1-based index，0 作為虛擬的空節點
-        weight.assign(n + 1, vector<long long>(n + 1, 0));
-        lx.assign(n + 1, 0);
-        ly.assign(n + 1, 0);
-        match_y.assign(n + 1, 0);
+// 帶權二分圖「最大權完美匹配」，左右各 n 點，O(n^3)。1-based
+// 點數不同或沒有邊: 補虛擬點/權重 0 的邊 (不能選的邊設 -INF 級大負數)
+// 要「最小權」: 權重全部取負，答案再取負
+const int MAXN = 505;
+const ll INF = 1e18;
+int n, match_y[MAXN], pre_[MAXN];
+ll w[MAXN][MAXN], lx[MAXN], ly[MAXN], slack[MAXN];
+bool vis_y[MAXN];
+void km_bfs(int root) {
+    fill(slack, slack + n + 1, INF);
+    fill(vis_y, vis_y + n + 1, false);
+    fill(pre_, pre_ + n + 1, 0);
+    int y = 0;
+    match_y[0] = root;
+    while (true) {
+        int x = match_y[y], ny = 0;
+        ll delta = INF;
+        vis_y[y] = true;
+        for (int i = 1; i <= n; i++) if (!vis_y[i]) {
+            ll d = lx[x] + ly[i] - w[x][i];
+            if (d < slack[i]) slack[i] = d, pre_[i] = y;
+            if (slack[i] < delta) delta = slack[i], ny = i;
+        }
+        for (int i = 0; i <= n; i++) {
+            if (vis_y[i]) lx[match_y[i]] -= delta, ly[i] += delta;
+            else slack[i] -= delta;
+        }
+        y = ny;
+        if (match_y[y] == 0) break; // 找到沒配對的右邊點
     }
-
-    void add_edge(int u, int v, long long w) {
-        weight[u][v] = max(weight[u][v], w); // 若有多重邊，保留權重最大的
-    }
-
-    // BFS 尋找增廣路徑並更新頂標
-    void bfs(int root) {
-        slack.assign(n + 1, INF);
-        vis_y.assign(n + 1, false);
-        pre.assign(n + 1, 0);
-        
-        int y = 0; 
-        match_y[0] = root; // 將起始點放在虛擬節點 match_y[0]
-        
-        while (true) {
-            int x = match_y[y]; // 當前考慮的左側節點
-            long long delta = INF;
-            int next_y = 0;
-            vis_y[y] = true;
-            
-            // 遍歷所有右側節點，計算 slack 量
-            for (int i = 1; i <= n; ++i) {
-                if (!vis_y[i]) {
-                    long long diff = lx[x] + ly[i] - weight[x][i];
-                    if (diff < slack[i]) {
-                        slack[i] = diff;
-                        pre[i] = y; // 紀錄從哪個右側節點轉移過來
-                    }
-                    if (slack[i] < delta) {
-                        delta = slack[i];
-                        next_y = i;
-                    }
-                }
-            }
-            
-            // 更新交替樹中所有點的頂標 (期望值)
-            for (int i = 0; i <= n; ++i) {
-                if (vis_y[i]) {
-                    lx[match_y[i]] -= delta;
-                    ly[i] += delta;
-                } else {
-                    slack[i] -= delta;
-                }
-            }
-            
-            y = next_y; // 走到下一個右側節點
-            if (match_y[y] == 0) break; // 找到未匹配的右側節點，增廣路徑結束
-        }
-        
-        // 回溯並更新匹配狀態
-        while (y != 0) {
-            match_y[y] = match_y[pre[y]];
-            y = pre[y];
-        }
-    }
-
-    long long solve() {
-        // 初始化左側頂標為連接邊的最大權重
-        for (int i = 1; i <= n; ++i) {
-            lx[i] = -INF;
-            for (int j = 1; j <= n; ++j) {
-                lx[i] = max(lx[i], weight[i][j]);
-            }
-        }
-        
-        // 對每一個左側節點進行匹配
-        for (int i = 1; i <= n; ++i) {
-            bfs(i);
-        }
-        
-        // 計算最大權重總和
-        long long max_weight = 0;
-        for (int i = 1; i <= n; ++i) {
-            if (match_y[i] != 0) {
-                max_weight += weight[match_y[i]][i];
-            }
-        }
-        return max_weight;
-    }
-};
+    while (y) match_y[y] = match_y[pre_[y]], y = pre_[y]; // 沿路翻轉
+}
+ll km() { // 先填好 n 與 w[1..n][1..n]
+    fill(match_y, match_y + n + 1, 0);
+    fill(ly, ly + n + 1, 0);
+    for (int i = 1; i <= n; i++) lx[i] = *max_element(w[i] + 1, w[i] + n + 1);
+    for (int i = 1; i <= n; i++) km_bfs(i);
+    ll res = 0;
+    for (int i = 1; i <= n; i++) res += w[match_y[i]][i]; // 右 i 配到左 match_y[i]
+    return res;
+}

@@ -1,16 +1,12 @@
-long long inv(long long a, long long mod) {
-    return fast_pow(a, mod - 2, mod);
-}
+// 需要 fast_pow。p 必須是質數且 a % p != 0；不是質數請用 exGCD 版
+ll inv(ll a, ll p) { return fast_pow(a, p - 2, p); }
+ll mod_div(ll a, ll b, ll p) { return (a % p + p) % p * inv(b, p) % p; } // (a/b) % p
 
-// 應用範例：計算 (a / b) % mod
-long long mod_div(long long a, long long b, long long mod) {
-    return (a % mod) * inv(b, mod) % mod;
+// O(N) 建 1~n 的逆元表 (p 質數, n < p)
+const int MAXN = 1000005;
+ll invt[MAXN];
+void build_inv(int n, ll p) {
+    invt[1] = 1;
+    for (int i = 2; i <= n; i++) invt[i] = (p - p / i) * invt[p % i] % p;
 }
-
-// 模逆元建表，數論 證略，可以直接查表找模逆元
-void build(){
-    inv[1] = 1;
-    for(int i=2; i<MAXN; ++i){
-        inv[i] = MOD - (MOD / i) * inv[MOD % i] % MOD;
-    }
-}
+// 減法取模記得: ((a - b) % p + p) % p

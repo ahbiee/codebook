@@ -1,78 +1,39 @@
-struct AC_Automaton {
-    static const int MAXN = 1e5 + 10;
-    int tree[MAXN][size]; // size是字元26, 二進制2
-    int fail[MAXN];
-    int stop[MAXN]; // 記錄有幾個字串在此結束
-    int cnt;
-
-    void init() {
-        cnt = 0;
-        new_node(); // root is 0
+// 多個 pattern 同時在文章中匹配。root = 0
+const int MAXN = 1000005, SIGMA = 26; // MAXN = pattern 總長 + 1
+int tr[MAXN][SIGMA], fail_[MAXN], occ[MAXN], cnt = 0;
+vector<int> order_; // BFS 順序
+int insert(const string &s) { // 回傳 s 的結尾節點 (記下來查答案用)
+    int u = 0;
+    for (char ch : s) {
+        int c = ch - 'a';
+        if (!tr[u][c]) tr[u][c] = ++cnt;
+        u = tr[u][c];
     }
-
-    int new_node() {
-        fill(tree[cnt], tree[cnt] + 26, 0);
-        fail[cnt] = stop[cnt] = 0;
-        return cnt++;
-    }
-
-    // 1. 將所有關鍵字插入 Trie
-    void insert(const string& s) {
-        int curr = 0;
-        for (char c : s) {
-            int path = c - 'a';
-            if (!tree[curr][path]) {
-                tree[curr][path] = new_node();
-            }
-            curr = tree[curr][path];
-        }
-        stop[curr]++;
-    }
-
-    // 2. 建立 Fail 指標與字典圖優化 (使用 BFS)
-    void build() {
-        queue<int> q;
-        // 將 root (0) 的所有實際存在的第一層子節點推入 queue
-        for (int i = 0; i < 26; ++i) {
-            if (tree[0][i]) {
-                fail[tree[0][i]] = 0;
-                q.push(tree[0][i]);
-            }
-        }
-
-        while (!q.empty()) {
-            int u = q.front();
-            q.pop();
-
-            for (int i = 0; i < 26; ++i) {
-                if (tree[u][i]) {
-                    // 若子節點存在，它的 fail 指向父節點 fail 的對應子節點
-                    fail[tree[u][i]] = tree[fail[u]][i];
-                    q.push(tree[u][i]);
-                } else {
-                    // 優化: 若子節點不存在，直接把這條路連向 fail 的對應節點
-                    // 這樣搜尋時就絕對不會遇到死胡同，也不用往回跳
-                    tree[u][i] = tree[fail[u]][i];
-                }
-            }
+    return u;
+}
+void build() { // 全部 insert 完再呼叫
+    queue<int> q;
+    for (int c = 0; c < SIGMA; c++) if (tr[0][c]) fail_[tr[0][c]] = 0, q.push(tr[0][c]);
+    while (!q.empty()) {
+        int u = q.front(); q.pop(); order_.push_back(u);
+        for (int c = 0; c < SIGMA; c++) {
+            int v = tr[u][c];
+            if (v) fail_[v] = tr[fail_[u]][c], q.push(v);
+            else tr[u][c] = tr[fail_[u]][c]; // 不存在的路直接連到 fail 的對應點
         }
     }
-
-    // 3. 搜尋文章，回傳所有關鍵字出現的總次數
-    int query(const string& text) {
-        int curr = 0;
-        int res = 0;
-        for (char c : text) {
-            curr = tree[curr][c - 'a']; // 感謝字典圖優化，無腦往下走即可
-            
-            // 順著 fail 指標往上收集沿途所有匹配成功的字串 (例如配對到 "she"，同時也配對到 "he")
-            int temp = curr;
-            while (temp != 0 && stop[temp] != -1) { 
-                res += stop[temp];
-                stop[temp] = -1; // -1 是優化：已經算過的關鍵字不要重複算
-                temp = fail[temp];
-            }
-        }
-        return res;
+}
+// 文章 text 跑一次。之後 pattern i 出現次數 = occ[end_node[i]]，O(|text| + 總長)
+void query(const string &text) {
+    int u = 0;
+    for (char ch : text) u = tr[u][ch - 'a'], occ[u]++;
+    for (int i = (int)order_.size() - 1; i >= 0; i--) { // 由深到淺，把次數加到 fail
+        int v = order_[i];
+        occ[fail_[v]] += occ[v];
     }
-};
+}
+/* [變形]
+- 只問「有幾個 pattern 出現過」: 看 occ[end_node[i]] > 0 的個數
+- 文章不能包含任何 pattern (禁止字串 DP): 先把 bad[v] |= bad[fail[v]] (按 BFS 順序)，
+  dp[長度][AC 節點]，轉移 v = tr[u][c]，跳過 bad[v] 的狀態
+*/

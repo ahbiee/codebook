@@ -1,37 +1,23 @@
-// === Next Greater Element === 
-int a[105] = {}; // 存好值的 array
-int ans[105] = {}; // 存答案的 array
-stack<int> st; // 注意是存 index 不是value，value在 a[st.top()]
-
-for (int i = 0; i < n; i++) {
-    // 第一輪會跳過，因為st是empty
-    while (!st.empty() && a[st.top()] < a[i]) {
-        ans[st.top()] = i;
-        st.pop();
+// 堆疊存 index。O(N)。0-based，找不到為 -1
+const int MAXN = 200005;
+int n, a[MAXN], nxt[MAXN], prv[MAXN];
+void next_greater() { // nxt[i] = i 右邊第一個「> a[i]」的位置
+    stack<int> st;
+    for (int i = 0; i < n; i++) {
+        while (!st.empty() && a[st.top()] < a[i]) { // [改] 下一個更小: >
+            nxt[st.top()] = i; st.pop();
+        }
+        st.push(i);
     }
-
-    st.push(i);
+    while (!st.empty()) nxt[st.top()] = -1, st.pop();
 }
-
-while (!st.empty()) { // 重設
-    ans[st.top()] = -1;
-    st.pop();
+void prev_greater() { // prv[i] = i 左邊第一個「> a[i]」的位置
+    stack<int> st;
+    for (int i = 0; i < n; i++) {
+        while (!st.empty() && a[st.top()] <= a[i]) st.pop(); // [改] 前一個更小: >=
+        prv[i] = st.empty() ? -1 : st.top();
+        st.push(i);
+    }
 }
-
-// === Next Smaller Element ===
-只需要把 while 改成 
-while (!st.empty() && a[st.top()] > a[i]) // (因為要找更小)
-
-// === Previous Greater ===
-for (int i = 0; i < n; i++) {
-    while (!st.empty() && a[st.top()] <= a[i])
-        st.pop();
-
-    if (st.empty())
-        ans[i] = -1;
-    else
-        ans[i] = st.top();
-
-    st.push(i);
-}
-// 最後 ans 陣列就是答案
+/* [應用] 直方圖最大矩形: 對每個 i 找左右第一個「更矮」的 L,R，
+   面積 = a[i] * (R - L - 1)。「以 a[i] 為最小值的最長區間」都是這招 */

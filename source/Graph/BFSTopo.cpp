@@ -1,66 +1,58 @@
-struct BFS_Topo {
-    int n;
-    vector<vector<int>> adj; // adjacency list，避免爆空間
-    vector<int> in_degree; // 紀錄入度，用於拓樸排序
+const int MAXN = 200005;
+int n, m, indeg[MAXN], dist_[MAXN];
+vector<int> g[MAXN]; // 多筆測資: for(i=0..n) g[i].clear(), indeg[i]=0;
 
-    void init(int _n) {
-        n = _n;
-        adj.assign(n + 1, vector<int>());
-        in_degree.assign(n + 1, 0);
+// 1. 拓樸排序 (Kahn)。回傳順序，size < n 代表有環
+vector<int> topo_sort() {
+    queue<int> q; vector<int> res;          // [改] 要字典序最小: priority_queue<int,vector<int>,greater<int>>
+    for (int i = 1; i <= n; i++) if (indeg[i] == 0) q.push(i);
+    while (!q.empty()) {
+        int u = q.front(); q.pop(); res.push_back(u);
+        for (int v : g[u]) if (--indeg[v] == 0) q.push(v);
     }
+    return res;
+}
+// DAG 上 DP: 依拓樸順序轉移，例如最長路 dp[v] = max(dp[v], dp[u] + w)、路徑數 dp[v] += dp[u]
 
-    // 有向圖，u 指向 v (u 必須在 v 之前完成)
-    void add_edge(int u, int v) {
-        adj[u].push_back(v);
-        in_degree[v]++; // v 被 u 指到，入度 +1
+// 2. BFS: 無權圖最短路 (邊權全為 1)
+void bfs(int s) {                       // [改] 多源 BFS: 把所有起點一開始都 push、dist = 0
+    fill(dist_, dist_ + n + 1, -1);
+    queue<int> q; q.push(s); dist_[s] = 0;
+    while (!q.empty()) {
+        int u = q.front(); q.pop();
+        for (int v : g[u]) if (dist_[v] == -1) dist_[v] = dist_[u] + 1, q.push(v);
     }
-
-    // 1. 拓樸排序 (Kahn's Algorithm)
-    // 回傳拓樸排序的結果。若回傳的 vector 大小小於 n，代表圖中有環
-    vector<int> topo_sort() {
-        queue<int> q;
-        vector<int> res;
-
-        // 步驟一：將所有入度為 0 (沒有前置條件) 的點加入 queue
-        for (int i = 1; i <= n; ++i) {
-            if (in_degree[i] == 0) q.push(i);
+}
+// 3. 網格 BFS
+const int MAXR = 1005;
+int R, C, gd[MAXR][MAXR];
+char grid[MAXR][MAXR];
+int dx[] = {1, -1, 0, 0}, dy[] = {0, 0, 1, -1}; // [改] 8 方向 / 騎士走法
+void grid_bfs(int sx, int sy) {
+    for (int i = 0; i < R; i++) fill(gd[i], gd[i] + C, -1);
+    queue<pair<int, int>> q; q.push({sx, sy}); gd[sx][sy] = 0;
+    while (!q.empty()) {
+        auto [x, y] = q.front(); q.pop();
+        for (int d = 0; d < 4; d++) {
+            int nx = x + dx[d], ny = y + dy[d];
+            if (nx < 0 || nx >= R || ny < 0 || ny >= C) continue;
+            if (grid[nx][ny] == '#' || gd[nx][ny] != -1) continue; // [改] 障礙物條件
+            gd[nx][ny] = gd[x][y] + 1; q.push({nx, ny});
         }
-
-        // 步驟二：開始 BFS
-        while (!q.empty()) {
-            int u = q.front();
-            q.pop();
-            res.push_back(u);
-
-            // 拔掉 u 連出去的所有邊
-            for (int v : adj[u]) {
-                in_degree[v]--; // v 的前置條件少了一個
-                if (in_degree[v] == 0) { // 如果前置條件都滿足了，就推入 queue
-                    q.push(v);
-                }
-            }
-        }
-        return res; // 若 res.size() < n，說明有環，無法完成拓樸排序
     }
-
-    // 2. 基礎 BFS：無權圖的單源最短路徑
-    vector<int> get_dist(int start) {
-        vector<int> dist(n + 1, -1);
-        queue<int> q;
-        
-        dist[start] = 0;
-        q.push(start);
-
-        while (!q.empty()) {
-            int u = q.front();
-            q.pop();
-            for (int v : adj[u]) {
-                if (dist[v] == -1) { // 沒走過
-                    dist[v] = dist[u] + 1;
-                    q.push(v);
-                }
-            }
+}
+// 4. 0-1 BFS: 邊權只有 0 或 1，用 deque，權 0 推前面、權 1 推後面，O(V+E)
+vector<pair<int, int>> wg[MAXN];
+int d01[MAXN];
+void bfs01(int s) {
+    fill(d01, d01 + n + 1, INT_MAX);
+    deque<int> dq; dq.push_back(s); d01[s] = 0;
+    while (!dq.empty()) {
+        int u = dq.front(); dq.pop_front();
+        for (auto [v, w] : wg[u]) if (d01[u] + w < d01[v]) {
+            d01[v] = d01[u] + w;
+            w ? dq.push_back(v) : dq.push_front(v);
         }
-        return dist;
     }
-};
+}
+// 例: 網格「最少拆幾道牆」/「最少轉向次數」→ 走空地權 0、拆牆/轉向權 1

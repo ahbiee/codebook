@@ -1,57 +1,31 @@
-void dfs_recursion(TreeNode* cur){ // pre, in, post
-    if(cur == nullptr) return;
-
-    // do something here: preorder
-    dfs_recursion(cur->left);
-    // do something here: inorder
-    dfs_recursion(cur->right);
-    // do something here: postorder
+// 二元樹用陣列存: lc[u], rc[u] (0 = 沒有子節點)，root 通常為 1
+const int MAXN = 200005;
+int lc[MAXN], rc[MAXN];
+vector<int> pre_order, in_order, post_order;
+void dfs(int u) {
+    if (!u) return;
+    pre_order.push_back(u);   // 前序: 根 左 右
+    dfs(lc[u]);
+    in_order.push_back(u);    // 中序: 左 根 右 (BST 的中序 = 排序好的)
+    dfs(rc[u]);
+    post_order.push_back(u);  // 後序: 左 右 根
 }
-
-void dfs_stack(TreeNode* root){ // pre
-    stack<TreeNode*> st;
-    if(root == nullptr) return;
-    st.push(root);
-    while(!st.empty()){
-        TreeNode* cur = st.top();
-        st.pop();
-
-        // can only do something here: preorder
-
-        if(cur->right != nullptr) st.push(cur->right); // 注意後進先出，所以right晚出要先push
-        if(cur->left != nullptr) st.push(cur->left);
+vector<int> level_order(int root) { // 層序 (BFS)
+    vector<int> res; queue<int> q; q.push(root);
+    while (!q.empty()) {
+        int u = q.front(); q.pop(); res.push_back(u);
+        if (lc[u]) q.push(lc[u]);
+        if (rc[u]) q.push(rc[u]);
     }
+    return res;
 }
-
-void bfs_queue(TreeNode* root){ // level
-    queue<TreeNode*> q;
-    if(root == nullptr) return;
-    q.push(root);
-    while(!q.empty()){
-        TreeNode* cur = q.front();
-        q.pop();
-
-        if(cur->left != nullptr) q.push(cur->left);
-        if(cur->right != nullptr) q.push(cur->right);
-        // do something anywhere will still be level ordered
-    }
+// 給前序 + 中序，輸出後序 (字元版)。O(N^2)，N 大時用 map 記 in 的位置
+string pre_in_to_post(const string &pre, const string &in) {
+    if (pre.empty()) return "";
+    char root = pre[0];
+    int k = in.find(root);    // 左子樹大小
+    return pre_in_to_post(pre.substr(1, k), in.substr(0, k))
+         + pre_in_to_post(pre.substr(k + 1), in.substr(k + 1)) + root;
 }
-
-/*
-題意：給定 preorder 與 inorder 的序列，輸出 postorder 長甚麼樣子
-*/
-void solve(string pre, string in){ // preorder, inorder
-    if(pre.empty() || in.empty()) return;
-    char root = pre[0]; // pre order的第一個值就是root
-    int in_idx_root = in.find(root); // 去找inorder的root的位置,就可以得到左右子樹的分割點
-
-    string in_left = in.substr(0, in_idx_root);
-    string in_right = in.substr(in_idx_root+1);
-
-    string pre_left = pre.substr(1, in_idx_root);
-    string pre_right = pre.substr(in_idx_root+1);
-
-    solve(pre_left, in_left);
-    solve(pre_right, in_right);
-    printf("%c", root); // postorder
-}
+// 給後序 + 中序 → 根在後序最後一個，其餘同理
+// 一般樹 (不只二元): vector<int> ch[u] 存小孩，DFS 遞迴每個小孩即可
