@@ -43,7 +43,7 @@
 \hline
 N 的範圍 & 複雜度 & 可能的作法 \\ \hline
 $\le 10$ & $O(N!)$ & 全排列、回溯 \\
-$\le 20$ & $O(2^N N)$ & 位元枚舉 \\
+$\le 20$ & $O(2^N N)$ & 位元枚舉、選/不選遞迴 \\
 $\le 40$ & $O(2^{N/2})$ & 折半枚舉 \\
 $\le 500$ & $O(N^3)$ & Floyd、區間 DP、KM \\
 $\le 5000$ & $O(N^2)$ & 二維 DP、LCS、枚舉兩端點 \\
@@ -78,6 +78,10 @@ $\le 10^{18}$ & $O(\log N)$ & 快速冪、矩陣快速冪、二分答案 \\ \hli
 兩人輪流、誰必勝 & Nim、SG 函數、打表找規律 \\
 排程、選最多不重疊區間 & Greedy (依結束時間排序) \\
 不重疊的工作、每個有獎勵，求最大獎勵 & 加權區間排程 DP \\
+$N \le 20$、分成兩組、每個選或不選 & 選/不選遞迴 $O(2^N)$ (Brute.cpp 5.)，不是排列 \\
+相鄰只差一個 bit 的序列 & Gray code：$i \oplus (i \gg 1)$ \\
+重新排列成迴文 & 奇數次的字母 $\le 1$；左半 + 中間 + 反轉左半 \\
+所有相異排列 (字母會重複) & \texttt{cnt[26]} 回溯、每層試 a$\sim$z (Brute.cpp 6.)；或 sort + next\_permutation \\
  \hline
 \end{tabular}
 
@@ -109,6 +113,8 @@ $\le 10^{18}$ & $O(\log N)$ & 快速冪、矩陣快速冪、二分答案 \\ \hli
     \item 多筆測資之間的初始化？$N=0$、$N=1$、全部相同、找不到答案時的輸出？
     \item 圖：不連通？自環、重邊？鏈狀樹 (遞迴太深)？$V=1, E=0$？
     \item 模板抄錯？不同陣列/字串用同一個 index 而越界？非 void 函式忘記 return？
+    \item \textbf{複雜度看起來對卻 TLE？} 迴圈裡 \texttt{s = c + s}、\texttt{s = s + c} 每次 $O(N)$ (改用 \texttt{+=})；組合題的 DFS 寫成排列 ($N!$)。
+    \item 回溯時共用的狀態 (\texttt{visited}、\texttt{cnt}、字串) \textbf{每一個}都有還原嗎？位元運算 \texttt{\& \^{} |} 優先順序比 \texttt{==} 低，要加括號。
     \item 浮點數誤差 (用 eps，必要時 long double)？負數取模 \texttt{(x\%m+m)\%m}？除以 0？
     \item signed 與 unsigned 比較 (\texttt{v.size()-1} 在 size 為 0 時)？
     \item 區間的端點：開區間還是閉區間？同一時間點的事件誰先處理？
@@ -122,7 +128,7 @@ $\le 10^{18}$ & $O(\log N)$ & 快速冪、矩陣快速冪、二分答案 \\ \hli
 
 \Algorithm{C++ 函式庫速查}{常用 STL 與注意事項。}{}{cpp}{source/Others/functions.cpp}{}
 
-\Algorithm{位元與數學小技巧}{}{}{cpp}{source/Others/Concepts.cpp}{}
+\Algorithm{位元與數學小技巧}{含「只差一個 bit」判斷、運算子優先順序、Gray code。}{}{cpp}{source/Others/Concepts.cpp}{}
 
 \section{資料結構}
 
@@ -224,7 +230,7 @@ $10^{18}$ & 897612484786617600 & 103680 \\
 
 \Algorithm{BFS、拓樸排序、網格 BFS、0-1 BFS}{無權最短路；拓樸排序 (可判環、DAG DP)；網格四方向；邊權只有 0/1 時用 deque。}{$O(V+E)$}{cpp}{source/Graph/BFSTopo.cpp}{}
 
-\Algorithm{DFS}{連通塊、有向圖判環 (三色)、小 $N$ 枚舉所有路徑 (回溯)。}{$O(V+E)$}{cpp}{source/Graph/DFS.cpp}{}
+\Algorithm{DFS}{如果解點數 $N \le 25$，可以直接dfs找答案。連通塊、有向圖判環 (三色)、小 $N$ 枚舉所有路徑 (回溯)。}{$O(V+E)$}{cpp}{source/Graph/DFS.cpp}{}
 
 \Algorithm{Dijkstra 單源最短路}{邊權 $\ge 0$。附路徑還原、最短路條數、瓶頸路寫法與常見變形。}{$O((V+E)\log V)$}{cpp}{source/Graph/Dijkstra.cpp}{}
 
@@ -379,7 +385,7 @@ O_y = \frac{1}{4\Delta} \begin{vmatrix} x_1 & x_1^2 + y_1^2 & 1 \\ x_2 & x_2^2 +
 
 \Algorithm{Sliding Window 滑動視窗}{最長不重複子字串、最多 K 種值的子陣列數。}{$O(N)$ (用 map 時 $O(N\log N)$)}{cpp}{source/Search/SlidingWindow.cpp}{}
 
-\Algorithm{暴力枚舉、回溯、折半枚舉}{子集合/排列枚舉、回溯剪枝 (N 皇后)、$N\le40$ 的折半枚舉。}{$O(2^N)$ / $O(2^{N/2}N)$}{cpp}{source/Search/Brute.cpp}{}
+\Algorithm{暴力枚舉、回溯、折半枚舉}{子集合/排列枚舉、排列 vs 組合、回溯剪枝 (N 皇后)、$N\le40$ 的折半枚舉、選/不選遞迴 (分兩組)、有重複字母的相異排列。}{$O(2^N)$ / $O(2^{N/2}N)$}{cpp}{source/Search/Brute.cpp}{}
 
 \section{MISC}
 

@@ -11,6 +11,14 @@ __gcd(a, b); gcd(a, b); lcm(a, b);  // C++17 <numeric>
 // <string>
 s.substr(pos, len); s.find(t) (找不到 == string::npos); stoi(s); stoll(s); to_string(x);
 // stringstream ss(line); while (ss >> word) — 一行內數量不固定時
+// string(k, c) = k 個 c (Python 的 c * k)；s += c / s += t 均攤 O(1)；reverse(s.begin(), s.end())
+// TLE: s = c + s (插在前面) 和 s = s + c 每次都複製整個字串 O(|s|)，放迴圈裡 = O(N^2)
+//   → 只往後 +=，最後再 reverse；或先開 string t(n, ' ')，兩個指標從兩端往中間填
+// 迴文重排: 奇數次的字母 <= 1 個 → 左半 + (中間那個) + 反轉左半 (CSES 1755)
+// 尾端: s.push_back(c) / s += c 加一個；s.pop_back() 拿掉最後一個 (空字串不可)；s.back() 看最後一個
+// s.append(c) 編譯錯誤 → s.append(1, c) 或 s.append(t)；s.erase(pos) 刪 pos 到結尾，s.erase(pos, len)
+// 'a' + i 是 int！ s + ('a' + i) 編譯錯誤 → s + char('a' + i)；cout << 'a' + i 會印出數字
+// for (const auto &x : v) 不複製；for (string x : v) 每一圈都複製一次
 // 容器
 // set/map: insert, erase(x), count, find, lower_bound(x), upper_bound(x)，全部 O(log N)
 // multiset 只刪一個: ms.erase(ms.find(x))；ms.erase(x) 會刪掉全部的 x

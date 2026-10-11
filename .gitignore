@@ -1,0 +1,11 @@
+# 編譯產物
+*.exe
+*.o
+build/
+
+# LaTeX 中間檔 (main.pdf 保留)
+*.aux
+*.log
+*.toc
+*.out
+*.synctex.gz
