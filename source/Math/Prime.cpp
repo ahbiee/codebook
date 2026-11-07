@@ -15,10 +15,10 @@ vector<pair<ll, int>> factorize(ll n) { // {質因數, 次方}
     if (n > 1) res.push_back({n, 1});
     return res;
 }
-// 二、線性篩 O(N): 質數表 + 最小質因數 spf，N <= 1e7
+// 二、Euler線性篩 O(N): 質數表 + 最小質因數 spf，N <= 1e7
 const int MAXN = 10000005;
 int spf[MAXN];
-vector<int> primes;
+vector<int> primes; // 1e4: 1229, 1e5: 9592, 1e6: 78498, 1e7: 664579
 void sieve(int n) {
     for (int i = 2; i <= n; i++) {
         if (spf[i] == 0) spf[i] = i, primes.push_back(i);
